@@ -1,0 +1,3706 @@
+{
+  "Aardvark Blue": {
+    "background": "#102040",
+    "foreground": "#dddddd",
+    "cursor-color": "#007acc",
+    "cursor-text": "#bfdbfe",
+    "selection-background": "#bfdbfe",
+    "selection-foreground": "#000000"
+  },
+  "3024 Night": {
+    "background": "#090300",
+    "foreground": "#a5a2a2",
+    "cursor-color": "#a5a2a2",
+    "cursor-text": "#090300",
+    "selection-background": "#4a4543",
+    "selection-foreground": "#a5a2a2"
+  },
+  "3024 Day": {
+    "background": "#f7f7f7",
+    "foreground": "#4a4543",
+    "cursor-color": "#4a4543",
+    "cursor-text": "#f7f7f7",
+    "selection-background": "#a5a2a2",
+    "selection-foreground": "#4a4543"
+  },
+  "12-bit Rainbow": {
+    "background": "#040404",
+    "foreground": "#feffff",
+    "cursor-color": "#e0d000",
+    "cursor-text": "#000000",
+    "selection-background": "#606060",
+    "selection-foreground": "#ffffff"
+  },
+  "0x96f": {
+    "background": "#262427",
+    "foreground": "#fcfcfa",
+    "cursor-color": "#fcfcfa",
+    "cursor-text": "#000000",
+    "selection-background": "#fcfcfa",
+    "selection-foreground": "#262427"
+  },
+  "Adventure": {
+    "background": "#040404",
+    "foreground": "#feffff",
+    "cursor-color": "#feffff",
+    "cursor-text": "#000000",
+    "selection-background": "#606060",
+    "selection-foreground": "#ffffff"
+  },
+  "Adwaita": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c0bfbc",
+    "selection-foreground": "#000000"
+  },
+  "Adventure Time": {
+    "background": "#1f1d45",
+    "foreground": "#f8dcc0",
+    "cursor-color": "#efbf38",
+    "cursor-text": "#08080a",
+    "selection-background": "#706b4e",
+    "selection-foreground": "#f3d9c4"
+  },
+  "Abernathy": {
+    "background": "#111416",
+    "foreground": "#eeeeec",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#eeeeec",
+    "selection-foreground": "#333333"
+  },
+  "Adwaita Dark": {
+    "background": "#1d1d20",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#1d1d20",
+    "selection-background": "#ffffff",
+    "selection-foreground": "#5e5c64"
+  },
+  "Afterglow": {
+    "background": "#212121",
+    "foreground": "#d0d0d0",
+    "cursor-color": "#d0d0d0",
+    "cursor-text": "#151515",
+    "selection-background": "#303030",
+    "selection-foreground": "#d0d0d0"
+  },
+  "Alien Blood": {
+    "background": "#0f1610",
+    "foreground": "#637d75",
+    "cursor-color": "#73fa91",
+    "cursor-text": "#0f1610",
+    "selection-background": "#1d4125",
+    "selection-foreground": "#73fa91"
+  },
+  "Aizen Dark": {
+    "background": "#1a1a1a",
+    "foreground": "#d0d6f0",
+    "cursor-color": "#f8b080",
+    "cursor-text": "#1a1a1a",
+    "selection-background": "#333333",
+    "selection-foreground": "#d0d6f0"
+  },
+  "Alabaster": {
+    "background": "#f7f7f7",
+    "foreground": "#000000",
+    "cursor-color": "#007acc",
+    "cursor-text": "#bfdbfe",
+    "selection-background": "#bfdbfe",
+    "selection-foreground": "#000000"
+  },
+  "Aizen Light": {
+    "background": "#f0f2f6",
+    "foreground": "#4a4d66",
+    "cursor-color": "#fc6008",
+    "cursor-text": "#f0f2f6",
+    "selection-background": "#bdc2cc",
+    "selection-foreground": "#4a4d66"
+  },
+  "Andromeda": {
+    "background": "#262a33",
+    "foreground": "#e5e5e5",
+    "cursor-color": "#f8f8f0",
+    "cursor-text": "#b5b5a8",
+    "selection-background": "#5a5c62",
+    "selection-foreground": "#ece7e7"
+  },
+  "Apple System Colors": {
+    "background": "#1e1e1e",
+    "foreground": "#ffffff",
+    "cursor-color": "#98989d",
+    "cursor-text": "#ffffff",
+    "selection-background": "#3f638b",
+    "selection-foreground": "#ffffff"
+  },
+  "Apple System Colors Light": {
+    "background": "#feffff",
+    "foreground": "#000000",
+    "cursor-color": "#98989d",
+    "cursor-text": "#ffffff",
+    "selection-background": "#abd8ff",
+    "selection-foreground": "#000000"
+  },
+  "Arcoiris": {
+    "background": "#201f1e",
+    "foreground": "#eee4d9",
+    "cursor-color": "#872929",
+    "cursor-text": "#fffbf2",
+    "selection-background": "#25524a",
+    "selection-foreground": "#f3fffd"
+  },
+  "Apple Classic": {
+    "background": "#2c2b2b",
+    "foreground": "#d5a200",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#6b5b02",
+    "selection-foreground": "#67e000"
+  },
+  "Argonaut": {
+    "background": "#0e1019",
+    "foreground": "#fffaf4",
+    "cursor-color": "#ff0018",
+    "cursor-text": "#ff8ca4",
+    "selection-background": "#002a3b",
+    "selection-foreground": "#ffffff"
+  },
+  "Arthur": {
+    "background": "#1c1c1c",
+    "foreground": "#ddeedd",
+    "cursor-color": "#e2bbef",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "Atom": {
+    "background": "#161719",
+    "foreground": "#c5c8c6",
+    "cursor-color": "#d0d0d0",
+    "cursor-text": "#151515",
+    "selection-background": "#444444",
+    "selection-foreground": "#c5c8c6"
+  },
+  "Ardoise": {
+    "background": "#1e1e1e",
+    "foreground": "#eaeaea",
+    "cursor-color": "#f7f7f7",
+    "cursor-text": "#000000",
+    "selection-background": "#46515e",
+    "selection-foreground": "#f1f3f5"
+  },
+  "Atelier Sulphurpool": {
+    "background": "#202746",
+    "foreground": "#979db4",
+    "cursor-color": "#979db4",
+    "cursor-text": "#202746",
+    "selection-background": "#5e6687",
+    "selection-foreground": "#979db4"
+  },
+  "Aura": {
+    "background": "#15141b",
+    "foreground": "#edecee",
+    "cursor-color": "#a277ff",
+    "cursor-text": "#edecee",
+    "selection-background": "#a277ff",
+    "selection-foreground": "#edecee"
+  },
+  "Ayu": {
+    "background": "#0b0e14",
+    "foreground": "#bfbdb6",
+    "cursor-color": "#e6b450",
+    "cursor-text": "#0b0e14",
+    "selection-background": "#409fff",
+    "selection-foreground": "#0b0e14"
+  },
+  "Atom One Light": {
+    "background": "#f9f9f9",
+    "foreground": "#2a2c33",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#ededed",
+    "selection-foreground": "#2a2c33"
+  },
+  "Atom One Dark": {
+    "background": "#21252b",
+    "foreground": "#abb2bf",
+    "cursor-color": "#abb2bf",
+    "cursor-text": "#21252b",
+    "selection-background": "#323844",
+    "selection-foreground": "#abb2bf"
+  },
+  "Aurora": {
+    "background": "#23262e",
+    "foreground": "#ffca28",
+    "cursor-color": "#ee5d43",
+    "cursor-text": "#ffd29c",
+    "selection-background": "#292e38",
+    "selection-foreground": "#00e8c6"
+  },
+  "Banana Blueberry": {
+    "background": "#191323",
+    "foreground": "#cccccc",
+    "cursor-color": "#e07d13",
+    "cursor-text": "#ffffff",
+    "selection-background": "#220525",
+    "selection-foreground": "#f4f4f4"
+  },
+  "Belafonte Day": {
+    "background": "#d5ccba",
+    "foreground": "#45373c",
+    "cursor-color": "#45373c",
+    "cursor-text": "#d5ccba",
+    "selection-background": "#968c83",
+    "selection-foreground": "#45373c"
+  },
+  "Ayu Mirage": {
+    "background": "#1f2430",
+    "foreground": "#cccac2",
+    "cursor-color": "#ffcc66",
+    "cursor-text": "#1f2430",
+    "selection-background": "#409fff",
+    "selection-foreground": "#1f2430"
+  },
+  "Batman": {
+    "background": "#1b1d1e",
+    "foreground": "#6f6f6f",
+    "cursor-color": "#fcef0c",
+    "cursor-text": "#000000",
+    "selection-background": "#4d504c",
+    "selection-foreground": "#f0e04a"
+  },
+  "Ayu Light": {
+    "background": "#f8f9fa",
+    "foreground": "#5c6166",
+    "cursor-color": "#ffaa33",
+    "cursor-text": "#f8f9fa",
+    "selection-background": "#035bd6",
+    "selection-foreground": "#f8f9fa"
+  },
+  "Black Metal (Bathory)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Birds Of Paradise": {
+    "background": "#2a1f1d",
+    "foreground": "#e0dbb7",
+    "cursor-color": "#644a33",
+    "cursor-text": "#8a7059",
+    "selection-background": "#563c27",
+    "selection-foreground": "#e0dbbb"
+  },
+  "Black Metal (Burzum)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Black Metal": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Belafonte Night": {
+    "background": "#20111b",
+    "foreground": "#968c83",
+    "cursor-color": "#968c83",
+    "cursor-text": "#20111b",
+    "selection-background": "#45373c",
+    "selection-foreground": "#968c83"
+  },
+  "Black Metal (Khold)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Black Metal (Marduk)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Black Metal (Gorgoroth)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Black Metal (Immortal)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Black Metal (Dark Funeral)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Blue Berry Pie": {
+    "background": "#1c0c28",
+    "foreground": "#babab9",
+    "cursor-color": "#fcfad6",
+    "cursor-text": "#000000",
+    "selection-background": "#606060",
+    "selection-foreground": "#ffffff"
+  },
+  "Black Metal (Nile)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Black Metal (Mayhem)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Black Metal (Venom)": {
+    "background": "#000000",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#8e8e8e",
+    "selection-background": "#c1c1c1",
+    "selection-foreground": "#000000"
+  },
+  "Blazer": {
+    "background": "#0d1926",
+    "foreground": "#d9e6f2",
+    "cursor-color": "#d9e6f2",
+    "cursor-text": "#0d1926",
+    "selection-background": "#c1ddff",
+    "selection-foreground": "#000000"
+  },
+  "Borland": {
+    "background": "#0000a4",
+    "foreground": "#ffff4e",
+    "cursor-color": "#ffa560",
+    "cursor-text": "#ffffff",
+    "selection-background": "#a4a4a4",
+    "selection-foreground": "#0000a4"
+  },
+  "Bluloco Dark": {
+    "background": "#282c34",
+    "foreground": "#b9c0cb",
+    "cursor-color": "#ffcc00",
+    "cursor-text": "#282c34",
+    "selection-background": "#b9c0ca",
+    "selection-foreground": "#272b33"
+  },
+  "Blue Dolphin": {
+    "background": "#006984",
+    "foreground": "#c5f2ff",
+    "cursor-color": "#ffcc00",
+    "cursor-text": "#292d3e",
+    "selection-background": "#2baeca",
+    "selection-foreground": "#eceff1"
+  },
+  "Bluloco Light": {
+    "background": "#f9f9f9",
+    "foreground": "#373a41",
+    "cursor-color": "#f32759",
+    "cursor-text": "#ffffff",
+    "selection-background": "#daf0ff",
+    "selection-foreground": "#373a41"
+  },
+  "Blue Matrix": {
+    "background": "#101116",
+    "foreground": "#00a2ff",
+    "cursor-color": "#76ff9f",
+    "cursor-text": "#a6a6a6",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Breeze": {
+    "background": "#31363b",
+    "foreground": "#eff0f1",
+    "cursor-color": "#eff0f1",
+    "cursor-text": "#31363b",
+    "selection-background": "#eff0f1",
+    "selection-foreground": "#31363b"
+  },
+  "Breadog": {
+    "background": "#f1ebe6",
+    "foreground": "#362c24",
+    "cursor-color": "#362c24",
+    "cursor-text": "#f1ebe6",
+    "selection-background": "#362c24",
+    "selection-foreground": "#f1ebe6"
+  },
+  "Box": {
+    "background": "#141d2b",
+    "foreground": "#9fef00",
+    "cursor-color": "#9fef00",
+    "cursor-text": "#111111",
+    "selection-background": "#a4b1cd",
+    "selection-foreground": "#141d2b"
+  },
+  "Bright Lights": {
+    "background": "#191919",
+    "foreground": "#b3c9d7",
+    "cursor-color": "#f34b00",
+    "cursor-text": "#002831",
+    "selection-background": "#b3c9d7",
+    "selection-foreground": "#191919"
+  },
+  "Broadcast": {
+    "background": "#2b2b2b",
+    "foreground": "#e6e1dc",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#c0bbb6",
+    "selection-background": "#5a647e",
+    "selection-foreground": "#e6e1dc"
+  },
+  "Builtin Tango Dark": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Builtin Light": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Builtin Pastel Dark": {
+    "background": "#000000",
+    "foreground": "#bbbbbb",
+    "cursor-color": "#ffa560",
+    "cursor-text": "#ffffff",
+    "selection-background": "#363983",
+    "selection-foreground": "#f2f2f2"
+  },
+  "Brogrammer": {
+    "background": "#131313",
+    "foreground": "#d6dbe5",
+    "cursor-color": "#b9b9b9",
+    "cursor-text": "#101010",
+    "selection-background": "#1f1f1f",
+    "selection-foreground": "#d6dbe5"
+  },
+  "Builtin Dark": {
+    "background": "#000000",
+    "foreground": "#bbbbbb",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "C64": {
+    "background": "#40318d",
+    "foreground": "#7869c4",
+    "cursor-color": "#7869c4",
+    "cursor-text": "#40318d",
+    "selection-background": "#7869c4",
+    "selection-foreground": "#40318d"
+  },
+  "Builtin Tango Light": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "CGA": {
+    "background": "#000000",
+    "foreground": "#aaaaaa",
+    "cursor-color": "#b8b8b8",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Calamity": {
+    "background": "#2f2833",
+    "foreground": "#d5ced9",
+    "cursor-color": "#d5ced9",
+    "cursor-text": "#2f2833",
+    "selection-background": "#7e6c88",
+    "selection-foreground": "#d5ced9"
+  },
+  "CLRS": {
+    "background": "#ffffff",
+    "foreground": "#262626",
+    "cursor-color": "#62c6ef",
+    "cursor-text": "#ffffff",
+    "selection-background": "#6fd3fc",
+    "selection-foreground": "#041730"
+  },
+  "Catppuccin Frappe": {
+    "background": "#303446",
+    "foreground": "#c6d0f5",
+    "cursor-color": "#f2d5cf",
+    "cursor-text": "#303446",
+    "selection-background": "#626880",
+    "selection-foreground": "#c6d0f5"
+  },
+  "Catppuccin Macchiato": {
+    "background": "#24273a",
+    "foreground": "#cad3f5",
+    "cursor-color": "#f4dbd6",
+    "cursor-text": "#24273a",
+    "selection-background": "#5b6078",
+    "selection-foreground": "#cad3f5"
+  },
+  "Carbonfox": {
+    "background": "#161616",
+    "foreground": "#f2f4f8",
+    "cursor-color": "#f2f4f8",
+    "cursor-text": "#161616",
+    "selection-background": "#2a2a2a",
+    "selection-foreground": "#f2f4f8"
+  },
+  "Catppuccin Mocha": {
+    "background": "#1e1e2e",
+    "foreground": "#cdd6f4",
+    "cursor-color": "#f5e0dc",
+    "cursor-text": "#1e1e2e",
+    "selection-background": "#585b70",
+    "selection-foreground": "#cdd6f4"
+  },
+  "Catppuccin Latte": {
+    "background": "#eff1f5",
+    "foreground": "#4c4f69",
+    "cursor-color": "#dc8a78",
+    "cursor-text": "#eff1f5",
+    "selection-background": "#acb0be",
+    "selection-foreground": "#4c4f69"
+  },
+  "Chalk": {
+    "background": "#2b2d2e",
+    "foreground": "#d2d8d9",
+    "cursor-color": "#708284",
+    "cursor-text": "#002831",
+    "selection-background": "#e4e8ed",
+    "selection-foreground": "#3f4041"
+  },
+  "Challenger Deep": {
+    "background": "#1e1c31",
+    "foreground": "#cbe1e7",
+    "cursor-color": "#fbfcfc",
+    "cursor-text": "#ff271d",
+    "selection-background": "#cbe1e7",
+    "selection-foreground": "#1e1c31"
+  },
+  "Chester": {
+    "background": "#2c3643",
+    "foreground": "#ffffff",
+    "cursor-color": "#b4b1b1",
+    "cursor-text": "#000000",
+    "selection-background": "#67747c",
+    "selection-foreground": "#ffffff"
+  },
+  "Chalkboard": {
+    "background": "#29262f",
+    "foreground": "#d9e6f2",
+    "cursor-color": "#d9e6f2",
+    "cursor-text": "#29262f",
+    "selection-background": "#073642",
+    "selection-foreground": "#ffffff"
+  },
+  "Ciapre": {
+    "background": "#191c27",
+    "foreground": "#aea47a",
+    "cursor-color": "#92805b",
+    "cursor-text": "#181818",
+    "selection-background": "#172539",
+    "selection-foreground": "#aea47f"
+  },
+  "Citruszest": {
+    "background": "#121212",
+    "foreground": "#bfbfbf",
+    "cursor-color": "#666666",
+    "cursor-text": "#f9f9f9",
+    "selection-background": "#ff8c00",
+    "selection-foreground": "#f4f4f4"
+  },
+  "Cobalt Next": {
+    "background": "#162c35",
+    "foreground": "#d7deea",
+    "cursor-color": "#ffc64c",
+    "cursor-text": "#8a919d",
+    "selection-background": "#4c5b67",
+    "selection-foreground": "#ffffff"
+  },
+  "Cobalt Neon": {
+    "background": "#142838",
+    "foreground": "#8ff586",
+    "cursor-color": "#c4206f",
+    "cursor-text": "#8ff586",
+    "selection-background": "#094fb1",
+    "selection-foreground": "#8ff586"
+  },
+  "Cobalt Next Dark": {
+    "background": "#0b1c24",
+    "foreground": "#d7deea",
+    "cursor-color": "#ffc64c",
+    "cursor-text": "#999999",
+    "selection-background": "#37b5b4",
+    "selection-foreground": "#ffffff"
+  },
+  "Cobalt Next Minimal": {
+    "background": "#0b1c24",
+    "foreground": "#d7deea",
+    "cursor-color": "#37b5b4",
+    "cursor-text": "#ffffff",
+    "selection-background": "#37b5b4",
+    "selection-foreground": "#ffffff"
+  },
+  "Coffee Theme": {
+    "background": "#f5deb3",
+    "foreground": "#000000",
+    "cursor-color": "#a1a1a1",
+    "cursor-text": "#fffc67",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Cobalt2": {
+    "background": "#132738",
+    "foreground": "#ffffff",
+    "cursor-color": "#f0cc09",
+    "cursor-text": "#98998c",
+    "selection-background": "#18354f",
+    "selection-foreground": "#b5b5b5"
+  },
+  "Crayon Pony Fish": {
+    "background": "#150707",
+    "foreground": "#68525a",
+    "cursor-color": "#68525a",
+    "cursor-text": "#140707",
+    "selection-background": "#2b1b1d",
+    "selection-foreground": "#69525a"
+  },
+  "Cursor Dark": {
+    "background": "#141414",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#141414",
+    "selection-background": "#303030",
+    "selection-foreground": "#ffffff"
+  },
+  "Cutie Pro": {
+    "background": "#181818",
+    "foreground": "#d5d0c9",
+    "cursor-color": "#efc4cd",
+    "cursor-text": "#181818",
+    "selection-background": "#363636",
+    "selection-foreground": "#d5d0c9"
+  },
+  "Cyberpunk Scarlet Protocol": {
+    "background": "#101116",
+    "foreground": "#e41951",
+    "cursor-color": "#76ff9f",
+    "cursor-text": "#a6a6a6",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Cyberpunk": {
+    "background": "#332a57",
+    "foreground": "#e5e5e5",
+    "cursor-color": "#21f6bc",
+    "cursor-text": "#999999",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Dark Modern": {
+    "background": "#1f1f1f",
+    "foreground": "#cccccc",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#3a3d41",
+    "selection-foreground": "#e0e0e0"
+  },
+  "Dark Pastel": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Cyberdyne": {
+    "background": "#151144",
+    "foreground": "#00ff92",
+    "cursor-color": "#00ff9c",
+    "cursor-text": "#a6a6a6",
+    "selection-background": "#454d96",
+    "selection-foreground": "#f4f4f4"
+  },
+  "Dark+": {
+    "background": "#1e1e1e",
+    "foreground": "#cccccc",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#3a3d41",
+    "selection-foreground": "#e0e0e0"
+  },
+  "Darkside": {
+    "background": "#222324",
+    "foreground": "#bababa",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#303333",
+    "selection-foreground": "#bababa"
+  },
+  "Darkmatrix": {
+    "background": "#070c0e",
+    "foreground": "#3e5715",
+    "cursor-color": "#9fa86e",
+    "cursor-text": "#00ff87",
+    "selection-background": "#0f191c",
+    "selection-foreground": "#00ff87"
+  },
+  "Darkermatrix": {
+    "background": "#070c0e",
+    "foreground": "#35451a",
+    "cursor-color": "#444733",
+    "cursor-text": "#00ff87",
+    "selection-background": "#0f191c",
+    "selection-foreground": "#00ff87"
+  },
+  "Dawnfox": {
+    "background": "#faf4ed",
+    "foreground": "#575279",
+    "cursor-color": "#575279",
+    "cursor-text": "#faf4ed",
+    "selection-background": "#d0d8d8",
+    "selection-foreground": "#575279"
+  },
+  "Dayfox": {
+    "background": "#f6f2ee",
+    "foreground": "#3d2b5a",
+    "cursor-color": "#3d2b5a",
+    "cursor-text": "#f6f2ee",
+    "selection-background": "#e7d2be",
+    "selection-foreground": "#3d2b5a"
+  },
+  "Dimidium": {
+    "background": "#141414",
+    "foreground": "#bab7b6",
+    "cursor-color": "#37e57b",
+    "cursor-text": "#141414",
+    "selection-background": "#8db8e5",
+    "selection-foreground": "#141414"
+  },
+  "Detuned": {
+    "background": "#000000",
+    "foreground": "#c7c7c7",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Desert": {
+    "background": "#333333",
+    "foreground": "#ffffff",
+    "cursor-color": "#00ff00",
+    "cursor-text": "#000000",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Deep": {
+    "background": "#090909",
+    "foreground": "#cdcdcd",
+    "cursor-color": "#d0d0d0",
+    "cursor-text": "#151515",
+    "selection-background": "#780002",
+    "selection-foreground": "#ececec"
+  },
+  "Django": {
+    "background": "#0b2f20",
+    "foreground": "#f8f8f8",
+    "cursor-color": "#336442",
+    "cursor-text": "#f8f8f8",
+    "selection-background": "#245032",
+    "selection-foreground": "#f8f8f8"
+  },
+  "Doom One": {
+    "background": "#282c34",
+    "foreground": "#bbc2cf",
+    "cursor-color": "#51afef",
+    "cursor-text": "#1b1b1b",
+    "selection-background": "#42444b",
+    "selection-foreground": "#bbc2cf"
+  },
+  "Dimmed Monokai": {
+    "background": "#1f1f1f",
+    "foreground": "#b9bcba",
+    "cursor-color": "#f83e19",
+    "cursor-text": "#171717",
+    "selection-background": "#2a2d32",
+    "selection-foreground": "#b9bcba"
+  },
+  "Django Smooth": {
+    "background": "#245032",
+    "foreground": "#f8f8f8",
+    "cursor-color": "#4c7e5c",
+    "cursor-text": "#f8f8f8",
+    "selection-background": "#336442",
+    "selection-foreground": "#f8f8f8"
+  },
+  "Django Reborn Again": {
+    "background": "#051f14",
+    "foreground": "#dadedc",
+    "cursor-color": "#ffcc00",
+    "cursor-text": "#9a9e9c",
+    "selection-background": "#203727",
+    "selection-foreground": "#dadedc"
+  },
+  "Dracula+": {
+    "background": "#212121",
+    "foreground": "#f8f8f2",
+    "cursor-color": "#eceff4",
+    "cursor-text": "#282828",
+    "selection-background": "#f8f8f2",
+    "selection-foreground": "#545454"
+  },
+  "Duckbones": {
+    "background": "#0e101a",
+    "foreground": "#ebefc0",
+    "cursor-color": "#edf2c2",
+    "cursor-text": "#0e101a",
+    "selection-background": "#37382d",
+    "selection-foreground": "#ebefc0"
+  },
+  "Dot Gov": {
+    "background": "#262c35",
+    "foreground": "#ebebeb",
+    "cursor-color": "#d9002f",
+    "cursor-text": "#ffffff",
+    "selection-background": "#1a4080",
+    "selection-foreground": "#ffffff"
+  },
+  "Dracula": {
+    "background": "#282a36",
+    "foreground": "#f8f8f2",
+    "cursor-color": "#f8f8f2",
+    "cursor-text": "#282a36",
+    "selection-background": "#44475a",
+    "selection-foreground": "#ffffff"
+  },
+  "Doom Peacock": {
+    "background": "#2b2a27",
+    "foreground": "#ede0ce",
+    "cursor-color": "#9c9c9d",
+    "cursor-text": "#36312b",
+    "selection-background": "#a60033",
+    "selection-foreground": "#ffffff"
+  },
+  "Electron Highlighter": {
+    "background": "#23283d",
+    "foreground": "#a5b6d4",
+    "cursor-color": "#a5b6d4",
+    "cursor-text": "#1a1b27",
+    "selection-background": "#25345a",
+    "selection-foreground": "#a5b6d4"
+  },
+  "Earthsong": {
+    "background": "#292520",
+    "foreground": "#e5c7a9",
+    "cursor-color": "#f6f7ec",
+    "cursor-text": "#292520",
+    "selection-background": "#121418",
+    "selection-foreground": "#e5c7a9"
+  },
+  "Duotone Dark": {
+    "background": "#1f1d27",
+    "foreground": "#b7a1ff",
+    "cursor-color": "#ff9839",
+    "cursor-text": "#1f1d27",
+    "selection-background": "#353147",
+    "selection-foreground": "#b7a2ff"
+  },
+  "ENCOM": {
+    "background": "#000000",
+    "foreground": "#00a595",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#00a48c",
+    "selection-foreground": "#3de1c9"
+  },
+  "Duskfox": {
+    "background": "#232136",
+    "foreground": "#e0def4",
+    "cursor-color": "#e0def4",
+    "cursor-text": "#232136",
+    "selection-background": "#433c59",
+    "selection-foreground": "#e0def4"
+  },
+  "Embers Dark": {
+    "background": "#16130f",
+    "foreground": "#a39a90",
+    "cursor-color": "#a39a90",
+    "cursor-text": "#16130f",
+    "selection-background": "#433b32",
+    "selection-foreground": "#a39a90"
+  },
+  "Embark": {
+    "background": "#1e1c31",
+    "foreground": "#eeffff",
+    "cursor-color": "#a1efd3",
+    "cursor-text": "#1e1c31",
+    "selection-background": "#fbfcfc",
+    "selection-foreground": "#1e1c31"
+  },
+  "Elementary": {
+    "background": "#181818",
+    "foreground": "#efefef",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Elegant": {
+    "background": "#292b31",
+    "foreground": "#ced2d6",
+    "cursor-color": "#00beff",
+    "cursor-text": "#ffffff",
+    "selection-background": "#d5d5d5",
+    "selection-foreground": "#144385"
+  },
+  "Elemental": {
+    "background": "#22211d",
+    "foreground": "#807a74",
+    "cursor-color": "#facb80",
+    "cursor-text": "#161611",
+    "selection-background": "#413829",
+    "selection-foreground": "#facd77"
+  },
+  "Everblush": {
+    "background": "#141b1e",
+    "foreground": "#dadada",
+    "cursor-color": "#dadada",
+    "cursor-text": "#141b1e",
+    "selection-background": "#141b1e",
+    "selection-foreground": "#dadada"
+  },
+  "Everforest Light Med": {
+    "background": "#efebd4",
+    "foreground": "#5c6a72",
+    "cursor-color": "#f57d26",
+    "cursor-text": "#eaedc8",
+    "selection-background": "#eaedc8",
+    "selection-foreground": "#5c6a72"
+  },
+  "Espresso Libre": {
+    "background": "#2a211c",
+    "foreground": "#b8a898",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#c3dcff",
+    "selection-foreground": "#ab9b8b"
+  },
+  "Espresso": {
+    "background": "#323232",
+    "foreground": "#ffffff",
+    "cursor-color": "#d6d6d6",
+    "cursor-text": "#999999",
+    "selection-background": "#5b5b5b",
+    "selection-foreground": "#ffffff"
+  },
+  "Everforest Dark Hard": {
+    "background": "#1e2326",
+    "foreground": "#d3c6aa",
+    "cursor-color": "#e69875",
+    "cursor-text": "#4c3743",
+    "selection-background": "#4c3743",
+    "selection-foreground": "#d3c6aa"
+  },
+  "Fahrenheit": {
+    "background": "#000000",
+    "foreground": "#ffffce",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#4e739f",
+    "selection-foreground": "#ffffce"
+  },
+  "Farmhouse Dark": {
+    "background": "#1d2027",
+    "foreground": "#e8e4e1",
+    "cursor-color": "#006efe",
+    "cursor-text": "#e8e4e1",
+    "selection-background": "#4d5658",
+    "selection-foreground": "#b3b1aa"
+  },
+  "Farmhouse Light": {
+    "background": "#e8e4e1",
+    "foreground": "#1d2027",
+    "cursor-color": "#006efe",
+    "cursor-text": "#1d2027",
+    "selection-background": "#b3b1aa",
+    "selection-foreground": "#4d5658"
+  },
+  "Fairyfloss": {
+    "background": "#5a5475",
+    "foreground": "#f8f8f2",
+    "cursor-color": "#f8f8f0",
+    "cursor-text": "#060709",
+    "selection-background": "#8077a8",
+    "selection-foreground": "#f6e1ce"
+  },
+  "Fideloper": {
+    "background": "#292f33",
+    "foreground": "#dbdae0",
+    "cursor-color": "#d4605a",
+    "cursor-text": "#fefff2",
+    "selection-background": "#efb8ac",
+    "selection-foreground": "#8c8c8c"
+  },
+  "Firefly Traditional": {
+    "background": "#000000",
+    "foreground": "#f5f5f5",
+    "cursor-color": "#00f900",
+    "cursor-text": "#999999",
+    "selection-background": "#cfeac6",
+    "selection-foreground": "#000000"
+  },
+  "Fish Tank": {
+    "background": "#232537",
+    "foreground": "#ecf0fe",
+    "cursor-color": "#fecd5e",
+    "cursor-text": "#232537",
+    "selection-background": "#fcf7e9",
+    "selection-foreground": "#232537"
+  },
+  "Firewatch": {
+    "background": "#1e2027",
+    "foreground": "#9ba2b2",
+    "cursor-color": "#f6f7ec",
+    "cursor-text": "#b7b8a8",
+    "selection-background": "#2f363e",
+    "selection-foreground": "#7d8fa4"
+  },
+  "Flat": {
+    "background": "#002240",
+    "foreground": "#2cc55d",
+    "cursor-color": "#e5be0c",
+    "cursor-text": "#ffffff",
+    "selection-background": "#792b9c",
+    "selection-foreground": "#ffffff"
+  },
+  "Firefox Dev": {
+    "background": "#0e1011",
+    "foreground": "#7c8fa4",
+    "cursor-color": "#708284",
+    "cursor-text": "#002831",
+    "selection-background": "#163c61",
+    "selection-foreground": "#f2f5f9"
+  },
+  "Flexoki Light": {
+    "background": "#fffcf0",
+    "foreground": "#100f0f",
+    "cursor-color": "#100f0f",
+    "cursor-text": "#fffcf0",
+    "selection-background": "#cecdc3",
+    "selection-foreground": "#100f0f"
+  },
+  "Floraverse": {
+    "background": "#0e0d15",
+    "foreground": "#dbd1b9",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#f3e0b8",
+    "selection-foreground": "#08002e"
+  },
+  "Flatland": {
+    "background": "#1d1f21",
+    "foreground": "#b8dbef",
+    "cursor-color": "#708284",
+    "cursor-text": "#002831",
+    "selection-background": "#2b2a24",
+    "selection-foreground": "#ffffff"
+  },
+  "Flexoki Dark": {
+    "background": "#100f0f",
+    "foreground": "#cecdc3",
+    "cursor-color": "#cecdc3",
+    "cursor-text": "#100f0f",
+    "selection-background": "#403e3c",
+    "selection-foreground": "#cecdc3"
+  },
+  "Forest Blue": {
+    "background": "#051519",
+    "foreground": "#e2d8cd",
+    "cursor-color": "#9e9ecb",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "Framer": {
+    "background": "#111111",
+    "foreground": "#777777",
+    "cursor-color": "#fcdc08",
+    "cursor-text": "#161616",
+    "selection-background": "#666666",
+    "selection-foreground": "#ffffff"
+  },
+  "Galaxy": {
+    "background": "#1d2837",
+    "foreground": "#ffffff",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Fun Forrest": {
+    "background": "#251200",
+    "foreground": "#dec165",
+    "cursor-color": "#e5591c",
+    "cursor-text": "#000000",
+    "selection-background": "#e5591c",
+    "selection-foreground": "#000000"
+  },
+  "Galizur": {
+    "background": "#071317",
+    "foreground": "#ddeeff",
+    "cursor-color": "#ddeeff",
+    "cursor-text": "#071317",
+    "selection-background": "#071317",
+    "selection-foreground": "#ddeeff"
+  },
+  "Front End Delight": {
+    "background": "#1b1c1d",
+    "foreground": "#adadad",
+    "cursor-color": "#cdcdcd",
+    "cursor-text": "#1b1c1d",
+    "selection-background": "#ea6154",
+    "selection-foreground": "#1b1c1d"
+  },
+  "GitHub Dark Default": {
+    "background": "#0d1117",
+    "foreground": "#e6edf3",
+    "cursor-color": "#2f81f7",
+    "cursor-text": "#6fc1ff",
+    "selection-background": "#e6edf3",
+    "selection-foreground": "#0d1117"
+  },
+  "GitHub": {
+    "background": "#f4f4f4",
+    "foreground": "#3e3e3e",
+    "cursor-color": "#3f3f3f",
+    "cursor-text": "#f4f4f4",
+    "selection-background": "#a9c1e2",
+    "selection-foreground": "#535353"
+  },
+  "Ghostty Default Style Dark": {
+    "background": "#282c34",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#353a44",
+    "selection-background": "#ffffff",
+    "selection-foreground": "#282c34"
+  },
+  "GitHub Dark Colorblind": {
+    "background": "#0d1117",
+    "foreground": "#c9d1d9",
+    "cursor-color": "#58a6ff",
+    "cursor-text": "#98e6ff",
+    "selection-background": "#c9d1d9",
+    "selection-foreground": "#0d1117"
+  },
+  "GitHub Dark": {
+    "background": "#101216",
+    "foreground": "#8b949e",
+    "cursor-color": "#c9d1d9",
+    "cursor-text": "#101216",
+    "selection-background": "#3b5070",
+    "selection-foreground": "#ffffff"
+  },
+  "GitHub Dark High Contrast": {
+    "background": "#0a0c10",
+    "foreground": "#f0f3f6",
+    "cursor-color": "#71b7ff",
+    "cursor-text": "#b1f7ff",
+    "selection-background": "#f0f3f6",
+    "selection-foreground": "#0a0c10"
+  },
+  "GitHub Light Colorblind": {
+    "background": "#ffffff",
+    "foreground": "#24292f",
+    "cursor-color": "#0969da",
+    "cursor-text": "#3c9cff",
+    "selection-background": "#24292f",
+    "selection-foreground": "#ffffff"
+  },
+  "GitHub Light High Contrast": {
+    "background": "#ffffff",
+    "foreground": "#0e1116",
+    "cursor-color": "#0349b4",
+    "cursor-text": "#367ce7",
+    "selection-background": "#0e1116",
+    "selection-foreground": "#ffffff"
+  },
+  "GitHub Light Default": {
+    "background": "#ffffff",
+    "foreground": "#1f2328",
+    "cursor-color": "#0969da",
+    "cursor-text": "#3c9cff",
+    "selection-background": "#1f2328",
+    "selection-foreground": "#ffffff"
+  },
+  "GitHub Dark Dimmed": {
+    "background": "#22272e",
+    "foreground": "#adbac7",
+    "cursor-color": "#539bf5",
+    "cursor-text": "#93dbff",
+    "selection-background": "#adbac7",
+    "selection-foreground": "#22272e"
+  },
+  "GitLab Light": {
+    "background": "#fafaff",
+    "foreground": "#303030",
+    "cursor-color": "#303030",
+    "cursor-text": "#565656",
+    "selection-background": "#ad95e9",
+    "selection-foreground": "#fafaff"
+  },
+  "Grape": {
+    "background": "#171423",
+    "foreground": "#9f9fa1",
+    "cursor-color": "#a288f7",
+    "cursor-text": "#171422",
+    "selection-background": "#493d70",
+    "selection-foreground": "#171422"
+  },
+  "GitLab Dark": {
+    "background": "#28262b",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#bfbfbf",
+    "selection-background": "#ad95e9",
+    "selection-foreground": "#28262b"
+  },
+  "GitLab Dark Grey": {
+    "background": "#222222",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#bfbfbf",
+    "selection-background": "#ad95e9",
+    "selection-foreground": "#222222"
+  },
+  "Glacier": {
+    "background": "#0c1115",
+    "foreground": "#ffffff",
+    "cursor-color": "#6c6c6c",
+    "cursor-text": "#9f9f9f",
+    "selection-background": "#bd2523",
+    "selection-foreground": "#ffffff"
+  },
+  "Gruvbox Dark Hard": {
+    "background": "#1d2021",
+    "foreground": "#ebdbb2",
+    "cursor-color": "#ebdbb2",
+    "cursor-text": "#1d2021",
+    "selection-background": "#665c54",
+    "selection-foreground": "#ebdbb2"
+  },
+  "Gruvbox Dark": {
+    "background": "#282828",
+    "foreground": "#ebdbb2",
+    "cursor-color": "#ebdbb2",
+    "cursor-text": "#282828",
+    "selection-background": "#665c54",
+    "selection-foreground": "#ebdbb2"
+  },
+  "Grass": {
+    "background": "#13773d",
+    "foreground": "#fff0a5",
+    "cursor-color": "#d9744c",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b64926",
+    "selection-foreground": "#ffffff"
+  },
+  "Gruber Darker": {
+    "background": "#181818",
+    "foreground": "#e4e4e4",
+    "cursor-color": "#ffdb00",
+    "cursor-text": "#a6a6a6",
+    "selection-background": "#ffffff",
+    "selection-foreground": "#54494e"
+  },
+  "Grey Green": {
+    "background": "#002a1a",
+    "foreground": "#ffffff",
+    "cursor-color": "#fff400",
+    "cursor-text": "#aeb1b0",
+    "selection-background": "#517e50",
+    "selection-foreground": "#e2e2e2"
+  },
+  "Gruvbox Material Dark": {
+    "background": "#282828",
+    "foreground": "#d4be98",
+    "cursor-color": "#d4be98",
+    "cursor-text": "#282828",
+    "selection-background": "#d4be98",
+    "selection-foreground": "#282828"
+  },
+  "Gruvbox Light Hard": {
+    "background": "#f9f5d7",
+    "foreground": "#3c3836",
+    "cursor-color": "#3c3836",
+    "cursor-text": "#f9f5d7",
+    "selection-background": "#3c3836",
+    "selection-foreground": "#f9f5d7"
+  },
+  "Gruvbox Material": {
+    "background": "#1d2021",
+    "foreground": "#d4be98",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#2b2c3f",
+    "selection-foreground": "#7cfb70"
+  },
+  "Gruvbox Material Light": {
+    "background": "#fbf1c7",
+    "foreground": "#654735",
+    "cursor-color": "#654735",
+    "cursor-text": "#fbf1c7",
+    "selection-background": "#654735",
+    "selection-foreground": "#fbf1c7"
+  },
+  "Gruvbox Light": {
+    "background": "#fbf1c7",
+    "foreground": "#3c3836",
+    "cursor-color": "#3c3836",
+    "cursor-text": "#fbf1c7",
+    "selection-background": "#3c3836",
+    "selection-foreground": "#fbf1c7"
+  },
+  "HaX0R R3D": {
+    "background": "#200101",
+    "foreground": "#b10e0e",
+    "cursor-color": "#b00d0d",
+    "cursor-text": "#ffffff",
+    "selection-background": "#ebc1ff",
+    "selection-foreground": "#979797"
+  },
+  "HaX0R Blue": {
+    "background": "#010515",
+    "foreground": "#11b7ff",
+    "cursor-color": "#10b6ff",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c1e4ff",
+    "selection-foreground": "#a9a9a9"
+  },
+  "Hacktober": {
+    "background": "#141414",
+    "foreground": "#c9c9c9",
+    "cursor-color": "#c9c9c9",
+    "cursor-text": "#141414",
+    "selection-background": "#141414",
+    "selection-foreground": "#c9c9c9"
+  },
+  "Guezwhoz": {
+    "background": "#1d1d1d",
+    "foreground": "#d9d9d9",
+    "cursor-color": "#99d4b1",
+    "cursor-text": "#1d1d1d",
+    "selection-background": "#245354",
+    "selection-foreground": "#58d6ce"
+  },
+  "HaX0R Gr33N": {
+    "background": "#020f01",
+    "foreground": "#16b10e",
+    "cursor-color": "#15d00d",
+    "cursor-text": "#ffffff",
+    "selection-background": "#d4ffc1",
+    "selection-foreground": "#b0b0b0"
+  },
+  "Heeler": {
+    "background": "#211f46",
+    "foreground": "#fdfdfd",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#2b2c41",
+    "selection-foreground": "#2eff58"
+  },
+  "Havn Daggry": {
+    "background": "#f8f9fb",
+    "foreground": "#3b4a7a",
+    "cursor-color": "#226c4f",
+    "cursor-text": "#d6dbeb",
+    "selection-background": "#cfe9dd",
+    "selection-foreground": "#313c64"
+  },
+  "Havn Skumring": {
+    "background": "#111522",
+    "foreground": "#d6dbeb",
+    "cursor-color": "#277a6f",
+    "cursor-text": "#e0e4f3",
+    "selection-background": "#2b514b",
+    "selection-foreground": "#dce0ef"
+  },
+  "Harper": {
+    "background": "#010101",
+    "foreground": "#a8a49d",
+    "cursor-color": "#a8a49d",
+    "cursor-text": "#010101",
+    "selection-background": "#5a5753",
+    "selection-foreground": "#a8a49d"
+  },
+  "Hardcore": {
+    "background": "#121212",
+    "foreground": "#a0a0a0",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#453b39",
+    "selection-foreground": "#b6bbc0"
+  },
+  "Highway": {
+    "background": "#222225",
+    "foreground": "#ededed",
+    "cursor-color": "#e0d9b9",
+    "cursor-text": "#1f192a",
+    "selection-background": "#384564",
+    "selection-foreground": "#ededed"
+  },
+  "Hivacruz": {
+    "background": "#132638",
+    "foreground": "#ede4e4",
+    "cursor-color": "#979db4",
+    "cursor-text": "#202746",
+    "selection-background": "#5e6687",
+    "selection-foreground": "#979db4"
+  },
+  "Hipster Green": {
+    "background": "#100b05",
+    "foreground": "#84c138",
+    "cursor-color": "#23ff18",
+    "cursor-text": "#ff0018",
+    "selection-background": "#083905",
+    "selection-foreground": "#ffffff"
+  },
+  "Homebrew": {
+    "background": "#000000",
+    "foreground": "#00ff00",
+    "cursor-color": "#23ff18",
+    "cursor-text": "#ff0018",
+    "selection-background": "#083905",
+    "selection-foreground": "#ffffff"
+  },
+  "Hopscotch": {
+    "background": "#322931",
+    "foreground": "#b9b5b8",
+    "cursor-color": "#b9b5b8",
+    "cursor-text": "#322931",
+    "selection-background": "#5c545b",
+    "selection-foreground": "#b9b5b8"
+  },
+  "Horizon": {
+    "background": "#1c1e26",
+    "foreground": "#d5d8da",
+    "cursor-color": "#6c6f93",
+    "cursor-text": "#9fa2c6",
+    "selection-background": "#6c6f93",
+    "selection-foreground": "#1c1e26"
+  },
+  "Horizon Bright": {
+    "background": "#fdf0ed",
+    "foreground": "#16161d",
+    "cursor-color": "#d3a89d",
+    "cursor-text": "#ffe8dc",
+    "selection-background": "#f9cec3",
+    "selection-foreground": "#16161d"
+  },
+  "Hopscotch.256": {
+    "background": "#322931",
+    "foreground": "#b9b5b8",
+    "cursor-color": "#b9b5b8",
+    "cursor-text": "#322931",
+    "selection-background": "#5c545b",
+    "selection-foreground": "#b9b5b8"
+  },
+  "Hot Dog Stand (Mustard)": {
+    "background": "#ffff54",
+    "foreground": "#000000",
+    "cursor-color": "#ea3323",
+    "cursor-text": "#ffff54",
+    "selection-background": "#ea3323",
+    "selection-foreground": "#ffffff"
+  },
+  "Hot Dog Stand": {
+    "background": "#ea3323",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffff54",
+    "cursor-text": "#ea3323",
+    "selection-background": "#ffff54",
+    "selection-foreground": "#000000"
+  },
+  "Hurtado": {
+    "background": "#000000",
+    "foreground": "#dbdbdb",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "IBM 5153 CGA": {
+    "background": "#141414",
+    "foreground": "#cecece",
+    "cursor-color": "#cecece",
+    "cursor-text": "#141414",
+    "selection-background": "#cecece",
+    "selection-foreground": "#141414"
+  },
+  "Hybrid": {
+    "background": "#161719",
+    "foreground": "#b7bcba",
+    "cursor-color": "#b7bcba",
+    "cursor-text": "#1e1f22",
+    "selection-background": "#1e1f22",
+    "selection-foreground": "#b7bcba"
+  },
+  "IBM 5153 CGA (Black)": {
+    "background": "#000000",
+    "foreground": "#c4c4c4",
+    "cursor-color": "#c4c4c4",
+    "cursor-text": "#000000",
+    "selection-background": "#c4c4c4",
+    "selection-foreground": "#000000"
+  },
+  "IC Green PPL": {
+    "background": "#2c2c2c",
+    "foreground": "#e0f1dc",
+    "cursor-color": "#47fa6b",
+    "cursor-text": "#292929",
+    "selection-background": "#116b41",
+    "selection-foreground": "#e0f1dc"
+  },
+  "IR Black": {
+    "background": "#000000",
+    "foreground": "#f1f1f1",
+    "cursor-color": "#808080",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "IRIX Console": {
+    "background": "#0c0c0c",
+    "foreground": "#f2f2f2",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#c2deff",
+    "selection-foreground": "#000000"
+  },
+  "Iceberg Dark": {
+    "background": "#161821",
+    "foreground": "#c6c8d1",
+    "cursor-color": "#c6c8d1",
+    "cursor-text": "#161821",
+    "selection-background": "#c6c8d1",
+    "selection-foreground": "#161821"
+  },
+  "IC Orange PPL": {
+    "background": "#262626",
+    "foreground": "#ffcb83",
+    "cursor-color": "#fc531d",
+    "cursor-text": "#ffc88a",
+    "selection-background": "#c14020",
+    "selection-foreground": "#ffc88a"
+  },
+  "IRIX Terminal": {
+    "background": "#000043",
+    "foreground": "#f2f2f2",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#c2deff",
+    "selection-foreground": "#000000"
+  },
+  "Jackie Brown": {
+    "background": "#2c1d16",
+    "foreground": "#ffcc2f",
+    "cursor-color": "#23ff18",
+    "cursor-text": "#ff0018",
+    "selection-background": "#af8d21",
+    "selection-foreground": "#ffffff"
+  },
+  "Iceberg Light": {
+    "background": "#e8e9ec",
+    "foreground": "#33374c",
+    "cursor-color": "#33374c",
+    "cursor-text": "#e8e9ec",
+    "selection-background": "#33374c",
+    "selection-foreground": "#e8e9ec"
+  },
+  "Idle Toes": {
+    "background": "#323232",
+    "foreground": "#ffffff",
+    "cursor-color": "#d6d6d6",
+    "cursor-text": "#000000",
+    "selection-background": "#5b5b5b",
+    "selection-foreground": "#000000"
+  },
+  "Japanesque": {
+    "background": "#1e1e1e",
+    "foreground": "#f7f6ec",
+    "cursor-color": "#edcf4f",
+    "cursor-text": "#343935",
+    "selection-background": "#175877",
+    "selection-foreground": "#f7f6ec"
+  },
+  "Idea": {
+    "background": "#202020",
+    "foreground": "#adadad",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#44475a",
+    "selection-foreground": "#ffffff"
+  },
+  "Kanagawa Dragon": {
+    "background": "#181616",
+    "foreground": "#c5c9c5",
+    "cursor-color": "#c8c093",
+    "cursor-text": "#181616",
+    "selection-background": "#c5c9c5",
+    "selection-foreground": "#181616"
+  },
+  "Jubi": {
+    "background": "#262b33",
+    "foreground": "#c3d3de",
+    "cursor-color": "#c3d3de",
+    "cursor-text": "#1e1b2e",
+    "selection-background": "#5b5184",
+    "selection-foreground": "#1e1b2e"
+  },
+  "Kanagawa Lotus": {
+    "background": "#f2ecbc",
+    "foreground": "#545464",
+    "cursor-color": "#43436c",
+    "cursor-text": "#f2ecbc",
+    "selection-background": "#545464",
+    "selection-foreground": "#f2ecbc"
+  },
+  "Jellybeans": {
+    "background": "#121212",
+    "foreground": "#dedede",
+    "cursor-color": "#ffa560",
+    "cursor-text": "#ffffff",
+    "selection-background": "#474e91",
+    "selection-foreground": "#f4f4f4"
+  },
+  "JetBrains Darcula": {
+    "background": "#202020",
+    "foreground": "#adadad",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#1a3272",
+    "selection-foreground": "#adadad"
+  },
+  "Kanagawa Wave": {
+    "background": "#1f1f28",
+    "foreground": "#dcd7ba",
+    "cursor-color": "#dcd7ba",
+    "cursor-text": "#1f1f28",
+    "selection-background": "#dcd7ba",
+    "selection-foreground": "#1f1f28"
+  },
+  "Kanso Ink": {
+    "background": "#14171d",
+    "foreground": "#c5c9c7",
+    "cursor-color": "#c5c9c7",
+    "cursor-text": "#14171d",
+    "selection-background": "#22262d",
+    "selection-foreground": "#c5c9c7"
+  },
+  "Kanso Mist": {
+    "background": "#22262d",
+    "foreground": "#c5c9c7",
+    "cursor-color": "#c5c9c7",
+    "cursor-text": "#22262d",
+    "selection-background": "#43464e",
+    "selection-foreground": "#c5c9c7"
+  },
+  "Kanagawabones": {
+    "background": "#1f1f28",
+    "foreground": "#ddd8bb",
+    "cursor-color": "#e6e0c2",
+    "cursor-text": "#1f1f28",
+    "selection-background": "#49473e",
+    "selection-foreground": "#ddd8bb"
+  },
+  "Kanso Pearl": {
+    "background": "#f2f1ef",
+    "foreground": "#22262d",
+    "cursor-color": "#22262d",
+    "cursor-text": "#f2f1ef",
+    "selection-background": "#e2e1df",
+    "selection-foreground": "#22262d"
+  },
+  "Kanso Zen": {
+    "background": "#090e13",
+    "foreground": "#c5c9c7",
+    "cursor-color": "#c5c9c7",
+    "cursor-text": "#090e13",
+    "selection-background": "#393b44",
+    "selection-foreground": "#c5c9c7"
+  },
+  "Kitty Default": {
+    "background": "#000000",
+    "foreground": "#dddddd",
+    "cursor-color": "#cccccc",
+    "cursor-text": "#111111",
+    "selection-background": "#fffacd",
+    "selection-foreground": "#000000"
+  },
+  "Kitty Low Contrast": {
+    "background": "#333333",
+    "foreground": "#ffffff",
+    "cursor-color": "#cccccc",
+    "cursor-text": "#111111",
+    "selection-background": "#fffacd",
+    "selection-foreground": "#000000"
+  },
+  "Kibble": {
+    "background": "#0e100a",
+    "foreground": "#f7f7f7",
+    "cursor-color": "#9fda9c",
+    "cursor-text": "#000000",
+    "selection-background": "#9ba787",
+    "selection-foreground": "#000000"
+  },
+  "Kolorit": {
+    "background": "#1d1a1e",
+    "foreground": "#efecec",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#e1925c",
+    "selection-foreground": "#1d1a1e"
+  },
+  "Lab Fox": {
+    "background": "#2e2e2e",
+    "foreground": "#ffffff",
+    "cursor-color": "#7f7f7f",
+    "cursor-text": "#b2b2b2",
+    "selection-background": "#cb392e",
+    "selection-foreground": "#ffffff"
+  },
+  "Kurokula": {
+    "background": "#141515",
+    "foreground": "#e0cfc2",
+    "cursor-color": "#7a1c1c",
+    "cursor-text": "#fffbf2",
+    "selection-background": "#515151",
+    "selection-foreground": "#ffc34c"
+  },
+  "Konsolas": {
+    "background": "#060606",
+    "foreground": "#c8c1c1",
+    "cursor-color": "#c8c1c1",
+    "cursor-text": "#060606",
+    "selection-background": "#060606",
+    "selection-foreground": "#c8c1c1"
+  },
+  "Later This Evening": {
+    "background": "#222222",
+    "foreground": "#959595",
+    "cursor-color": "#4f4f4f",
+    "cursor-text": "#959595",
+    "selection-background": "#424242",
+    "selection-foreground": "#959595"
+  },
+  "Laser": {
+    "background": "#030d18",
+    "foreground": "#f106e3",
+    "cursor-color": "#00ff9c",
+    "cursor-text": "#a6a6a6",
+    "selection-background": "#2e206a",
+    "selection-foreground": "#f4f4f4"
+  },
+  "Liquid Carbon": {
+    "background": "#303030",
+    "foreground": "#afc2c2",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#7dbeff",
+    "selection-foreground": "#000000"
+  },
+  "Light Owl": {
+    "background": "#fbfbfb",
+    "foreground": "#403f53",
+    "cursor-color": "#403f53",
+    "cursor-text": "#f6f6f6",
+    "selection-background": "#e0e0e0",
+    "selection-foreground": "#403f53"
+  },
+  "Lavandula": {
+    "background": "#050014",
+    "foreground": "#736e7d",
+    "cursor-color": "#8c91fa",
+    "cursor-text": "#050014",
+    "selection-background": "#37323c",
+    "selection-foreground": "#8c91fa"
+  },
+  "Liquid Carbon Transparent": {
+    "background": "#000000",
+    "foreground": "#afc2c2",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#7dbeff",
+    "selection-foreground": "#000000"
+  },
+  "Lovelace": {
+    "background": "#1d1f28",
+    "foreground": "#fdfdfd",
+    "cursor-color": "#c574dd",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Material Dark": {
+    "background": "#232322",
+    "foreground": "#e5e5e5",
+    "cursor-color": "#16afca",
+    "cursor-text": "#dfdfdf",
+    "selection-background": "#dfdfdf",
+    "selection-foreground": "#3d3d3d"
+  },
+  "Mariana": {
+    "background": "#343d46",
+    "foreground": "#d8dee9",
+    "cursor-color": "#fcbb6a",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#4e5a65",
+    "selection-foreground": "#d8dee9"
+  },
+  "Material Darker": {
+    "background": "#212121",
+    "foreground": "#eeffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#bfbfbf",
+    "selection-background": "#eeffff",
+    "selection-foreground": "#545454"
+  },
+  "Material": {
+    "background": "#eaeaea",
+    "foreground": "#232322",
+    "cursor-color": "#16afca",
+    "cursor-text": "#2e2e2d",
+    "selection-background": "#c2c2c2",
+    "selection-foreground": "#4e4e4e"
+  },
+  "Man Page": {
+    "background": "#fef49c",
+    "foreground": "#000000",
+    "cursor-color": "#7f7f7f",
+    "cursor-text": "#000000",
+    "selection-background": "#a4c9cd",
+    "selection-foreground": "#000000"
+  },
+  "Material Design Colors": {
+    "background": "#1d262a",
+    "foreground": "#e7ebed",
+    "cursor-color": "#eaeaea",
+    "cursor-text": "#000000",
+    "selection-background": "#4e6a78",
+    "selection-foreground": "#e7ebed"
+  },
+  "Material Ocean": {
+    "background": "#0f111a",
+    "foreground": "#8f93a2",
+    "cursor-color": "#ffcc00",
+    "cursor-text": "#0f111a",
+    "selection-background": "#1f2233",
+    "selection-foreground": "#8f93a2"
+  },
+  "Matte Black": {
+    "background": "#121212",
+    "foreground": "#bebebe",
+    "cursor-color": "#eaeaea",
+    "cursor-text": "#121212",
+    "selection-background": "#333333",
+    "selection-foreground": "#eaeaea"
+  },
+  "Matrix": {
+    "background": "#0f191c",
+    "foreground": "#426644",
+    "cursor-color": "#384545",
+    "cursor-text": "#00ff00",
+    "selection-background": "#18282e",
+    "selection-foreground": "#00ff87"
+  },
+  "Mathias": {
+    "background": "#000000",
+    "foreground": "#bbbbbb",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#555555",
+    "selection-foreground": "#f2f2f2"
+  },
+  "Mellow": {
+    "background": "#161617",
+    "foreground": "#c9c7cd",
+    "cursor-color": "#cac9dd",
+    "cursor-text": "#161617",
+    "selection-background": "#2a2a2d",
+    "selection-foreground": "#c1c0d4"
+  },
+  "Medallion": {
+    "background": "#1d1908",
+    "foreground": "#cac296",
+    "cursor-color": "#d3ba30",
+    "cursor-text": "#fffc7d",
+    "selection-background": "#626dac",
+    "selection-foreground": "#cac29a"
+  },
+  "Mellifluous": {
+    "background": "#1a1a1a",
+    "foreground": "#dadada",
+    "cursor-color": "#bfad9e",
+    "cursor-text": "#1a1a1a",
+    "selection-background": "#2d2d2d",
+    "selection-foreground": "#c0af8c"
+  },
+  "Melange Light": {
+    "background": "#f1f1f1",
+    "foreground": "#54433a",
+    "cursor-color": "#54433a",
+    "cursor-text": "#f1f1f1",
+    "selection-background": "#54433a",
+    "selection-foreground": "#d9d3ce"
+  },
+  "Melange Dark": {
+    "background": "#292522",
+    "foreground": "#ece1d7",
+    "cursor-color": "#ece1d7",
+    "cursor-text": "#292522",
+    "selection-background": "#ece1d7",
+    "selection-foreground": "#403a36"
+  },
+  "Modus Operandi": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#bdbdbd",
+    "selection-foreground": "#000000"
+  },
+  "Midnight In Mojave": {
+    "background": "#1e1e1e",
+    "foreground": "#ffffff",
+    "cursor-color": "#32d74b",
+    "cursor-text": "#1c1c1c",
+    "selection-background": "#4a504d",
+    "selection-foreground": "#ffffff"
+  },
+  "Mirage": {
+    "background": "#1b2738",
+    "foreground": "#a6b2c0",
+    "cursor-color": "#ddb3ff",
+    "cursor-text": "#ffffff",
+    "selection-background": "#273951",
+    "selection-foreground": "#d3dbe5"
+  },
+  "Miasma": {
+    "background": "#222222",
+    "foreground": "#c2c2b0",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#959595",
+    "selection-background": "#e5c47b",
+    "selection-foreground": "#000000"
+  },
+  "Misterioso": {
+    "background": "#2d3743",
+    "foreground": "#e1e1e0",
+    "cursor-color": "#666666",
+    "cursor-text": "#ffffff",
+    "selection-background": "#2d37ff",
+    "selection-foreground": "#000000"
+  },
+  "Modus Vivendi": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#5a5a5a",
+    "selection-foreground": "#ffffff"
+  },
+  "Modus Operandi Tinted": {
+    "background": "#fbf7f0",
+    "foreground": "#000000",
+    "cursor-color": "#d00000",
+    "cursor-text": "#fbf7f0",
+    "selection-background": "#c2bcb5",
+    "selection-foreground": "#000000"
+  },
+  "Mona Lisa": {
+    "background": "#120b0d",
+    "foreground": "#f7d66a",
+    "cursor-color": "#c46c32",
+    "cursor-text": "#120b0d",
+    "selection-background": "#f7d66a",
+    "selection-foreground": "#120b0d"
+  },
+  "Modus Vivendi Tinted": {
+    "background": "#0d0e1c",
+    "foreground": "#ffffff",
+    "cursor-color": "#ff66ff",
+    "cursor-text": "#0d0e1c",
+    "selection-background": "#555a66",
+    "selection-foreground": "#ffffff"
+  },
+  "Molokai": {
+    "background": "#121212",
+    "foreground": "#bbbbbb",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Monokai Pro Light": {
+    "background": "#faf4f2",
+    "foreground": "#29242a",
+    "cursor-color": "#706b6e",
+    "cursor-text": "#a39ea1",
+    "selection-background": "#bfb9ba",
+    "selection-foreground": "#29242a"
+  },
+  "Monokai Pro": {
+    "background": "#2d2a2e",
+    "foreground": "#fcfcfa",
+    "cursor-color": "#c1c0c0",
+    "cursor-text": "#8e8d8d",
+    "selection-background": "#5b595c",
+    "selection-foreground": "#fcfcfa"
+  },
+  "Monokai Pro Machine": {
+    "background": "#273136",
+    "foreground": "#f2fffc",
+    "cursor-color": "#b8c4c3",
+    "cursor-text": "#859190",
+    "selection-background": "#545f62",
+    "selection-foreground": "#f2fffc"
+  },
+  "Monokai Pro Light Sun": {
+    "background": "#f8efe7",
+    "foreground": "#2c232e",
+    "cursor-color": "#72696d",
+    "cursor-text": "#a59ca0",
+    "selection-background": "#beb5b3",
+    "selection-foreground": "#2c232e"
+  },
+  "Monokai Classic": {
+    "background": "#272822",
+    "foreground": "#fdfff1",
+    "cursor-color": "#c0c1b5",
+    "cursor-text": "#8d8e82",
+    "selection-background": "#57584f",
+    "selection-foreground": "#fdfff1"
+  },
+  "Monokai Pro Octagon": {
+    "background": "#282a3a",
+    "foreground": "#eaf2f1",
+    "cursor-color": "#b2b9bd",
+    "cursor-text": "#f2f9fd",
+    "selection-background": "#535763",
+    "selection-foreground": "#eaf2f1"
+  },
+  "Monokai Remastered": {
+    "background": "#0c0c0c",
+    "foreground": "#d9d9d9",
+    "cursor-color": "#fc971f",
+    "cursor-text": "#000000",
+    "selection-background": "#343434",
+    "selection-foreground": "#ffffff"
+  },
+  "Monokai Pro Spectrum": {
+    "background": "#222222",
+    "foreground": "#f7f1ff",
+    "cursor-color": "#bab6c0",
+    "cursor-text": "#faf6ff",
+    "selection-background": "#525053",
+    "selection-foreground": "#f7f1ff"
+  },
+  "Monokai Soda": {
+    "background": "#1a1a1a",
+    "foreground": "#c4c5b5",
+    "cursor-color": "#f6f7ec",
+    "cursor-text": "#b7b8a8",
+    "selection-background": "#343434",
+    "selection-foreground": "#c4c5b5"
+  },
+  "Monokai Pro Ristretto": {
+    "background": "#2c2525",
+    "foreground": "#fff1f3",
+    "cursor-color": "#c3b7b8",
+    "cursor-text": "#fff7f8",
+    "selection-background": "#5b5353",
+    "selection-foreground": "#fff1f3"
+  },
+  "Neobones Light": {
+    "background": "#e5ede6",
+    "foreground": "#202e18",
+    "cursor-color": "#202e18",
+    "cursor-text": "#e5ede6",
+    "selection-background": "#ade48c",
+    "selection-foreground": "#202e18"
+  },
+  "Neobones Dark": {
+    "background": "#0f191f",
+    "foreground": "#c6d5cf",
+    "cursor-color": "#ceddd7",
+    "cursor-text": "#0f191f",
+    "selection-background": "#3a3e3d",
+    "selection-foreground": "#c6d5cf"
+  },
+  "Moonfly": {
+    "background": "#080808",
+    "foreground": "#bdbdbd",
+    "cursor-color": "#9e9e9e",
+    "cursor-text": "#080808",
+    "selection-background": "#b2ceee",
+    "selection-foreground": "#080808"
+  },
+  "Monokai Vivid": {
+    "background": "#121212",
+    "foreground": "#f9f9f9",
+    "cursor-color": "#fb0007",
+    "cursor-text": "#ff8c95",
+    "selection-background": "#ffffff",
+    "selection-foreground": "#000000"
+  },
+  "N0Tch2K": {
+    "background": "#222222",
+    "foreground": "#a0a0a0",
+    "cursor-color": "#aa9175",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "Neopolitan": {
+    "background": "#271f19",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#bfbfbf",
+    "selection-background": "#253b76",
+    "selection-foreground": "#ffffff"
+  },
+  "Neon": {
+    "background": "#14161a",
+    "foreground": "#00fffc",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#0013ff",
+    "selection-foreground": "#08d2cf"
+  },
+  "Night Lion V2": {
+    "background": "#171717",
+    "foreground": "#bbbbbb",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Neutron": {
+    "background": "#1c1e22",
+    "foreground": "#e6e8ef",
+    "cursor-color": "#f6f7ec",
+    "cursor-text": "#b7b8a8",
+    "selection-background": "#2f363e",
+    "selection-foreground": "#7d8fa4"
+  },
+  "Night Lion V1": {
+    "background": "#000000",
+    "foreground": "#bbbbbb",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Night Owlish Light": {
+    "background": "#ffffff",
+    "foreground": "#403f53",
+    "cursor-color": "#403f53",
+    "cursor-text": "#fbfbfb",
+    "selection-background": "#f2f2f2",
+    "selection-foreground": "#403f53"
+  },
+  "Night Owl": {
+    "background": "#011627",
+    "foreground": "#d6deeb",
+    "cursor-color": "#7e57c2",
+    "cursor-text": "#ffffff",
+    "selection-background": "#5f7e97",
+    "selection-foreground": "#dfe5ee"
+  },
+  "Nightfox": {
+    "background": "#192330",
+    "foreground": "#cdcecf",
+    "cursor-color": "#cdcecf",
+    "cursor-text": "#192330",
+    "selection-background": "#2b3b51",
+    "selection-foreground": "#cdcecf"
+  },
+  "Niji": {
+    "background": "#141515",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffc663",
+    "cursor-text": "#141515",
+    "selection-background": "#515151",
+    "selection-foreground": "#ffc663"
+  },
+  "No Clown Fiesta": {
+    "background": "#101010",
+    "foreground": "#e0e1e4",
+    "cursor-color": "#e0e1e4",
+    "cursor-text": "#18191b",
+    "selection-background": "#696d79",
+    "selection-foreground": "#e0e1e4"
+  },
+  "No Clown Fiesta Light": {
+    "background": "#e1e1e1",
+    "foreground": "#151515",
+    "cursor-color": "#151515",
+    "cursor-text": "#d0d0d0",
+    "selection-background": "#c6d5de",
+    "selection-foreground": "#151515"
+  },
+  "Nocturnal Winter": {
+    "background": "#0d0d17",
+    "foreground": "#e6e5e5",
+    "cursor-color": "#e6e5e5",
+    "cursor-text": "#a6a6a6",
+    "selection-background": "#adbdd0",
+    "selection-foreground": "#000000"
+  },
+  "Nord Wave": {
+    "background": "#212121",
+    "foreground": "#d8dee9",
+    "cursor-color": "#ebcb8b",
+    "cursor-text": "#b89858",
+    "selection-background": "#d8dee9",
+    "selection-foreground": "#212121"
+  },
+  "Nord Light": {
+    "background": "#e5e9f0",
+    "foreground": "#414858",
+    "cursor-color": "#7bb3c3",
+    "cursor-text": "#3b4252",
+    "selection-background": "#d8dee9",
+    "selection-foreground": "#4c556a"
+  },
+  "Nord": {
+    "background": "#2e3440",
+    "foreground": "#d8dee9",
+    "cursor-color": "#eceff4",
+    "cursor-text": "#282828",
+    "selection-background": "#eceff4",
+    "selection-foreground": "#4c566a"
+  },
+  "Nvim Dark": {
+    "background": "#14161b",
+    "foreground": "#e0e2ea",
+    "cursor-color": "#9b9ea4",
+    "cursor-text": "#e0e2ea",
+    "selection-background": "#4f5258",
+    "selection-foreground": "#e0e2ea"
+  },
+  "Novel": {
+    "background": "#dfdbc3",
+    "foreground": "#3b2322",
+    "cursor-color": "#73635a",
+    "cursor-text": "#000000",
+    "selection-background": "#a4a390",
+    "selection-foreground": "#000000"
+  },
+  "Obsidian": {
+    "background": "#283033",
+    "foreground": "#cdcdcd",
+    "cursor-color": "#c0cad0",
+    "cursor-text": "#8d8d8d",
+    "selection-background": "#3e4c4f",
+    "selection-foreground": "#dfe1e2"
+  },
+  "Nordfox": {
+    "background": "#2e3440",
+    "foreground": "#cdcecf",
+    "cursor-color": "#cdcecf",
+    "cursor-text": "#2e3440",
+    "selection-background": "#3e4a5b",
+    "selection-foreground": "#cdcecf"
+  },
+  "Nvim Light": {
+    "background": "#e0e2ea",
+    "foreground": "#14161b",
+    "cursor-color": "#9b9ea4",
+    "cursor-text": "#14161b",
+    "selection-background": "#9b9ea4",
+    "selection-foreground": "#14161b"
+  },
+  "One Dark Two": {
+    "background": "#21252b",
+    "foreground": "#e6e6e6",
+    "cursor-color": "#e6e6e6",
+    "cursor-text": "#1d1f23",
+    "selection-background": "#393e47",
+    "selection-foreground": "#e6e6e6"
+  },
+  "Oceanic Next": {
+    "background": "#162c35",
+    "foreground": "#c0c5ce",
+    "cursor-color": "#c0c5ce",
+    "cursor-text": "#1b2b34",
+    "selection-background": "#4f5b66",
+    "selection-foreground": "#c0c5ce"
+  },
+  "Oceanic Material": {
+    "background": "#1c262b",
+    "foreground": "#c2c8d7",
+    "cursor-color": "#b3b8c3",
+    "cursor-text": "#ffffff",
+    "selection-background": "#6dc2b8",
+    "selection-foreground": "#e8eefd"
+  },
+  "Ocean": {
+    "background": "#224fbc",
+    "foreground": "#ffffff",
+    "cursor-color": "#7f7f7f",
+    "cursor-text": "#ffffff",
+    "selection-background": "#216dff",
+    "selection-foreground": "#ffffff"
+  },
+  "Ollie": {
+    "background": "#222125",
+    "foreground": "#8a8dae",
+    "cursor-color": "#5b6ea7",
+    "cursor-text": "#2a292d",
+    "selection-background": "#1e3a66",
+    "selection-foreground": "#8a8eac"
+  },
+  "One Half Dark": {
+    "background": "#282c34",
+    "foreground": "#dcdfe4",
+    "cursor-color": "#a3b3cc",
+    "cursor-text": "#e9ecf1",
+    "selection-background": "#474e5d",
+    "selection-foreground": "#dcdfe4"
+  },
+  "One Double Dark": {
+    "background": "#282c34",
+    "foreground": "#dbdfe5",
+    "cursor-color": "#f5e0dc",
+    "cursor-text": "#9aa3c1",
+    "selection-background": "#585b70",
+    "selection-foreground": "#cdd6f4"
+  },
+  "One Double Light": {
+    "background": "#fafafa",
+    "foreground": "#383a43",
+    "cursor-color": "#1a1919",
+    "cursor-text": "#dbdfe5",
+    "selection-background": "#454e5e",
+    "selection-foreground": "#1a1919"
+  },
+  "Onenord": {
+    "background": "#2e3440",
+    "foreground": "#e5e9f0",
+    "cursor-color": "#81a1c1",
+    "cursor-text": "#3b4252",
+    "selection-background": "#434c5e",
+    "selection-foreground": "#d8dee9"
+  },
+  "One Half Light": {
+    "background": "#fafafa",
+    "foreground": "#383a42",
+    "cursor-color": "#a5b4e5",
+    "cursor-text": "#383a42",
+    "selection-background": "#bfceff",
+    "selection-foreground": "#383a42"
+  },
+  "Pale Night Hc": {
+    "background": "#3e4251",
+    "foreground": "#cccccc",
+    "cursor-color": "#ffcb6b",
+    "cursor-text": "#323232",
+    "selection-background": "#717cb4",
+    "selection-foreground": "#80cbc4"
+  },
+  "Onenord Light": {
+    "background": "#f7f8fa",
+    "foreground": "#2e3440",
+    "cursor-color": "#3879c5",
+    "cursor-text": "#f7f8fa",
+    "selection-background": "#eaebed",
+    "selection-foreground": "#000000"
+  },
+  "Operator Mono Dark": {
+    "background": "#191919",
+    "foreground": "#c3cac2",
+    "cursor-color": "#fcdc08",
+    "cursor-text": "#161616",
+    "selection-background": "#19273b",
+    "selection-foreground": "#dde5dc"
+  },
+  "Overnight Slumber": {
+    "background": "#0e1729",
+    "foreground": "#ced2d6",
+    "cursor-color": "#ffa7c4",
+    "cursor-text": "#ffffff",
+    "selection-background": "#1f2b41",
+    "selection-foreground": "#ced2d6"
+  },
+  "Oxocarbon": {
+    "background": "#161616",
+    "foreground": "#f2f4f8",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#393939",
+    "selection-foreground": "#626262"
+  },
+  "Paul Millr": {
+    "background": "#000000",
+    "foreground": "#f2f2f2",
+    "cursor-color": "#4d4d4d",
+    "cursor-text": "#ffffff",
+    "selection-background": "#414141",
+    "selection-foreground": "#ffffff"
+  },
+  "Pencil Dark": {
+    "background": "#212121",
+    "foreground": "#f1f1f1",
+    "cursor-color": "#20bbfc",
+    "cursor-text": "#f1f1f1",
+    "selection-background": "#b6d6fd",
+    "selection-foreground": "#989898"
+  },
+  "Pandora": {
+    "background": "#141e43",
+    "foreground": "#e1e1e1",
+    "cursor-color": "#43d58e",
+    "cursor-text": "#ffffff",
+    "selection-background": "#2d37ff",
+    "selection-foreground": "#82e0ff"
+  },
+  "Paraiso Dark": {
+    "background": "#2f1e2e",
+    "foreground": "#a39e9b",
+    "cursor-color": "#a39e9b",
+    "cursor-text": "#2f1e2e",
+    "selection-background": "#4f424c",
+    "selection-foreground": "#a39e9b"
+  },
+  "Pencil Light": {
+    "background": "#f1f1f1",
+    "foreground": "#424242",
+    "cursor-color": "#20bbfc",
+    "cursor-text": "#424242",
+    "selection-background": "#b6d6fd",
+    "selection-foreground": "#424242"
+  },
+  "Poimandres": {
+    "background": "#1a1e28",
+    "foreground": "#a6accd",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#1a1e29",
+    "selection-background": "#a6accd",
+    "selection-foreground": "#ffffff"
+  },
+  "Peppermint": {
+    "background": "#000000",
+    "foreground": "#c8c8c8",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#e6e6e6",
+    "selection-foreground": "#000000"
+  },
+  "Piatto Light": {
+    "background": "#ffffff",
+    "foreground": "#414141",
+    "cursor-color": "#5e77c8",
+    "cursor-text": "#abbee5",
+    "selection-background": "#706b4e",
+    "selection-foreground": "#acbcdc"
+  },
+  "Phala Green Dark": {
+    "background": "#000000",
+    "foreground": "#c1fc03",
+    "cursor-color": "#c1fc03",
+    "cursor-text": "#ff271d",
+    "selection-background": "#014804",
+    "selection-foreground": "#ffffff"
+  },
+  "Pnevma": {
+    "background": "#1c1c1c",
+    "foreground": "#d0d0d0",
+    "cursor-color": "#e4c9af",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "Poimandres White": {
+    "background": "#fefeff",
+    "foreground": "#969cbd",
+    "cursor-color": "#969cbd",
+    "cursor-text": "#fefeff",
+    "selection-background": "#969cbd",
+    "selection-foreground": "#3b3e48"
+  },
+  "Poimandres Darker": {
+    "background": "#16161e",
+    "foreground": "#a6accd",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#16161e",
+    "selection-background": "#a6accd",
+    "selection-foreground": "#ffffff"
+  },
+  "Powershell": {
+    "background": "#052454",
+    "foreground": "#f6f6f7",
+    "cursor-color": "#f6f6f7",
+    "cursor-text": "#052454",
+    "selection-background": "#f6f6f7",
+    "selection-foreground": "#052454"
+  },
+  "Popping And Locking": {
+    "background": "#181921",
+    "foreground": "#ebdbb2",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#ebdbb2",
+    "selection-foreground": "#928374"
+  },
+  "Poimandres Storm": {
+    "background": "#252b37",
+    "foreground": "#a6accd",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#252b37",
+    "selection-background": "#a6accd",
+    "selection-foreground": "#ffffff"
+  },
+  "Pro Light": {
+    "background": "#ffffff",
+    "foreground": "#191919",
+    "cursor-color": "#4d4d4d",
+    "cursor-text": "#f2f2f2",
+    "selection-background": "#c1ddff",
+    "selection-foreground": "#191919"
+  },
+  "Purplepeter": {
+    "background": "#2a1a4a",
+    "foreground": "#ece7fa",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#8689c2",
+    "selection-foreground": "#271c50"
+  },
+  "Primary": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#656565",
+    "selection-foreground": "#eeeeee"
+  },
+  "Purple Rain": {
+    "background": "#21084a",
+    "foreground": "#fffbf6",
+    "cursor-color": "#ff271d",
+    "cursor-text": "#ff9a90",
+    "selection-background": "#287691",
+    "selection-foreground": "#ffffff"
+  },
+  "Pro": {
+    "background": "#000000",
+    "foreground": "#f2f2f2",
+    "cursor-color": "#4d4d4d",
+    "cursor-text": "#ffffff",
+    "selection-background": "#414141",
+    "selection-foreground": "#000000"
+  },
+  "Rapture": {
+    "background": "#111e2a",
+    "foreground": "#c0c9e5",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#111e2a",
+    "selection-background": "#304b66",
+    "selection-foreground": "#ffffff"
+  },
+  "Raycast Dark": {
+    "background": "#1a1a1a",
+    "foreground": "#ffffff",
+    "cursor-color": "#cccccc",
+    "cursor-text": "#999999",
+    "selection-background": "#333333",
+    "selection-foreground": "#595959"
+  },
+  "Raycast Light": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#404040",
+    "selection-background": "#e5e5e5",
+    "selection-foreground": "#000000"
+  },
+  "Rebecca": {
+    "background": "#292a44",
+    "foreground": "#e8e6ed",
+    "cursor-color": "#b89bf9",
+    "cursor-text": "#292a44",
+    "selection-background": "#663399",
+    "selection-foreground": "#f4f2f9"
+  },
+  "Red Alert": {
+    "background": "#762423",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#762423",
+    "selection-background": "#073642",
+    "selection-foreground": "#ffffff"
+  },
+  "Red Planet": {
+    "background": "#222222",
+    "foreground": "#c2b790",
+    "cursor-color": "#c2b790",
+    "cursor-text": "#202020",
+    "selection-background": "#1b324a",
+    "selection-foreground": "#bcb291"
+  },
+  "Retro": {
+    "background": "#000000",
+    "foreground": "#13a10e",
+    "cursor-color": "#13a10e",
+    "cursor-text": "#000000",
+    "selection-background": "#ffffff",
+    "selection-foreground": "#000000"
+  },
+  "Retro Legends": {
+    "background": "#0d0d0d",
+    "foreground": "#45eb45",
+    "cursor-color": "#45eb45",
+    "cursor-text": "#0d0d0d",
+    "selection-background": "#336633",
+    "selection-foreground": "#f2fff2"
+  },
+  "Red Sands": {
+    "background": "#7a251e",
+    "foreground": "#d7c9a7",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#a4a390",
+    "selection-foreground": "#000000"
+  },
+  "Relaxed": {
+    "background": "#353a44",
+    "foreground": "#d9d9d9",
+    "cursor-color": "#d9d9d9",
+    "cursor-text": "#1b1b1b",
+    "selection-background": "#6a7985",
+    "selection-foreground": "#d9d9d9"
+  },
+  "Rose Pine Moon": {
+    "background": "#232136",
+    "foreground": "#e0def4",
+    "cursor-color": "#e0def4",
+    "cursor-text": "#232136",
+    "selection-background": "#44415a",
+    "selection-foreground": "#e0def4"
+  },
+  "Rouge 2": {
+    "background": "#17182b",
+    "foreground": "#a2a3aa",
+    "cursor-color": "#969e92",
+    "cursor-text": "#ffffff",
+    "selection-background": "#5d5d6b",
+    "selection-foreground": "#dfe5ee"
+  },
+  "Rose Pine": {
+    "background": "#191724",
+    "foreground": "#e0def4",
+    "cursor-color": "#e0def4",
+    "cursor-text": "#191724",
+    "selection-background": "#403d52",
+    "selection-foreground": "#e0def4"
+  },
+  "Rose Pine Dawn": {
+    "background": "#faf4ed",
+    "foreground": "#575279",
+    "cursor-color": "#575279",
+    "cursor-text": "#faf4ed",
+    "selection-background": "#dfdad9",
+    "selection-foreground": "#575279"
+  },
+  "Rippedcasts": {
+    "background": "#2b2b2b",
+    "foreground": "#ffffff",
+    "cursor-color": "#7f7f7f",
+    "cursor-text": "#ffffff",
+    "selection-background": "#5a647e",
+    "selection-foreground": "#f2f2f2"
+  },
+  "Royal": {
+    "background": "#100815",
+    "foreground": "#514968",
+    "cursor-color": "#524966",
+    "cursor-text": "#100613",
+    "selection-background": "#1f1d2b",
+    "selection-foreground": "#a593cd"
+  },
+  "Ryuuko": {
+    "background": "#2c3941",
+    "foreground": "#ececec",
+    "cursor-color": "#ececec",
+    "cursor-text": "#002831",
+    "selection-background": "#002831",
+    "selection-foreground": "#819090"
+  },
+  "Sakura": {
+    "background": "#18131e",
+    "foreground": "#dd7bdc",
+    "cursor-color": "#ff65fd",
+    "cursor-text": "#24242e",
+    "selection-background": "#c05cbf",
+    "selection-foreground": "#24242e"
+  },
+  "Sea Shells": {
+    "background": "#09141b",
+    "foreground": "#deb88d",
+    "cursor-color": "#fca02f",
+    "cursor-text": "#08131a",
+    "selection-background": "#1e4962",
+    "selection-foreground": "#fee4ce"
+  },
+  "Scarlet Protocol": {
+    "background": "#1c153d",
+    "foreground": "#e41951",
+    "cursor-color": "#76ff9f",
+    "cursor-text": "#a6a6a6",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Selenized Black": {
+    "background": "#181818",
+    "foreground": "#b9b9b9",
+    "cursor-color": "#777777",
+    "cursor-text": "#181818",
+    "selection-background": "#3b3b3b",
+    "selection-foreground": "#646464"
+  },
+  "Seafoam Pastel": {
+    "background": "#243435",
+    "foreground": "#d4e7d4",
+    "cursor-color": "#57647a",
+    "cursor-text": "#323232",
+    "selection-background": "#ffffff",
+    "selection-foreground": "#9e8b13"
+  },
+  "Seoulbones Dark": {
+    "background": "#4b4b4b",
+    "foreground": "#dddddd",
+    "cursor-color": "#e2e2e2",
+    "cursor-text": "#4b4b4b",
+    "selection-background": "#777777",
+    "selection-foreground": "#dddddd"
+  },
+  "Selenized Dark": {
+    "background": "#103c48",
+    "foreground": "#adbcbc",
+    "cursor-color": "#adbcbc",
+    "cursor-text": "#103c48",
+    "selection-background": "#184956",
+    "selection-foreground": "#53d6c7"
+  },
+  "Selenized Light": {
+    "background": "#fbf3db",
+    "foreground": "#53676d",
+    "cursor-color": "#53676d",
+    "cursor-text": "#fbf3db",
+    "selection-background": "#ece3cc",
+    "selection-foreground": "#00978a"
+  },
+  "Slate": {
+    "background": "#222222",
+    "foreground": "#35b1d2",
+    "cursor-color": "#87d3c4",
+    "cursor-text": "#323232",
+    "selection-background": "#0f3754",
+    "selection-foreground": "#2dffc0"
+  },
+  "Seoulbones Light": {
+    "background": "#e2e2e2",
+    "foreground": "#555555",
+    "cursor-color": "#555555",
+    "cursor-text": "#e2e2e2",
+    "selection-background": "#cccccc",
+    "selection-foreground": "#555555"
+  },
+  "Seti": {
+    "background": "#111213",
+    "foreground": "#cacecd",
+    "cursor-color": "#e3bf21",
+    "cursor-text": "#ad8b00",
+    "selection-background": "#303233",
+    "selection-foreground": "#cacecd"
+  },
+  "Shaman": {
+    "background": "#001015",
+    "foreground": "#405555",
+    "cursor-color": "#4afcd6",
+    "cursor-text": "#031413",
+    "selection-background": "#415555",
+    "selection-foreground": "#5afad6"
+  },
+  "Shades Of Purple": {
+    "background": "#1e1d40",
+    "foreground": "#ffffff",
+    "cursor-color": "#fad000",
+    "cursor-text": "#98998e",
+    "selection-background": "#b362ff",
+    "selection-foreground": "#c2c2c2"
+  },
+  "Smyck": {
+    "background": "#1b1b1b",
+    "foreground": "#f7f7f7",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#207483",
+    "selection-foreground": "#f7f7f7"
+  },
+  "Sleepy Hollow": {
+    "background": "#121214",
+    "foreground": "#af9a91",
+    "cursor-color": "#af9a91",
+    "cursor-text": "#391a02",
+    "selection-background": "#575256",
+    "selection-foreground": "#d2c7a9"
+  },
+  "Soft Server": {
+    "background": "#242626",
+    "foreground": "#99a3a2",
+    "cursor-color": "#d2e0de",
+    "cursor-text": "#000000",
+    "selection-background": "#7f8786",
+    "selection-foreground": "#effffe"
+  },
+  "Snazzy Soft": {
+    "background": "#282a36",
+    "foreground": "#eff0eb",
+    "cursor-color": "#eaeaea",
+    "cursor-text": "#282a36",
+    "selection-background": "#92bcd0",
+    "selection-foreground": "#000000"
+  },
+  "Snazzy": {
+    "background": "#1e1f29",
+    "foreground": "#ebece6",
+    "cursor-color": "#e4e4e4",
+    "cursor-text": "#a9a9a9",
+    "selection-background": "#81aec6",
+    "selection-foreground": "#000000"
+  },
+  "Solarized Dark Patched": {
+    "background": "#001e27",
+    "foreground": "#708284",
+    "cursor-color": "#708284",
+    "cursor-text": "#002831",
+    "selection-background": "#002831",
+    "selection-foreground": "#819090"
+  },
+  "Solarized Darcula": {
+    "background": "#3d3f41",
+    "foreground": "#d2d8d9",
+    "cursor-color": "#708284",
+    "cursor-text": "#002831",
+    "selection-background": "#214283",
+    "selection-foreground": "#d2d8d9"
+  },
+  "Solarized Osaka Night": {
+    "background": "#1a1b26",
+    "foreground": "#c0caf5",
+    "cursor-color": "#c0caf5",
+    "cursor-text": "#1a1b26",
+    "selection-background": "#283457",
+    "selection-foreground": "#c0caf5"
+  },
+  "Solarized Dark Higher Contrast": {
+    "background": "#001e27",
+    "foreground": "#9cc2c3",
+    "cursor-color": "#f34b00",
+    "cursor-text": "#002831",
+    "selection-background": "#003748",
+    "selection-foreground": "#7a8f8e"
+  },
+  "Sonokai": {
+    "background": "#2c2e34",
+    "foreground": "#e2e2e3",
+    "cursor-color": "#e2e2e3",
+    "cursor-text": "#2c2e34",
+    "selection-background": "#414550",
+    "selection-foreground": "#e2e2e3"
+  },
+  "Spacegray": {
+    "background": "#20242d",
+    "foreground": "#b3b8c3",
+    "cursor-color": "#b3b8c3",
+    "cursor-text": "#1d1f21",
+    "selection-background": "#16181e",
+    "selection-foreground": "#b3b8c3"
+  },
+  "Spacedust": {
+    "background": "#0a1e24",
+    "foreground": "#ecf0c1",
+    "cursor-color": "#708284",
+    "cursor-text": "#002831",
+    "selection-background": "#0a385c",
+    "selection-foreground": "#ffffff"
+  },
+  "Spacegray Eighties": {
+    "background": "#222222",
+    "foreground": "#bdbaae",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#272e35",
+    "selection-foreground": "#ffffff"
+  },
+  "Spacegray Eighties Dull": {
+    "background": "#222222",
+    "foreground": "#c9c6bc",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#272e36",
+    "selection-foreground": "#ffffff"
+  },
+  "Spacegray Bright": {
+    "background": "#2a2e3a",
+    "foreground": "#f3f3f3",
+    "cursor-color": "#c6c6c6",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#cacaca",
+    "selection-foreground": "#000000"
+  },
+  "Square": {
+    "background": "#1a1a1a",
+    "foreground": "#acacab",
+    "cursor-color": "#fcfbcc",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "Spring": {
+    "background": "#ffffff",
+    "foreground": "#4d4d4c",
+    "cursor-color": "#4d4d4c",
+    "cursor-text": "#ffffff",
+    "selection-background": "#d6d6d6",
+    "selection-foreground": "#4d4d4c"
+  },
+  "Spiderman": {
+    "background": "#1b1d1e",
+    "foreground": "#e3e3e3",
+    "cursor-color": "#2c3fff",
+    "cursor-text": "#000000",
+    "selection-background": "#070e50",
+    "selection-foreground": "#f0272d"
+  },
+  "Squirrelsong Dark": {
+    "background": "#372920",
+    "foreground": "#b19b89",
+    "cursor-color": "#b19b89",
+    "cursor-text": "#372920",
+    "selection-background": "#5b402e",
+    "selection-foreground": "#b19b89"
+  },
+  "Srcery": {
+    "background": "#1c1b19",
+    "foreground": "#fce8c3",
+    "cursor-color": "#fbb829",
+    "cursor-text": "#1c1b19",
+    "selection-background": "#fce8c3",
+    "selection-foreground": "#1c1b19"
+  },
+  "Starlight": {
+    "background": "#242424",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#242424",
+    "selection-background": "#ffffff",
+    "selection-foreground": "#242424"
+  },
+  "Sugarplum": {
+    "background": "#111147",
+    "foreground": "#db7ddd",
+    "cursor-color": "#53b397",
+    "cursor-text": "#93f3d7",
+    "selection-background": "#5ca8dc",
+    "selection-foreground": "#ead8ff"
+  },
+  "Sublette": {
+    "background": "#202535",
+    "foreground": "#ccced0",
+    "cursor-color": "#ccced0",
+    "cursor-text": "#202535",
+    "selection-background": "#ccced0",
+    "selection-foreground": "#202535"
+  },
+  "Subliminal": {
+    "background": "#282c35",
+    "foreground": "#d4d4d4",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#484e5b",
+    "selection-foreground": "#ffffff"
+  },
+  "Sundried": {
+    "background": "#1a1818",
+    "foreground": "#c9c9c9",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#191717",
+    "selection-background": "#302b2a",
+    "selection-foreground": "#c9c9c9"
+  },
+  "Sunset Drive": {
+    "background": "#0f0f1a",
+    "foreground": "#ededfe",
+    "cursor-color": "#ededfe",
+    "cursor-text": "#0f0f1a",
+    "selection-background": "#202036",
+    "selection-foreground": "#ededff"
+  },
+  "Synthwave Alpha": {
+    "background": "#241b30",
+    "foreground": "#f2f2e3",
+    "cursor-color": "#f2f2e3",
+    "cursor-text": "#241b30",
+    "selection-background": "#6e29ad",
+    "selection-foreground": "#f2f2e3"
+  },
+  "Symfonic": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#dc322f",
+    "cursor-text": "#ffffff",
+    "selection-background": "#073642",
+    "selection-foreground": "#ffffff"
+  },
+  "Synthwave Everything": {
+    "background": "#2a2139",
+    "foreground": "#f0eff1",
+    "cursor-color": "#72f1b8",
+    "cursor-text": "#1a1a1a",
+    "selection-background": "#181521",
+    "selection-foreground": "#f0eff1"
+  },
+  "Synthwave": {
+    "background": "#000000",
+    "foreground": "#dad9c7",
+    "cursor-color": "#19cde6",
+    "cursor-text": "#ffffed",
+    "selection-background": "#19cde6",
+    "selection-foreground": "#000000"
+  },
+  "Tearout": {
+    "background": "#34392d",
+    "foreground": "#f4d2ae",
+    "cursor-color": "#d7c483",
+    "cursor-text": "#141415",
+    "selection-background": "#e4c47a",
+    "selection-foreground": "#000000"
+  },
+  "Tango Half Adapted": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Tango Adapted": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "Teerb": {
+    "background": "#262626",
+    "foreground": "#d0d0d0",
+    "cursor-color": "#e4c9af",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "Terafox": {
+    "background": "#152528",
+    "foreground": "#e6eaea",
+    "cursor-color": "#e6eaea",
+    "cursor-text": "#152528",
+    "selection-background": "#293e40",
+    "selection-foreground": "#e6eaea"
+  },
+  "Tinacious Design Dark": {
+    "background": "#1d1d26",
+    "foreground": "#cbcbf0",
+    "cursor-color": "#cbcbf0",
+    "cursor-text": "#999999",
+    "selection-background": "#ff3399",
+    "selection-foreground": "#ffffff"
+  },
+  "Terminal Basic Dark": {
+    "background": "#1d1e1d",
+    "foreground": "#ffffff",
+    "cursor-color": "#9d9d9d",
+    "cursor-text": "#1d1e1d",
+    "selection-background": "#3f638a",
+    "selection-foreground": "#ffffff"
+  },
+  "Thayer Bright": {
+    "background": "#1b1d1e",
+    "foreground": "#f8f8f8",
+    "cursor-color": "#fc971f",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "The Hulk": {
+    "background": "#1b1d1e",
+    "foreground": "#b5b5b5",
+    "cursor-color": "#16b61b",
+    "cursor-text": "#000000",
+    "selection-background": "#4d504c",
+    "selection-foreground": "#31892f"
+  },
+  "Terminal Basic": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#7f7f7f",
+    "cursor-text": "#000000",
+    "selection-background": "#a4c9ff",
+    "selection-foreground": "#000000"
+  },
+  "TokyoNight Day": {
+    "background": "#e1e2e7",
+    "foreground": "#3760bf",
+    "cursor-color": "#3760bf",
+    "cursor-text": "#e1e2e7",
+    "selection-background": "#99a7df",
+    "selection-foreground": "#3760bf"
+  },
+  "Tinacious Design Light": {
+    "background": "#f8f8ff",
+    "foreground": "#1d1d26",
+    "cursor-color": "#b1b1d6",
+    "cursor-text": "#ffffff",
+    "selection-background": "#ff3399",
+    "selection-foreground": "#ffffff"
+  },
+  "TokyoNight Moon": {
+    "background": "#222436",
+    "foreground": "#c8d3f5",
+    "cursor-color": "#c8d3f5",
+    "cursor-text": "#222436",
+    "selection-background": "#2d3f76",
+    "selection-foreground": "#c8d3f5"
+  },
+  "TokyoNight": {
+    "background": "#1a1b26",
+    "foreground": "#c0caf5",
+    "cursor-color": "#c0caf5",
+    "cursor-text": "#15161e",
+    "selection-background": "#33467c",
+    "selection-foreground": "#c0caf5"
+  },
+  "TokyoNight Night": {
+    "background": "#1a1b26",
+    "foreground": "#c0caf5",
+    "cursor-color": "#c0caf5",
+    "cursor-text": "#1a1b26",
+    "selection-background": "#283457",
+    "selection-foreground": "#c0caf5"
+  },
+  "Tomorrow Night": {
+    "background": "#1d1f21",
+    "foreground": "#c5c8c6",
+    "cursor-color": "#c5c8c6",
+    "cursor-text": "#1d1f21",
+    "selection-background": "#373b41",
+    "selection-foreground": "#c5c8c6"
+  },
+  "Tomorrow": {
+    "background": "#ffffff",
+    "foreground": "#4d4d4c",
+    "cursor-color": "#4d4d4c",
+    "cursor-text": "#ffffff",
+    "selection-background": "#d6d6d6",
+    "selection-foreground": "#4d4d4c"
+  },
+  "TokyoNight Storm": {
+    "background": "#24283b",
+    "foreground": "#c0caf5",
+    "cursor-color": "#c0caf5",
+    "cursor-text": "#1d202f",
+    "selection-background": "#364a82",
+    "selection-foreground": "#c0caf5"
+  },
+  "Tomorrow Night Bright": {
+    "background": "#000000",
+    "foreground": "#eaeaea",
+    "cursor-color": "#eaeaea",
+    "cursor-text": "#000000",
+    "selection-background": "#424242",
+    "selection-foreground": "#eaeaea"
+  },
+  "Tomorrow Night Blue": {
+    "background": "#002451",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#003f8e",
+    "selection-background": "#003f8e",
+    "selection-foreground": "#ffffff"
+  },
+  "Treehouse": {
+    "background": "#191919",
+    "foreground": "#786b53",
+    "cursor-color": "#fac814",
+    "cursor-text": "#191919",
+    "selection-background": "#786b53",
+    "selection-foreground": "#fac800"
+  },
+  "Tomorrow Night Eighties": {
+    "background": "#2d2d2d",
+    "foreground": "#cccccc",
+    "cursor-color": "#cccccc",
+    "cursor-text": "#2d2d2d",
+    "selection-background": "#515151",
+    "selection-foreground": "#cccccc"
+  },
+  "Tomorrow Night Burns": {
+    "background": "#151515",
+    "foreground": "#a1b0b8",
+    "cursor-color": "#ff443e",
+    "cursor-text": "#b0c2c4",
+    "selection-background": "#b0bec5",
+    "selection-foreground": "#2a2d32"
+  },
+  "Toy Chest": {
+    "background": "#24364b",
+    "foreground": "#31d07b",
+    "cursor-color": "#d5d5d5",
+    "cursor-text": "#141c25",
+    "selection-background": "#5f217a",
+    "selection-foreground": "#d5d5d5"
+  },
+  "Twilight": {
+    "background": "#141414",
+    "foreground": "#ffffd4",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#313131",
+    "selection-foreground": "#ffffd4"
+  },
+  "Ubuntu": {
+    "background": "#300a24",
+    "foreground": "#eeeeec",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Ultra Dark": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#fefefe",
+    "cursor-text": "#000000",
+    "selection-background": "#222222",
+    "selection-foreground": "#cccccc"
+  },
+  "Unikitty": {
+    "background": "#ff8cd9",
+    "foreground": "#0b0b0b",
+    "cursor-color": "#c7ff98",
+    "cursor-text": "#202020",
+    "selection-background": "#3ea9fe",
+    "selection-foreground": "#ffffff"
+  },
+  "Ultra Violent": {
+    "background": "#242728",
+    "foreground": "#c1c1c1",
+    "cursor-color": "#c1c1c1",
+    "cursor-text": "#ffffff",
+    "selection-background": "#574c49",
+    "selection-foreground": "#c3c7cb"
+  },
+  "Under The Sea": {
+    "background": "#011116",
+    "foreground": "#ffffff",
+    "cursor-color": "#4afcd6",
+    "cursor-text": "#031413",
+    "selection-background": "#415555",
+    "selection-foreground": "#4dffda"
+  },
+  "Vague": {
+    "background": "#141415",
+    "foreground": "#cdcdcd",
+    "cursor-color": "#cdcdcd",
+    "cursor-text": "#141415",
+    "selection-background": "#252530",
+    "selection-foreground": "#cdcdcd"
+  },
+  "Vesper": {
+    "background": "#101010",
+    "foreground": "#ffffff",
+    "cursor-color": "#acb1ab",
+    "cursor-text": "#ffffff",
+    "selection-background": "#988049",
+    "selection-foreground": "#b9beb8"
+  },
+  "Vaughn": {
+    "background": "#25234f",
+    "foreground": "#dcdccc",
+    "cursor-color": "#ff5555",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Urple": {
+    "background": "#1b1b23",
+    "foreground": "#877a9b",
+    "cursor-color": "#a063eb",
+    "cursor-text": "#1b1b22",
+    "selection-background": "#a063eb",
+    "selection-foreground": "#1b1b22"
+  },
+  "Vercel": {
+    "background": "#101010",
+    "foreground": "#fafafa",
+    "cursor-color": "#f32882",
+    "cursor-text": "#fafafa",
+    "selection-background": "#005be7",
+    "selection-foreground": "#fafafa"
+  },
+  "Vimbones": {
+    "background": "#f0f0ca",
+    "foreground": "#353535",
+    "cursor-color": "#353535",
+    "cursor-text": "#f0f0ca",
+    "selection-background": "#d7d7d7",
+    "selection-foreground": "#353535"
+  },
+  "Violet Light": {
+    "background": "#fcf4dc",
+    "foreground": "#536870",
+    "cursor-color": "#536870",
+    "cursor-text": "#fcf4dc",
+    "selection-background": "#595ab7",
+    "selection-foreground": "#fcf4dc"
+  },
+  "Violite": {
+    "background": "#241c36",
+    "foreground": "#eef4f6",
+    "cursor-color": "#eef4f6",
+    "cursor-text": "#241c36",
+    "selection-background": "#49376d",
+    "selection-foreground": "#eef4f6"
+  },
+  "Violet Dark": {
+    "background": "#1c1d1f",
+    "foreground": "#708284",
+    "cursor-color": "#708284",
+    "cursor-text": "#1c1d1f",
+    "selection-background": "#595ab7",
+    "selection-foreground": "#1c1d1f"
+  },
+  "Vibrant Ink": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#b5d5ff",
+    "selection-foreground": "#000000"
+  },
+  "Wild Cherry": {
+    "background": "#1f1726",
+    "foreground": "#dafaff",
+    "cursor-color": "#dd00ff",
+    "cursor-text": "#ff7fff",
+    "selection-background": "#002831",
+    "selection-foreground": "#e4ffff"
+  },
+  "Wez": {
+    "background": "#000000",
+    "foreground": "#b3b3b3",
+    "cursor-color": "#53ae71",
+    "cursor-text": "#000000",
+    "selection-background": "#4d52f8",
+    "selection-foreground": "#000000"
+  },
+  "Warm Neon": {
+    "background": "#404040",
+    "foreground": "#afdab6",
+    "cursor-color": "#30ff24",
+    "cursor-text": "#0bbc04",
+    "selection-background": "#b0ad21",
+    "selection-foreground": "#ffffff"
+  },
+  "Whimsy": {
+    "background": "#29283b",
+    "foreground": "#b3b0d6",
+    "cursor-color": "#b3b0d6",
+    "cursor-text": "#535178",
+    "selection-background": "#3d3c58",
+    "selection-foreground": "#ffffff"
+  },
+  "Wilmersdorf": {
+    "background": "#282b33",
+    "foreground": "#c6c6c6",
+    "cursor-color": "#7ebebd",
+    "cursor-text": "#1f2024",
+    "selection-background": "#1f2024",
+    "selection-foreground": "#c6c6c6"
+  },
+  "Xcode Dark": {
+    "background": "#292a30",
+    "foreground": "#dfdfe0",
+    "cursor-color": "#dfdfe0",
+    "cursor-text": "#292a30",
+    "selection-background": "#414453",
+    "selection-foreground": "#dfdfe0"
+  },
+  "Wombat": {
+    "background": "#171717",
+    "foreground": "#dedacf",
+    "cursor-color": "#bbbbbb",
+    "cursor-text": "#ffffff",
+    "selection-background": "#453b39",
+    "selection-foreground": "#b6bbc0"
+  },
+  "Xcode Dark hc": {
+    "background": "#1f1f24",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#1f1f24",
+    "selection-background": "#43454b",
+    "selection-foreground": "#ffffff"
+  },
+  "Xcode Light": {
+    "background": "#ffffff",
+    "foreground": "#262626",
+    "cursor-color": "#262626",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b4d8fd",
+    "selection-foreground": "#262626"
+  },
+  "Wryan": {
+    "background": "#101010",
+    "foreground": "#999993",
+    "cursor-color": "#9e9ecb",
+    "cursor-text": "#000000",
+    "selection-background": "#4d4d4d",
+    "selection-foreground": "#ffffff"
+  },
+  "Xcode WWDC": {
+    "background": "#292c36",
+    "foreground": "#e7e8eb",
+    "cursor-color": "#e7e8eb",
+    "cursor-text": "#292c36",
+    "selection-background": "#494d5c",
+    "selection-foreground": "#e7e8eb"
+  },
+  "Zenbones Dark": {
+    "background": "#1c1917",
+    "foreground": "#b4bdc3",
+    "cursor-color": "#c4cacf",
+    "cursor-text": "#1c1917",
+    "selection-background": "#3d4042",
+    "selection-foreground": "#b4bdc3"
+  },
+  "Zenbones": {
+    "background": "#f0edec",
+    "foreground": "#2c363c",
+    "cursor-color": "#2c363c",
+    "cursor-text": "#f0edec",
+    "selection-background": "#cbd9e3",
+    "selection-foreground": "#2c363c"
+  },
+  "Zenbones Light": {
+    "background": "#f0edec",
+    "foreground": "#2c363c",
+    "cursor-color": "#2c363c",
+    "cursor-text": "#f0edec",
+    "selection-background": "#cbd9e3",
+    "selection-foreground": "#2c363c"
+  },
+  "Xcode Light hc": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#b4d8fd",
+    "selection-foreground": "#000000"
+  },
+  "Zenwritten Light": {
+    "background": "#eeeeee",
+    "foreground": "#353535",
+    "cursor-color": "#353535",
+    "cursor-text": "#eeeeee",
+    "selection-background": "#d7d7d7",
+    "selection-foreground": "#353535"
+  },
+  "branch": {
+    "background": "#32221a",
+    "foreground": "#cfc1a9",
+    "cursor-color": "#cfc1a9",
+    "cursor-text": "#32221a",
+    "selection-background": "#cfc1a9",
+    "selection-foreground": "#32221a"
+  },
+  "Zenwritten Dark": {
+    "background": "#191919",
+    "foreground": "#bbbbbb",
+    "cursor-color": "#c9c9c9",
+    "cursor-text": "#191919",
+    "selection-background": "#404040",
+    "selection-foreground": "#bbbbbb"
+  },
+  "Zenburn": {
+    "background": "#3f3f3f",
+    "foreground": "#dcdccc",
+    "cursor-color": "#73635a",
+    "cursor-text": "#000000",
+    "selection-background": "#21322f",
+    "selection-foreground": "#c2d87a"
+  },
+  "Zenburned": {
+    "background": "#404040",
+    "foreground": "#f0e4cf",
+    "cursor-color": "#f3eadb",
+    "cursor-text": "#404040",
+    "selection-background": "#746956",
+    "selection-foreground": "#f0e4cf"
+  },
+  "iTerm2 Dark Background": {
+    "background": "#000000",
+    "foreground": "#c7c7c7",
+    "cursor-color": "#c7c7c7",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "iTerm2 Light Background": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "iTerm2 Pastel Dark Background": {
+    "background": "#000000",
+    "foreground": "#c7c7c7",
+    "cursor-color": "#ffb473",
+    "cursor-text": "#8c8c8c",
+    "selection-background": "#454d96",
+    "selection-foreground": "#f4f4f4"
+  },
+  "iTerm2 Default": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#e5e5e5",
+    "cursor-text": "#000000",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "iTerm2 Smoooooth": {
+    "background": "#15191f",
+    "foreground": "#dcdcdc",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#b3d7ff",
+    "selection-foreground": "#000000"
+  },
+  "iTerm2 Solarized Dark": {
+    "background": "#002b36",
+    "foreground": "#839496",
+    "cursor-color": "#839496",
+    "cursor-text": "#073642",
+    "selection-background": "#073642",
+    "selection-foreground": "#93a1a1"
+  },
+  "iTerm2 Tango Light": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "cursor-color": "#000000",
+    "cursor-text": "#ffffff",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "iTerm2 Tango Dark": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "cursor-color": "#ffffff",
+    "cursor-text": "#000000",
+    "selection-background": "#c1deff",
+    "selection-foreground": "#000000"
+  },
+  "novmbr": {
+    "background": "#241d1a",
+    "foreground": "#c7b8ac",
+    "cursor-color": "#c7b8ac",
+    "cursor-text": "#241d1a",
+    "selection-background": "#c7b8ac",
+    "selection-foreground": "#241d1a"
+  },
+  "iTerm2 Solarized Light": {
+    "background": "#fdf6e3",
+    "foreground": "#657b83",
+    "cursor-color": "#657b83",
+    "cursor-text": "#eee8d5",
+    "selection-background": "#eee8d5",
+    "selection-foreground": "#586e75"
+  },
+  "owl": {
+    "background": "#2f2b2c",
+    "foreground": "#dedede",
+    "cursor-color": "#dedede",
+    "cursor-text": "#2f2b2c",
+    "selection-background": "#dedede",
+    "selection-foreground": "#2f2b2c"
+  },
+  "traffic": {
+    "background": "#272c30",
+    "foreground": "#cfb9a8",
+    "cursor-color": "#cfb9a8",
+    "cursor-text": "#272c30",
+    "selection-background": "#cfb9a8",
+    "selection-foreground": "#272c30"
+  },
+  "urban": {
+    "background": "#312e39",
+    "foreground": "#c0a79a",
+    "cursor-color": "#c0a79a",
+    "cursor-text": "#312e39",
+    "selection-background": "#c0a79a",
+    "selection-foreground": "#312e39"
+  }
+}
