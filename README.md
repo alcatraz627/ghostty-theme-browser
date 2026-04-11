@@ -11,6 +11,7 @@ An interactive browser for exploring all 463+ Ghostty terminal color themes with
 - **Keyboard Navigation** — Use `Shift + ↑/↓` to navigate between themes
 - **Shareable URLs** — Each theme gets its own URL via hash navigation for easy sharing
 - **Browser History** — Use back/forward buttons to navigate themes
+- **[Keyboard Shortcuts Reference](keybindings.html)** — Complete guide to Ghostty keybindings for Windows/Linux and macOS
 
 ## Getting Started
 
