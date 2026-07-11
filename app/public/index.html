@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghostty Config Manager</title>
+<style>
+  :root {
+    --bg: #16161e;
+    --surface: #1e1e2a;
+    --text: #c8ccd8;
+    --dim: #7a7f92;
+    --border: #2c2f3e;
+    --accent: #7aa2f7;
+    --comment: #565c74;
+    --key: #9ece6a;
+    --value: #e0af68;
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f4f6;
+    --surface: #ffffff;
+    --text: #2a2d3a;
+    --dim: #6b7085;
+    --border: #d9dbe3;
+    --accent: #2f5fd0;
+    --comment: #9a9eb0;
+    --key: #4d7a1e;
+    --value: #a05f0a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  header h1 { font-size: 15px; margin: 0; font-weight: 600; }
+  .badge {
+    font-size: 12px; color: var(--dim); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2px 8px;
+  }
+  #theme-toggle {
+    margin-left: auto; cursor: pointer; background: none; border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 4px 10px; font: inherit;
+  }
+  main { padding: 20px; max-width: 900px; margin: 0 auto; }
+  #config-path { color: var(--accent); word-break: break-all; }
+  pre {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; overflow-x: auto; white-space: pre-wrap;
+  }
+  .c { color: var(--comment); }
+  .k { color: var(--key); }
+  .v { color: var(--value); }
+  .swatch {
+    display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+    border: 1px solid var(--border); margin-right: 4px; vertical-align: baseline;
+  }
+  #error { color: #f7768e; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Ghostty Config Manager</h1>
+  <span class="badge" id="version">…</span>
+  <button id="theme-toggle" type="button">light</button>
+</header>
+<main>
+  <p>Live config: <span id="config-path">…</span></p>
+  <p id="error" hidden></p>
+  <pre id="config"></pre>
+</main>
+<script>
+  const qs = new URLSearchParams(location.search);
+  const token = qs.get("token") || "";
+
+  const root = document.documentElement;
+  const toggle = document.getElementById("theme-toggle");
+  function setTheme(t) {
+    root.dataset.theme = t;
+    toggle.textContent = t === "light" ? "dark" : "light";
+    localStorage.setItem("theme", t);
+  }
+  setTheme(localStorage.getItem("theme") || "dark");
+  toggle.addEventListener("click", () =>
+    setTheme(root.dataset.theme === "light" ? "dark" : "light"));
+
+  async function api(path) {
+    const res = await fetch(path, { headers: { "x-app-token": token } });
+    if (!res.ok) throw new Error(`${path}: ${res.status} ${(await res.json()).error || ""}`);
+    return res.json();
+  }
+
+  // One config line -> highlighted HTML. Comments dim; key/value colored;
+  // hex colors get an inline swatch.
+  function renderLine(line) {
+    const esc = (s) => s.replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
+    if (/^\s*#/.test(line)) return `<span class="c">${esc(line)}</span>`;
+    const m = line.match(/^(\s*)([a-z0-9-]+)(\s*=\s*)(.*)$/i);
+    if (!m) return esc(line);
+    const [, pad, key, eq, value] = m;
+    const withSwatches = esc(value).replace(/#[0-9a-fA-F]{6}\b/g,
+      (hex) => `<span class="swatch" style="background:${hex}"></span>${hex}`);
+    return `${pad}<span class="k">${esc(key)}</span>${esc(eq)}<span class="v">${withSwatches}</span>`;
+  }
+
+  (async () => {
+    try {
+      const meta = await api("/api/meta");
+      document.getElementById("version").textContent = meta.ghosttyVersion;
+      const cfg = await api("/api/config");
+      document.getElementById("config-path").textContent =
+        cfg.path + (cfg.exists ? "" : "  (does not exist yet)");
+      document.getElementById("config").innerHTML =
+        (cfg.content || "").split("\n").map(renderLine).join("\n");
+    } catch (err) {
+      const el = document.getElementById("error");
+      el.hidden = false;
+      el.textContent = err.message + (token ? "" : " — open the tokened URL printed by the server");
+    }
+  })();
+</script>
+</body>
+</html>

@@ -4,3 +4,8 @@ node_modules/
 .env
 .env.local
 _checkpoint.claude.md
+.playwright-mcp/
+.claude/output/
+_*.claude.md
+.claude/skills/
+.claude/session-notes/
