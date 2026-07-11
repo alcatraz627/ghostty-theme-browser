@@ -38,6 +38,7 @@ import {
   deleteProfile,
   activateProfile,
 } from "./lib/profiles.mjs";
+import { listThemes, themeColors } from "./lib/themes.mjs";
 import { readFileSync as readFile } from "node:fs";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
@@ -100,6 +101,9 @@ const api = {
   },
   "GET /api/history": () => ({ entries: historyLog(configState().path) }),
   "GET /api/profiles": () => ({ profiles: listProfiles() }),
+  "GET /api/themes": () => ({ themes: listThemes() }),
+  "GET /api/theme": (_body, url) =>
+    mapTypeErrors(() => themeColors(url.searchParams.get("name") || "")),
   // Save the current config (or another profile, for duplicate) under a name.
   "POST /api/profiles/save": (body) =>
     mapTypeErrors(() => {

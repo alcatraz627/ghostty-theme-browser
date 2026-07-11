@@ -85,6 +85,52 @@
   .row input[type="color"] { width: 42px; height: 30px; padding: 1px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
   .color-wrap { display: flex; gap: 8px; align-items: center; }
   .color-wrap input[type="text"] { flex: 1; }
+  #customize-grid {
+    display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 800px) { #customize-grid { grid-template-columns: 1fr; } }
+  #theme-panel { display: flex; flex-direction: column; gap: 8px; }
+  #theme-search {
+    background: var(--surface); color: var(--text); font: inherit;
+    border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px;
+  }
+  #theme-list {
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    max-height: 70vh; overflow-y: auto;
+  }
+  .theme-row {
+    padding: 6px 12px; cursor: pointer; display: flex; gap: 8px; align-items: baseline;
+  }
+  .theme-row:hover { background: var(--bg); }
+  .theme-row.current { border-left: 3px solid var(--accent); background: var(--bg); }
+  .theme-row .src { margin-left: auto; font-size: 10px; color: var(--dim); }
+  #terminal-preview {
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+    margin-bottom: 14px;
+  }
+  #terminal-preview .tp-bar {
+    display: flex; gap: 6px; padding: 8px 12px; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  #terminal-preview .tp-dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.7; }
+  #terminal-preview .tp-body { padding: 0; line-height: 1.55; }
+  #terminal-preview .tp-line { white-space: pre-wrap; word-break: break-all; }
+  #terminal-preview .tp-cursor-block { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: text-bottom; }
+  #terminal-preview .tp-cursor-bar { display: inline-block; width: 2px; height: 1.1em; vertical-align: text-bottom; }
+  #terminal-preview .tp-cursor-underline { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: text-bottom; }
+  #terminal-preview .tp-palette { display: flex; margin-top: 10px; }
+  #terminal-preview .tp-palette span { flex: 1; height: 14px; }
+  #knobs { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+  .knob {
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    padding: 8px 10px;
+  }
+  .knob label { display: block; color: var(--dim); font-size: 11px; margin-bottom: 4px; }
+  .knob input, .knob select {
+    width: 100%; background: var(--bg); color: var(--text); font: inherit;
+    border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px;
+  }
   #history-hint { color: var(--dim); font-size: 12px; }
   .snap {
     border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
@@ -162,9 +208,10 @@
   <h1>Ghostty Config Manager</h1>
   <span class="badge" id="version">…</span>
   <nav class="seg" id="view-seg">
-    <button type="button" data-view="viewer" class="active">View</button>
+    <button type="button" data-view="customize" class="active">Customize</button>
+    <button type="button" data-view="viewer">View</button>
     <button type="button" data-view="editor">Edit</button>
-    <button type="button" data-view="form">Form</button>
+    <button type="button" data-view="form">All settings</button>
     <button type="button" data-view="history">History</button>
     <button type="button" data-view="profiles">Profiles</button>
   </nav>
@@ -174,7 +221,19 @@
   <p>Live config: <span id="config-path">…</span></p>
   <p id="error" hidden></p>
   <div id="banner" hidden></div>
-  <section id="viewer-view" data-view="viewer">
+  <section id="customize-view" data-view="customize">
+    <div id="customize-grid">
+      <div id="theme-panel">
+        <input id="theme-search" type="search" placeholder="Search themes…">
+        <div id="theme-list"><p>Loading themes…</p></div>
+      </div>
+      <div id="preview-panel">
+        <div id="terminal-preview"></div>
+        <div id="knobs"></div>
+      </div>
+    </div>
+  </section>
+  <section id="viewer-view" data-view="viewer" hidden>
     <pre id="config"></pre>
   </section>
   <section id="editor-view" data-view="editor" hidden>
@@ -303,6 +362,158 @@
     if (view === "form") ensureForm();
     if (view === "history") renderHistory();
     if (view === "profiles") renderProfiles();
+    if (view === "customize") ensureCustomize();
+  });
+
+  // ── customize view (the landing surface) ──
+  const themeListEl = document.getElementById("theme-list");
+  const themeSearch = document.getElementById("theme-search");
+  const previewEl = document.getElementById("terminal-preview");
+  const knobsEl = document.getElementById("knobs");
+  let themesList = null;
+  const themeCache = new Map();
+
+  async function ensureSchema() {
+    if (!schema) schema = await api("/api/schema");
+    return schema;
+  }
+
+  async function ensureCustomize() {
+    try {
+      if (!themesList) themesList = (await api("/api/themes")).themes;
+      await ensureSchema();
+      renderCustomize();
+    } catch (err) {
+      themeListEl.innerHTML = `<p>Themes unavailable: ${esc(err.message)}</p>`;
+    }
+  }
+
+  // The config's effective theme name; light:X,dark:Y pairs preview the dark side.
+  function currentThemeName() {
+    const raw = (valuesFromContent()["theme"] || []).at(-1) || "";
+    if (raw.includes(":")) {
+      const dark = raw.split(",").map((s) => s.trim()).find((s) => s.startsWith("dark:"));
+      return dark ? dark.slice(5).trim() : raw.split(":").pop().trim();
+    }
+    return raw;
+  }
+
+  async function themeColorsFor(name) {
+    if (!name) return {};
+    if (!themeCache.has(name)) {
+      try {
+        themeCache.set(name, (await api(`/api/theme?name=${encodeURIComponent(name)}`)).colors);
+      } catch {
+        themeCache.set(name, {});
+      }
+    }
+    return themeCache.get(name);
+  }
+
+  function knobValue(values, key) {
+    const v = (values[key] || []).at(-1);
+    if (v !== undefined) return v;
+    const opt = schema?.options.find((o) => o.key === key);
+    return opt ? (opt.list ? opt.defaults.at(-1) ?? "" : opt.default) : "";
+  }
+
+  const cssColor = (c) => (/^[0-9a-fA-F]{6}$/.test(c) ? "#" + c : c);
+
+  async function renderCustomize() {
+    if (!themesList) return;
+    const values = valuesFromContent();
+    const current = currentThemeName();
+
+    const q = themeSearch.value.trim().toLowerCase();
+    const shown = themesList.filter((t) => !q || t.name.toLowerCase().includes(q));
+    themeListEl.innerHTML = shown.length
+      ? shown.map((t) =>
+          `<div class="theme-row ${t.name === current ? "current" : ""}" data-theme="${esc(t.name)}">` +
+          `<span>${esc(t.name)}</span><span class="src">${t.source === "user" ? "custom" : ""}</span></div>`
+        ).join("")
+      : "<p>No matching themes.</p>";
+    themeListEl.querySelector(".theme-row.current")?.scrollIntoView({ block: "nearest" });
+
+    // Effective colors: the theme loads first, explicit config keys win.
+    const eff = { ...(await themeColorsFor(current)) };
+    for (const key of ["background", "foreground", "cursor-color", "cursor-text",
+                       "selection-background", "selection-foreground"]) {
+      const v = (values[key] || []).at(-1);
+      if (v) eff[key] = v;
+    }
+    for (const pal of values["palette"] || []) {
+      const m = pal.match(/^(\d{1,3})\s*=\s*(.+)$/);
+      if (m) eff[`palette.${m[1]}`] = m[2].trim();
+    }
+    const pal = (n, fb) => cssColor(eff[`palette.${n}`] || fb);
+    const bg = cssColor(eff["background"] || "#1a1b26");
+    const fg = cssColor(eff["foreground"] || "#c0caf5");
+    const cursorColor = cssColor(eff["cursor-color"] || fg);
+    const cursorStyle = knobValue(values, "cursor-style") || "block";
+    const font = `${(values["font-family"] || []).at(-1) || "monospace"}, monospace`;
+    const fontSize = Number(knobValue(values, "font-size")) || 13;
+    const padX = Number(knobValue(values, "window-padding-x")) || 0;
+    const padY = Number(knobValue(values, "window-padding-y")) || 0;
+    const opacity = Number(knobValue(values, "background-opacity")) || 1;
+
+    const cursor = cursorStyle === "bar"
+      ? `<span class="tp-cursor-bar" style="background:${esc(cursorColor)}"></span>`
+      : cursorStyle === "underline"
+        ? `<span class="tp-cursor-underline" style="border-bottom:2px solid ${esc(cursorColor)}"></span>`
+        : `<span class="tp-cursor-block" style="${cursorStyle === "block_hollow"
+            ? `border:1px solid ${esc(cursorColor)}`
+            : `background:${esc(cursorColor)}`}"></span>`;
+
+    previewEl.innerHTML =
+      `<div class="tp-bar">` +
+        `<span class="tp-dot" style="background:${pal(1, "#f7768e")}"></span>` +
+        `<span class="tp-dot" style="background:${pal(3, "#e0af68")}"></span>` +
+        `<span class="tp-dot" style="background:${pal(2, "#9ece6a")}"></span>` +
+      `</div>` +
+      `<div class="tp-body" style="background:${esc(bg)};color:${esc(fg)};opacity:${opacity};` +
+        `font-family:${esc(font)};font-size:${fontSize}px;padding:${padY}px ${padX}px;">` +
+        `<div class="tp-line" style="color:${pal(8, "#565f89")}"># ${esc(current || "no theme set")} — live preview</div>` +
+        `<div class="tp-line"><span style="color:${pal(4, "#7aa2f7")}">const</span> ` +
+          `greet = (<span style="color:${pal(3, "#e0af68")}">name</span>) => ` +
+          `<span style="color:${pal(2, "#9ece6a")}">\`hello \${name}\`</span>;</div>` +
+        `<div class="tp-line" style="color:${pal(1, "#f7768e")}">✗ error: connection refused (port 6202)</div>` +
+        `<div class="tp-line" style="color:${pal(2, "#9ece6a")}">✓ build finished in 1.2s</div>` +
+        `<div class="tp-line"><span style="color:${pal(5, "#bb9af7")}">~/dev</span> $ ${cursor}</div>` +
+        `<div class="tp-palette">` +
+          Array.from({ length: 16 }, (_, i) => `<span style="background:${pal(i, "#000")}"></span>`).join("") +
+        `</div>` +
+      `</div>`;
+
+    const knob = (key, control) =>
+      `<div class="knob"><label>${esc(key)}</label>${control}</div>`;
+    const num = (key, step) =>
+      knob(key, `<input type="number" step="${step}" data-knob="${esc(key)}" value="${esc(knobValue(values, key))}">`);
+    const cursorOpts = ["block", "bar", "underline", "block_hollow"]
+      .map((v) => `<option ${v === cursorStyle ? "selected" : ""}>${v}</option>`).join("");
+    knobsEl.innerHTML =
+      knob("font-family", `<input type="text" data-knob="font-family" data-knob-list="1" value="${esc((values["font-family"] || []).at(-1) || "")}" placeholder="(default)">`) +
+      num("font-size", "0.5") +
+      num("window-padding-x", "1") +
+      num("window-padding-y", "1") +
+      num("background-opacity", "0.05") +
+      knob("cursor-style", `<select data-knob="cursor-style">${cursorOpts}</select>`);
+  }
+
+  themeSearch.addEventListener("input", renderCustomize);
+
+  themeListEl.addEventListener("click", (e) => {
+    const name = e.target.closest(".theme-row")?.dataset.theme;
+    if (name) saveSet({ key: "theme", value: name });
+  });
+
+  knobsEl.addEventListener("change", (e) => {
+    const key = e.target.dataset.knob;
+    if (!key) return;
+    const value = e.target.value.trim();
+    if (e.target.dataset.knobList) {
+      return saveSet(value ? { key, values: [value] } : { key, unset: true });
+    }
+    return saveSet(value === "" ? { key, unset: true } : { key, value });
   });
 
   // ── profiles view ──
@@ -352,6 +563,7 @@
         if (r.ok) {
           setContent(r.content);
           renderForm();
+          renderCustomize();
           renderProfiles();
           showBanner("ok", reloadHintHtml(`Activated "${esc(activate)}".`));
         } else {
@@ -425,6 +637,7 @@
         if (r.ok) {
           setContent(r.content);
           renderForm();
+          renderCustomize();
           renderHistory();
           showBanner("ok", reloadHintHtml("Restored."));
         } else {
@@ -445,6 +658,7 @@
         const cfg = await api("/api/config");
         setContent(cfg.content);
         renderForm();
+        renderCustomize();
         showBanner("ok", "Config changed on disk — views refreshed.");
       }
       knownMtime = s.mtimeMs;
@@ -463,6 +677,7 @@
       if (r.ok) {
         setContent(r.content);
         renderForm();
+        renderCustomize();
         showBanner("ok", reloadHintHtml("Saved."));
       } else {
         showBanner("bad", esc(`Save failed: ${r.reason}`));
@@ -480,9 +695,8 @@
     "Clipboard", "Mouse", "Keybinds", "Quick Terminal", "macOS", "Linux/GTK", "Other"];
 
   async function ensureForm() {
-    if (schema) return;
     try {
-      schema = await api("/api/schema");
+      await ensureSchema();
       renderForm();
     } catch (err) {
       formBody.innerHTML = `<p>Failed to load schema: ${esc(err.message)}</p>`;
@@ -565,6 +779,7 @@
       if (r.ok) {
         setContent(r.content);
         renderForm();
+        renderCustomize();
         showBanner("ok", reloadHintHtml(`Saved ${payload.key}.`));
       } else {
         const msgs = [
@@ -663,6 +878,7 @@
       document.getElementById("config-path").textContent =
         cfg.path + (cfg.exists ? "" : "  (does not exist yet)");
       setContent(cfg.content);
+      ensureCustomize(); // the landing view
     } catch (err) {
       const el = document.getElementById("error");
       el.hidden = false;
