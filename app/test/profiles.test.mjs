@@ -35,10 +35,27 @@ test("save, list, read, delete round-trip", () => {
 });
 
 test("hostile names are rejected before any fs access", () => {
-  for (const bad of ["../evil", "a/b", ".hidden", "", "x".repeat(60), "a\nb"]) {
+  for (const bad of ["../evil", "a/b", ".hidden", "", "x".repeat(60), "a\nb", "x ", " x"]) {
     assert.throws(() => assertProfileName(bad), TypeError, bad);
   }
   assert.throws(() => readProfile("no-such-profile"), /no such profile/);
+});
+
+test("overwrite requires the explicit flag, case-insensitively", () => {
+  saveProfile("CaseTest", A);
+  assert.throws(() => saveProfile("casetest", B), /already exists/);
+  const r = saveProfile("casetest", B, { overwrite: true });
+  // The existing file's casing wins, so no duplicate pair can ever exist.
+  assert.equal(r.name, "CaseTest");
+  assert.equal(readProfile("CaseTest"), B);
+  deleteProfile("CaseTest");
+});
+
+test("a stray directory in the profiles dir does not break listing", async () => {
+  const { mkdirSync } = await import("node:fs");
+  mkdirSync(join(process.env.GHOSTTY_MGR_STATE, "profiles", "stray-dir.conf"), { recursive: true });
+  assert.ok(Array.isArray(listProfiles()));
+  assert.ok(!listProfiles().some((p) => p.name === "stray-dir"));
 });
 
 test("acceptance: switching profiles preserves comments byte-exactly, via history", () => {

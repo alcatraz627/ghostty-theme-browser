@@ -540,14 +540,26 @@
     }
   }
 
+  async function saveProfileWithConfirm(payload, doneMsg) {
+    try {
+      await postApi("/api/profiles/save", payload);
+    } catch (err) {
+      if (!err.message.includes("already exists")) throw err;
+      if (!confirm(`${payload.name} already exists. Replace it?`)) return false;
+      await postApi("/api/profiles/save", { ...payload, overwrite: true });
+    }
+    renderProfiles();
+    showBanner("ok", doneMsg);
+    return true;
+  }
+
   document.getElementById("profile-save").addEventListener("click", async () => {
     const name = profileName.value.trim();
     if (!name) return showBanner("bad", "Give the profile a name first.");
     try {
-      await postApi("/api/profiles/save", { name });
-      profileName.value = "";
-      renderProfiles();
-      showBanner("ok", `Saved current config as profile "${esc(name)}".`);
+      if (await saveProfileWithConfirm({ name }, `Saved current config as profile "${esc(name)}".`)) {
+        profileName.value = "";
+      }
     } catch (err) {
       showBanner("bad", esc(err.message));
     }
@@ -572,8 +584,10 @@
       } else if (duplicate) {
         const name = prompt(`Duplicate "${duplicate}" as:`, `${duplicate} copy`);
         if (!name) return;
-        await postApi("/api/profiles/save", { name: name.trim(), from: duplicate });
-        renderProfiles();
+        await saveProfileWithConfirm(
+          { name: name.trim(), from: duplicate },
+          `Duplicated "${esc(duplicate)}" as "${esc(name.trim())}".`
+        );
       } else if (del) {
         if (!confirm(`Delete profile "${del}"? The config it holds stays in history.`)) return;
         await postApi("/api/profiles/delete", { name: del });

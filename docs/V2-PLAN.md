@@ -265,6 +265,16 @@ days, schema heuristics + widgets); M4 and M5 half a day each; M6 one day. Rough
   prior capture); history growth is unbounded by design ("kept forever",
   1.4 MB / 200 writes measured). Report:
   `.claude/output/20260712-m4-validation/report.md`.
+- **M5** shipped 2026-07-12 (v2/milestones): profiles as complete config files;
+  activation through the locked chain (outgoing config always lands in history
+  first). Content-based active detection: byte-identical profiles all read
+  active (honest for fresh duplicates). Gate report: see M5 validation dir.
+- **M6** shipped 2026-07-12 (v2/milestones): the Customize landing view, reshaped
+  per user feedback ("form viewer, not a customization app") — theme picker over
+  the binary's live corpus, terminal preview of effective colors (theme first,
+  explicit keys win), curated knobs; the schema form demoted to "All settings".
+  Gate report: see M6 validation dir. V1's hosted browser remains untouched at
+  the repo root; the local app reads themes live so it cannot drift.
 
 ## 6. Risks
 

@@ -114,7 +114,7 @@ const api = {
           : state.exists
             ? readFile(state.path, "utf8")
             : "";
-      return saveProfile(body?.name, content);
+      return saveProfile(body?.name, content, { overwrite: body?.overwrite === true });
     }),
   "POST /api/profiles/activate": (body) =>
     mapTypeErrors(() => activateProfile(body?.name)),
