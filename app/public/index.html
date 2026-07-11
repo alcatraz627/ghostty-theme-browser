@@ -534,11 +534,15 @@
     const fg = cssColor(eff["foreground"] || "#c0caf5");
     const cursorColor = cssColor(eff["cursor-color"] || fg);
     const cursorStyle = knobValue(values, "cursor-style") || "block";
-    const font = `${(values["font-family"] || []).at(-1) || "monospace"}, monospace`;
-    const fontSize = Number(knobValue(values, "font-size")) || 13;
-    const padX = Number(knobValue(values, "window-padding-x")) || 0;
-    const padY = Number(knobValue(values, "window-padding-y")) || 0;
-    const opacity = Number(knobValue(values, "background-opacity")) || 1;
+    // Number() with a fallback that respects explicit zeros — `0 || d`
+    // silently substitutes the default, which lied about opacity = 0.
+    const numOr = (v, d) => (Number.isFinite(Number(v)) && v !== "" ? Number(v) : d);
+    const fontChain = values["font-family"] || [];
+    const font = `${fontChain.at(-1) || "monospace"}, monospace`;
+    const fontSize = numOr(knobValue(values, "font-size"), 13) || 13;
+    const padX = numOr(knobValue(values, "window-padding-x"), 0);
+    const padY = numOr(knobValue(values, "window-padding-y"), 0);
+    const opacity = numOr(knobValue(values, "background-opacity"), 1);
 
     const cursor = cursorStyle === "bar"
       ? `<span class="tp-cursor-bar" style="background:${esc(cursorColor)}"></span>`
@@ -572,10 +576,16 @@
       `<div class="knob"><label>${esc(key)}</label>${control}</div>`;
     const num = (key, step) =>
       knob(key, `<input type="number" step="${step}" data-knob="${esc(key)}" value="${esc(knobValue(values, key))}">`);
-    const cursorOpts = ["block", "bar", "underline", "block_hollow"]
-      .map((v) => `<option ${v === cursorStyle ? "selected" : ""}>${v}</option>`).join("");
+    const cursorOpts = `<option value="" ${!(values["cursor-style"] || []).length ? "selected" : ""}>(default)</option>` +
+      ["block", "bar", "underline", "block_hollow"]
+        .map((v) => `<option ${v === cursorStyle && (values["cursor-style"] || []).length ? "selected" : ""}>${v}</option>`).join("");
+    // A multi-font fallback chain must not be silently collapsed by this
+    // single-value knob — send those users to the list editor instead.
+    const fontKnob = fontChain.length > 1
+      ? `<span class="d">fallback chain (${fontChain.length} fonts) — edit in All settings to keep the chain</span>`
+      : `<input type="text" data-knob="font-family" data-knob-list="1" value="${esc(fontChain[0] || "")}" placeholder="(default)">`;
     knobsEl.innerHTML =
-      knob("font-family", `<input type="text" data-knob="font-family" data-knob-list="1" value="${esc((values["font-family"] || []).at(-1) || "")}" placeholder="(default)">`) +
+      knob("font-family", fontKnob) +
       num("font-size", "0.5") +
       num("window-padding-x", "1") +
       num("window-padding-y", "1") +

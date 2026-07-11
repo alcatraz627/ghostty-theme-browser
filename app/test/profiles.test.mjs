@@ -35,7 +35,7 @@ test("save, list, read, delete round-trip", () => {
 });
 
 test("hostile names are rejected before any fs access", () => {
-  for (const bad of ["../evil", "a/b", ".hidden", "", "x".repeat(60), "a\nb", "x ", " x"]) {
+  for (const bad of ["../evil", "a/b", ".hidden", "", "x".repeat(60), "a\nb", "x ", " x", "a..b"]) {
     assert.throws(() => assertProfileName(bad), TypeError, bad);
   }
   assert.throws(() => readProfile("no-such-profile"), /no such profile/);

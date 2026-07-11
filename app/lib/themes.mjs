@@ -4,7 +4,7 @@
 // config syntax; its colors come back as a key→value map with palette
 // entries expanded to palette.N keys.
 
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { runAction } from "./ghostty.mjs";
@@ -31,20 +31,36 @@ export function listThemes() {
 }
 
 export function themeColors(name) {
-  if (typeof name !== "string" || name.includes("/") || name.includes("..") || !name.trim()) {
+  // Leading dots also rejected: "." resolves to the themes directory itself
+  // (EISDIR on read), and no theme in the corpus is a dotfile.
+  if (
+    typeof name !== "string" ||
+    name.includes("/") ||
+    name.includes("..") ||
+    name.startsWith(".") ||
+    !name.trim()
+  ) {
     throw new TypeError(`invalid theme name: ${JSON.stringify(name)}`);
   }
   // Same resolution order the binary reports when a theme is missing:
-  // user dir first, bundle second.
+  // user dir first, bundle second. Must be a regular file — a directory
+  // that happens to match the name is not a theme.
   const candidates = [join(userThemesDir(), name), join(BUNDLE_THEMES, name)];
-  const path = candidates.find((p) => existsSync(p));
+  const path = candidates.find((p) => {
+    try {
+      return existsSync(p) && statSync(p).isFile();
+    } catch {
+      return false;
+    }
+  });
   if (!path) throw new TypeError(`no such theme: ${name}`);
 
   const colors = {};
   for (const p of pairs(parse(readFileSync(path, "utf8")))) {
     if (p.key === "palette") {
       const m = p.value.match(/^(\d{1,3})\s*=\s*(.+)$/);
-      if (m) colors[`palette.${m[1]}`] = m[2].trim();
+      // ANSI palette indices are 0-255; anything else is a malformed line.
+      if (m && Number(m[1]) <= 255) colors[`palette.${m[1]}`] = m[2].trim();
     } else {
       colors[p.key] = p.value;
     }

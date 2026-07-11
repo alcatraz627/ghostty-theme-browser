@@ -267,14 +267,25 @@ days, schema heuristics + widgets); M4 and M5 half a day each; M6 one day. Rough
   `.claude/output/20260712-m4-validation/report.md`.
 - **M5** shipped 2026-07-12 (v2/milestones): profiles as complete config files;
   activation through the locked chain (outgoing config always lands in history
-  first). Content-based active detection: byte-identical profiles all read
-  active (honest for fresh duplicates). Gate report: see M5 validation dir.
+  first). Gate verdict PASS-WITH-NOTES — its two majors (case-insensitive
+  silent overwrite; EISDIR listing outage) were pre-fixed and re-verified live
+  by the validator. Known behaviors, deliberate: byte-identical profiles all
+  read active; a profile saved before any config exists stays inert. Report:
+  `.claude/output/20260712-m5-validation/report.md`.
 - **M6** shipped 2026-07-12 (v2/milestones): the Customize landing view, reshaped
   per user feedback ("form viewer, not a customization app") — theme picker over
   the binary's live corpus, terminal preview of effective colors (theme first,
   explicit keys win), curated knobs; the schema form demoted to "All settings".
-  Gate report: see M6 validation dir. V1's hosted browser remains untouched at
-  the repo root; the local app reads themes live so it cannot drift.
+  **Corrected same-day after user pushback (atone mist-20260711-214932-dc):
+  selections STAGE ONLY; an explicit Apply commits the batch as one locked
+  write and one history entry; Discard drops it.** Preview-surface contract now
+  standing: browse/preview interactions never mutate durable state. Gate verdict
+  ISSUES-FOUND (theme-name "." EISDIR 500; opacity-0 previewed opaque;
+  font-chain collapse) — all fixed with guard tests same-day. Accepted gap: the
+  client-side effective-colors merge is untested inline script (extraction
+  deferred). Report: `.claude/output/20260712-m6-validation/report.md`. V1's
+  hosted browser remains untouched at the repo root; the local app reads themes
+  live so it cannot drift.
 
 ## 6. Risks
 
