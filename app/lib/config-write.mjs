@@ -14,13 +14,13 @@ import {
   unlinkSync,
 } from "node:fs";
 import { dirname, join } from "node:path";
-import { homedir } from "node:os";
 import { parse, serialize, pairs } from "./config-model.mjs";
 import { lint } from "./lint.mjs";
 import { configState } from "./paths.mjs";
+import { env } from "./env.mjs";
+import { captureExternal, snapshot } from "./history.mjs";
 
-const STATE_DIR = join(homedir(), ".config", "ghostty-manager");
-const BACKUP_DIR = join(STATE_DIR, "backups");
+const BACKUP_DIR = join(env.stateDir, "backups");
 const BACKUPS_KEPT = 50;
 
 // The value portion never includes a trailing \r — CRLF lines keep their
@@ -128,7 +128,7 @@ function pruneBackups(prefix) {
 // write leaves a timestamped backup of the previous file. All filesystem
 // failures come back as { ok: false, reason }, never as a thrown exception —
 // the API contract every other failure path honors.
-export function writeConfig(newText, { skipValidate = false } = {}) {
+export function writeConfig(newText, { skipValidate = false, message = "save" } = {}) {
   const state = configState();
   const check = lint(newText);
   if (!check.ok && !skipValidate) {
@@ -148,6 +148,16 @@ export function writeConfig(newText, { skipValidate = false } = {}) {
     }
     pruneBackups(prefix);
 
+    // History is auxiliary: a git failure must not block the config write,
+    // but it must be reported, never swallowed.
+    let history = null;
+    try {
+      captureExternal(state.path);
+      history = { pending: true };
+    } catch (err) {
+      history = { error: `history capture failed: ${err.message}` };
+    }
+
     // Same-directory temp + rename: rename is only atomic within a filesystem.
     const tmp = join(dirname(state.path), `.config-mgr-${process.pid}.tmp`);
     writeFileSync(tmp, newText);
@@ -157,7 +167,15 @@ export function writeConfig(newText, { skipValidate = false } = {}) {
     if (readBack !== newText) {
       return { ok: false, reason: "read-back mismatch", backup };
     }
-    return { ok: true, backup, lint: check };
+
+    if (!history?.error) {
+      try {
+        history = snapshot(state.path, newText, message, "app");
+      } catch (err) {
+        history = { error: `history snapshot failed: ${err.message}` };
+      }
+    }
+    return { ok: true, backup, lint: check, history };
   } catch (err) {
     return { ok: false, reason: `filesystem error: ${err.message}`, backup };
   }

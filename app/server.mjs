@@ -25,6 +25,12 @@ import {
   writeConfig,
   currentText,
 } from "./lib/config-write.mjs";
+import {
+  log as historyLog,
+  show as historyShow,
+  diff as historyDiff,
+  captureExternal,
+} from "./lib/history.mjs";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(ROOT, "public");
@@ -73,6 +79,37 @@ const api = {
     port: PORT,
   }),
   "GET /api/schema": () => buildSchema(),
+  // The stat poll doubles as the external-edit detector: any hand edit the
+  // repo hasn't seen becomes an [external] timeline entry.
+  "GET /api/stat": () => {
+    const state = configState();
+    try {
+      captureExternal(state.path);
+    } catch {
+      /* history is auxiliary; stat stays available without it */
+    }
+    return { mtimeMs: state.mtimeMs, exists: state.exists };
+  },
+  "GET /api/history": () => ({ entries: historyLog(configState().path) }),
+  "GET /api/history/diff": (_body, url) => {
+    const hash = url.searchParams.get("hash") || "";
+    return { diff: historyDiff(configState().path, hash) };
+  },
+  "POST /api/history/restore": (body) => {
+    if (typeof body?.hash !== "string" || !/^[0-9a-f]{7,40}$/.test(body.hash)) {
+      throw withStatus(new Error("bad hash"), 400);
+    }
+    let content;
+    try {
+      content = historyShow(configState().path, body.hash);
+    } catch {
+      throw withStatus(new Error("unknown snapshot hash"), 400);
+    }
+    const result = writeConfig(content, {
+      message: `restore ${body.hash.slice(0, 7)}`,
+    });
+    return { ...result, content: result.ok ? content : currentText() };
+  },
   "GET /api/config": () => {
     const state = configState();
     return {
@@ -94,8 +131,10 @@ const api = {
     const singleLine = (v) => typeof v === "string" && !/[\r\n]/.test(v);
     const before = currentText();
     let after;
+    let message;
     if (body.unset === true) {
       after = unsetKeyInText(before, key);
+      message = `unset ${key}`;
     } else if (Array.isArray(body.values)) {
       if (!body.values.every(singleLine)) {
         throw withStatus(new Error("values must be single-line strings"), 400);
@@ -103,6 +142,9 @@ const api = {
       after = body.values.length
         ? setListInText(before, key, body.values)
         : unsetKeyInText(before, key);
+      message = body.values.length
+        ? `set ${key} (${body.values.length} items)`
+        : `unset ${key}`;
     } else if (typeof body.value === "string") {
       if (!singleLine(body.value)) {
         throw withStatus(new Error("value must be a single-line string"), 400);
@@ -111,10 +153,11 @@ const api = {
       after = body.value === ""
         ? unsetKeyInText(before, key)
         : setKeyInText(before, key, body.value);
+      message = body.value === "" ? `unset ${key}` : `set ${key} = ${body.value}`;
     } else {
       throw withStatus(new Error("provide value, values, or unset"), 400);
     }
-    const result = writeConfig(after);
+    const result = writeConfig(after, { message });
     return { ...result, content: result.ok ? after : before };
   },
   // Whole-file save from the raw editor; force skips the validation gate
@@ -123,7 +166,10 @@ const api = {
     if (typeof body?.content !== "string") {
       throw withStatus(new Error("content must be a string"), 400);
     }
-    const result = writeConfig(body.content, { skipValidate: body.force === true });
+    const result = writeConfig(body.content, {
+      skipValidate: body.force === true,
+      message: "raw editor save",
+    });
     return { ...result, content: result.ok ? body.content : currentText() };
   },
 };
@@ -185,7 +231,7 @@ const server = createServer((req, res) => {
         }
       }
       try {
-        const body = JSON.stringify(handler(parsedBody));
+        const body = JSON.stringify(handler(parsedBody, url));
         res.writeHead(200, { "content-type": "application/json" });
         res.end(body);
       } catch (err) {

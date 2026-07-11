@@ -3,7 +3,16 @@
 //
 // Convention recorded at .claude/conventions/env-access.md.
 
+import { homedir } from "node:os";
+import { join } from "node:path";
+
 export const env = {
+  // Root for app state (backups, history repos). Tests point this at a temp
+  // dir so nothing they do touches the real state.
+  stateDir:
+    process.env.GHOSTTY_MGR_STATE ||
+    join(homedir(), ".config", "ghostty-manager"),
+
   // Base dir for the XDG config lookup (Ghostty's cross-platform config home).
   xdgConfigHome: process.env.XDG_CONFIG_HOME || null,
 

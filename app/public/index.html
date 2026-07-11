@@ -85,6 +85,23 @@
   .row input[type="color"] { width: 42px; height: 30px; padding: 1px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
   .color-wrap { display: flex; gap: 8px; align-items: center; }
   .color-wrap input[type="text"] { flex: 1; }
+  #history-hint { color: var(--dim); font-size: 12px; }
+  .snap {
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    padding: 8px 12px; margin-bottom: 8px;
+  }
+  .snap-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .snap-time { color: var(--dim); font-size: 12px; }
+  .snap-src { font-size: 11px; border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: var(--dim); }
+  .snap-src.external { color: var(--value); border-color: var(--value); }
+  .snap-msg { flex: 1; }
+  .snap button {
+    cursor: pointer; background: none; border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 2px 10px; font: inherit; font-size: 12px;
+  }
+  .snap pre { margin: 8px 0 2px; font-size: 12px; max-height: 300px; overflow: auto; }
+  .snap .add { color: var(--key); }
+  .snap .del { color: #f7768e; }
   #editor-view[hidden], #viewer-view[hidden] { display: none; }
   #editor {
     width: 100%; min-height: 55vh; resize: vertical;
@@ -126,6 +143,7 @@
     <button type="button" data-view="viewer" class="active">View</button>
     <button type="button" data-view="editor">Edit</button>
     <button type="button" data-view="form">Form</button>
+    <button type="button" data-view="history">History</button>
   </nav>
   <button id="theme-toggle" type="button">light</button>
 </header>
@@ -150,6 +168,11 @@
       <span class="badge" id="form-count"></span>
     </div>
     <div id="form-body"><p>Loading schema…</p></div>
+  </section>
+  <section id="history-view" data-view="history" hidden>
+    <p class="d" id="history-hint">Every save and detected hand-edit is a snapshot. Restoring never
+    deletes anything — it appends a new snapshot, so redo is just restoring the newer one.</p>
+    <div id="history-body"><p>Loading…</p></div>
   </section>
 </main>
 <script>
@@ -245,7 +268,87 @@
     }
     if (view === "editor") { editor.focus(); runLint(); }
     if (view === "form") ensureForm();
+    if (view === "history") renderHistory();
   });
+
+  // ── history view ──
+  const historyBody = document.getElementById("history-body");
+
+  function relTime(ts) {
+    const s = Math.round((Date.now() - ts) / 1000);
+    if (s < 60) return `${s}s ago`;
+    if (s < 3600) return `${Math.round(s / 60)}m ago`;
+    if (s < 86400) return `${Math.round(s / 3600)}h ago`;
+    return new Date(ts).toLocaleString();
+  }
+
+  async function renderHistory() {
+    try {
+      const { entries } = await api("/api/history");
+      if (!entries.length) {
+        historyBody.innerHTML = "<p>No snapshots yet — the first save creates one.</p>";
+        return;
+      }
+      historyBody.innerHTML = entries.map((e, i) =>
+        `<div class="snap" data-hash="${esc(e.hash)}">` +
+        `<div class="snap-head">` +
+        `<span class="snap-time">${esc(relTime(e.ts))}</span>` +
+        `<span class="snap-src ${e.source === "external" ? "external" : ""}">${esc(e.source)}</span>` +
+        `<span class="snap-msg">${esc(e.message)}</span>` +
+        `<button data-diff="${esc(e.hash)}">diff</button>` +
+        (i === 0 ? "" : `<button data-restore="${esc(e.hash)}">restore</button>`) +
+        `</div><pre hidden></pre></div>`
+      ).join("");
+    } catch (err) {
+      historyBody.innerHTML = `<p>History unavailable: ${esc(err.message)}</p>`;
+    }
+  }
+
+  historyBody.addEventListener("click", async (e) => {
+    const diffHash = e.target.dataset.diff;
+    if (diffHash) {
+      const pre = e.target.closest(".snap").querySelector("pre");
+      if (!pre.hidden) { pre.hidden = true; return; }
+      const { diff } = await api(`/api/history/diff?hash=${diffHash}`);
+      pre.innerHTML = diff.split("\n").map((l) => {
+        const cls = l.startsWith("+") ? "add" : l.startsWith("-") ? "del" : "";
+        return cls ? `<span class="${cls}">${esc(l)}</span>` : esc(l);
+      }).join("\n");
+      pre.hidden = false;
+      return;
+    }
+    const restoreHash = e.target.dataset.restore;
+    if (restoreHash) {
+      try {
+        const r = await postApi("/api/history/restore", { hash: restoreHash });
+        if (r.ok) {
+          setContent(r.content);
+          renderForm();
+          renderHistory();
+          showBanner("ok", reloadHintHtml("Restored."));
+        } else {
+          showBanner("bad", esc(`Restore failed: ${r.reason}`));
+        }
+      } catch (err) {
+        showBanner("bad", esc(err.message));
+      }
+    }
+  });
+
+  // ── changed-on-disk detection (poll; also triggers external capture) ──
+  let knownMtime = null;
+  setInterval(async () => {
+    try {
+      const s = await api("/api/stat");
+      if (knownMtime !== null && s.mtimeMs !== knownMtime) {
+        const cfg = await api("/api/config");
+        setContent(cfg.content);
+        renderForm();
+        showBanner("ok", "Config changed on disk — views refreshed.");
+      }
+      knownMtime = s.mtimeMs;
+    } catch { /* server briefly unreachable; next tick retries */ }
+  }, 5000);
 
   // ── raw editor save (validation-gated, explicit save-anyway) ──
   document.getElementById("save-btn").addEventListener("click", async () => {

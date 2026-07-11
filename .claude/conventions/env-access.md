@@ -9,4 +9,6 @@ past ~6 variables or gains security-sensitive values.
 Established 2026-07-11 (session ghost-v2v3-a3) in response to the env-access
 hook. Current surface: `XDG_CONFIG_HOME`, `GHOSTTY_MGR_PORT`,
 `GHOSTTY_MGR_CONFIG` (manage a specific config file; tests use it to exercise
-the write path against a sandbox copy instead of the live config).
+the write path against a sandbox copy instead of the live config),
+`GHOSTTY_MGR_STATE` (root for backups + history repos; tests point it at a
+temp dir).
