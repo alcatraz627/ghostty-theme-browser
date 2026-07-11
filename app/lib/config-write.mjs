@@ -9,10 +9,14 @@ import {
   writeFileSync,
   renameSync,
   mkdirSync,
+  rmdirSync,
+  statSync,
+  existsSync,
   copyFileSync,
   readdirSync,
   unlinkSync,
 } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { parse, serialize, pairs } from "./config-model.mjs";
 import { lint } from "./lint.mjs";
@@ -123,33 +127,60 @@ function pruneBackups(prefix) {
   for (const f of old) unlinkSync(join(BACKUP_DIR, f));
 }
 
-// Writes newText to the managed config. Refuses on validation failure unless
-// skipValidate (the raw editor's explicit "save anyway"). Every successful
-// write leaves a timestamped backup of the previous file. All filesystem
-// failures come back as { ok: false, reason }, never as a thrown exception —
-// the API contract every other failure path honors.
-export function writeConfig(newText, { skipValidate = false, message = "save" } = {}) {
-  const state = configState();
-  const check = lint(newText);
-  if (!check.ok && !skipValidate) {
-    return { ok: false, reason: "validation failed", lint: check };
-  }
+// Cross-process mutex around the whole read-modify-write cycle, using mkdir's
+// atomicity. Without it, two processes (a second server instance, a future
+// profiles CLI) computing changes from the same base silently lose the
+// slower writer's edit — the M4 gate reproduced this 100% of the time.
+const LOCK_RETRIES = 40;
+const LOCK_WAIT_S = "0.05";
+const LOCK_STALE_MS = 10_000;
 
-  let backup = null;
-  try {
-    mkdirSync(BACKUP_DIR, { recursive: true });
-    const prefix = backupPrefixFor(state.path);
-    if (state.exists) {
-      const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-      backup = join(BACKUP_DIR, `${prefix}-${stamp}`);
-      copyFileSync(state.path, backup);
-    } else {
-      mkdirSync(dirname(state.path), { recursive: true });
+function acquireLock(targetPath) {
+  const lock = `${targetPath}.gcm-lock`;
+  for (let i = 0; i < LOCK_RETRIES; i++) {
+    try {
+      mkdirSync(lock);
+      return lock;
+    } catch (err) {
+      if (err.code !== "EEXIST") throw err;
+      try {
+        if (Date.now() - statSync(lock).mtimeMs > LOCK_STALE_MS) {
+          rmdirSync(lock); // crashed holder; steal on next iteration
+          continue;
+        }
+      } catch {
+        continue; // lock vanished between mkdir and stat — retry immediately
+      }
+      spawnSync("sleep", [LOCK_WAIT_S]);
     }
-    pruneBackups(prefix);
+  }
+  return null;
+}
 
-    // History is auxiliary: a git failure must not block the config write,
-    // but it must be reported, never swallowed.
+function releaseLock(lock) {
+  try {
+    rmdirSync(lock);
+  } catch {
+    /* stolen as stale or already gone — nothing to release */
+  }
+}
+
+// The one write primitive: locks the target, reads the freshest content,
+// applies the caller's mutator, and runs the full safety chain (validate with
+// the real binary → timestamped backup → capture hand edits → same-dir atomic
+// rename → read-back → history snapshot). Refuses on validation failure
+// unless skipValidate (the raw editor's explicit "save anyway"). All failures
+// come back as { ok: false, reason }, never a thrown exception; the returned
+// content is the new text on success, the pre-change text otherwise.
+export function applyChange(mutator, { skipValidate = false, message = "save" } = {}) {
+  const state = configState();
+  const lock = acquireLock(state.path);
+  if (!lock) {
+    return { ok: false, reason: "config is locked by another process" };
+  }
+  try {
+    // History is auxiliary: a git failure must not block the write, but it
+    // must be reported, never swallowed.
     let history = null;
     try {
       captureExternal(state.path);
@@ -158,27 +189,68 @@ export function writeConfig(newText, { skipValidate = false, message = "save" } 
       history = { error: `history capture failed: ${err.message}` };
     }
 
-    // Same-directory temp + rename: rename is only atomic within a filesystem.
-    const tmp = join(dirname(state.path), `.config-mgr-${process.pid}.tmp`);
-    writeFileSync(tmp, newText);
-    renameSync(tmp, state.path);
+    const before = existsSync(state.path) ? readFileSync(state.path, "utf8") : "";
+    const newText = mutator(before);
 
-    const readBack = readFileSync(state.path, "utf8");
-    if (readBack !== newText) {
-      return { ok: false, reason: "read-back mismatch", backup };
+    const check = lint(newText);
+    if (!check.ok && !skipValidate) {
+      return { ok: false, reason: "validation failed", lint: check, content: before };
     }
 
-    if (!history?.error) {
-      try {
-        history = snapshot(state.path, newText, message, "app");
-      } catch (err) {
-        history = { error: `history snapshot failed: ${err.message}` };
+    let backup = null;
+    try {
+      mkdirSync(BACKUP_DIR, { recursive: true });
+      const prefix = backupPrefixFor(state.path);
+      if (existsSync(state.path)) {
+        const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+        backup = join(BACKUP_DIR, `${prefix}-${stamp}`);
+        copyFileSync(state.path, backup);
+      } else {
+        mkdirSync(dirname(state.path), { recursive: true });
       }
+      pruneBackups(prefix);
+
+      // Same-directory temp + rename: rename is only atomic within a filesystem.
+      const tmp = join(dirname(state.path), `.config-mgr-${process.pid}.tmp`);
+      writeFileSync(tmp, newText);
+
+      // Shrink the hand-edit TOCTOU window to the microseconds between this
+      // capture and the rename: editors don't honor our lock, so anything
+      // that landed since the first capture gets its history entry now.
+      if (!history?.error) {
+        try {
+          captureExternal(state.path);
+        } catch (err) {
+          history = { error: `history capture failed: ${err.message}` };
+        }
+      }
+      renameSync(tmp, state.path);
+
+      const readBack = readFileSync(state.path, "utf8");
+      if (readBack !== newText) {
+        return { ok: false, reason: "read-back mismatch", backup, content: readBack };
+      }
+
+      if (!history?.error) {
+        try {
+          history = snapshot(state.path, newText, message, "app");
+        } catch (err) {
+          history = { error: `history snapshot failed: ${err.message}` };
+        }
+      }
+      return { ok: true, backup, lint: check, history, content: newText };
+    } catch (err) {
+      return { ok: false, reason: `filesystem error: ${err.message}`, backup, content: before };
     }
-    return { ok: true, backup, lint: check, history };
-  } catch (err) {
-    return { ok: false, reason: `filesystem error: ${err.message}`, backup };
+  } finally {
+    releaseLock(lock);
   }
+}
+
+// Whole-content save; the base doesn't matter because the caller is
+// deliberately replacing everything (raw editor, restore, profile activate).
+export function writeConfig(newText, opts = {}) {
+  return applyChange(() => newText, opts);
 }
 
 // Throws a statusCode-tagged error on unreadable targets so the HTTP layer

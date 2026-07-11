@@ -254,6 +254,17 @@ days, schema heuristics + widgets); M4 and M5 half a day each; M6 one day. Rough
   writeConfig returns structured failures with namespaced, rotated backups
   (50 kept). Report: `.claude/output/20260711-m3-validation/report.md`. Known
   minor: comments interleaved inside a list block move below it on list apply.
+- **M4** shipped 2026-07-12 (v2/milestones): per-target git history with timeline
+  UI, restore-as-append, external-edit capture (write-time + stat-poll). Gate
+  verdict ISSUES-FOUND (2 blockers: cross-process lost updates with ok:true;
+  hand-edit TOCTOU) — fixed by moving read-modify-write inside a cross-process
+  mkdir-lock (`applyChange`, now the single write primitive) and re-capturing
+  external state immediately before the rename; diff endpoint now 400s cleanly.
+  Residual accepted: a hand edit landing in the microseconds between the final
+  capture and rename is overwritten on disk (recoverable only if seen by a
+  prior capture); history growth is unbounded by design ("kept forever",
+  1.4 MB / 200 writes measured). Report:
+  `.claude/output/20260712-m4-validation/report.md`.
 
 ## 6. Risks
 

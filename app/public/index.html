@@ -232,6 +232,9 @@
     document.getElementById("config").innerHTML =
       cfgContent.split("\n").map(renderLine).join("\n");
     if (document.activeElement !== editor) editor.value = cfgContent;
+    // Any content refresh resets the changed-on-disk baseline, so the app's
+    // own saves don't masquerade as external edits on the next stat poll.
+    knownMtime = null;
   }
 
   // key → every value the user's config sets for it, in file order.
