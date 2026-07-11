@@ -253,6 +253,36 @@ export function writeConfig(newText, opts = {}) {
   return applyChange(() => newText, opts);
 }
 
+// A batch of staged changes applied as ONE locked write and one history
+// entry — the commit half of the preview-then-apply contract. Each change is
+// {key, value} | {key, values: []} | {key, unset: true}; shapes are enforced
+// by the same assertions the surgery functions throw.
+export function applyChanges(changes, opts = {}) {
+  if (!Array.isArray(changes) || changes.length === 0) {
+    throw new TypeError("changes must be a non-empty array");
+  }
+  const mutator = (before) =>
+    changes.reduce((text, ch) => {
+      if (!ch || typeof ch.key !== "string") {
+        throw new TypeError("each change needs a key");
+      }
+      if (ch.unset === true) return unsetKeyInText(text, ch.key);
+      if (Array.isArray(ch.values)) {
+        return ch.values.length
+          ? setListInText(text, ch.key, ch.values)
+          : unsetKeyInText(text, ch.key);
+      }
+      if (typeof ch.value === "string") {
+        return ch.value === ""
+          ? unsetKeyInText(text, ch.key)
+          : setKeyInText(text, ch.key, ch.value);
+      }
+      throw new TypeError(`change for "${ch.key}" needs value, values, or unset`);
+    }, before);
+  const keys = changes.map((c) => c.key).join(", ");
+  return applyChange(mutator, { message: `apply ${changes.length} change(s): ${keys}`, ...opts });
+}
+
 // Throws a statusCode-tagged error on unreadable targets so the HTTP layer
 // reports a clean structured failure instead of leaking a raw fs exception.
 export function currentText() {

@@ -24,6 +24,7 @@ import {
   setListInText,
   writeConfig,
   applyChange,
+  applyChanges,
 } from "./lib/config-write.mjs";
 import {
   log as historyLog,
@@ -196,6 +197,23 @@ const api = {
       throw withStatus(new Error("provide value, values, or unset"), 400);
     }
     return applyChange(mutator, { message });
+  },
+  // The commit half of the Customize view's preview-then-apply contract:
+  // all staged changes in one locked write, one history entry.
+  "POST /api/config/apply": (body) => {
+    if (!Array.isArray(body?.changes) || !body.changes.length) {
+      throw withStatus(new Error("changes must be a non-empty array"), 400);
+    }
+    for (const ch of body.changes) {
+      if (typeof ch?.key !== "string" || !/^[A-Za-z0-9_-]+$/.test(ch.key)) {
+        throw withStatus(new Error("bad key in changes"), 400);
+      }
+      const vals = Array.isArray(ch.values) ? ch.values : typeof ch.value === "string" ? [ch.value] : [];
+      if (!vals.every((v) => typeof v === "string" && !/[\r\n]/.test(v))) {
+        throw withStatus(new Error("values must be single-line strings"), 400);
+      }
+    }
+    return mapTypeErrors(() => applyChanges(body.changes));
   },
   // Whole-file save from the raw editor; force skips the validation gate
   // (Ghostty itself tolerates bad lines by ignoring them).

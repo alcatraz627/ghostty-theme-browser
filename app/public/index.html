@@ -85,6 +85,21 @@
   .row input[type="color"] { width: 42px; height: 30px; padding: 1px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
   .color-wrap { display: flex; gap: 8px; align-items: center; }
   .color-wrap input[type="text"] { flex: 1; }
+  #apply-bar {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 14px;
+    border: 1px solid var(--accent); border-radius: 8px; background: var(--surface);
+    padding: 10px 14px;
+  }
+  #apply-msg { flex: 1; }
+  #apply-btn {
+    cursor: pointer; background: var(--accent); color: var(--bg);
+    border: 1px solid var(--accent); border-radius: 6px; padding: 5px 16px; font: inherit;
+  }
+  #discard-btn {
+    cursor: pointer; background: none; border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 5px 12px; font: inherit;
+  }
+  .theme-row.pending { border-left: 3px dashed var(--accent); background: var(--bg); }
   #customize-grid {
     display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 16px;
     align-items: start;
@@ -222,6 +237,11 @@
   <p id="error" hidden></p>
   <div id="banner" hidden></div>
   <section id="customize-view" data-view="customize">
+    <div id="apply-bar" hidden>
+      <span id="apply-msg"></span>
+      <button id="apply-btn" type="button">Apply</button>
+      <button id="discard-btn" type="button">Discard</button>
+    </div>
     <div id="customize-grid">
       <div id="theme-panel">
         <input id="theme-search" type="search" placeholder="Search themes…">
@@ -373,6 +393,63 @@
   let themesList = null;
   const themeCache = new Map();
 
+  // The core of preview-then-apply: selections stage here and render in the
+  // preview; NOTHING is written until the Apply button sends the whole batch.
+  const pending = new Map(); // key → {value} | {values} | {unset:true}
+
+  function pendingOverlayValues() {
+    const values = valuesFromContent();
+    for (const [key, ch] of pending) {
+      if (ch.unset) delete values[key];
+      else if (ch.values) values[key] = [...ch.values];
+      else values[key] = [ch.value];
+    }
+    return values;
+  }
+
+  function stage(key, change) {
+    pending.set(key, change);
+    renderCustomize();
+  }
+
+  function renderApplyBar() {
+    const bar = document.getElementById("apply-bar");
+    bar.hidden = pending.size === 0;
+    if (pending.size) {
+      document.getElementById("apply-msg").textContent =
+        `Previewing ${pending.size} change${pending.size === 1 ? "" : "s"} (${[...pending.keys()].join(", ")}) — nothing written yet.`;
+    }
+  }
+
+  document.getElementById("apply-btn").addEventListener("click", async () => {
+    if (!pending.size) return;
+    const changes = [...pending.entries()].map(([key, ch]) => ({ key, ...ch }));
+    try {
+      const r = await postApi("/api/config/apply", { changes });
+      if (r.ok) {
+        pending.clear();
+        setContent(r.content);
+        renderForm();
+        renderCustomize();
+        showBanner("ok", reloadHintHtml(`Applied ${changes.length} change${changes.length === 1 ? "" : "s"}.`));
+      } else {
+        const msgs = [
+          ...(r.lint?.diagnostics || []).map((d) => d.message),
+          ...(r.lint?.fileLevel || []).map((f) => f.message),
+        ];
+        showBanner("bad", esc(`Not applied: ${msgs[0] || r.reason}`));
+      }
+    } catch (err) {
+      showBanner("bad", esc(err.message));
+    }
+  });
+
+  document.getElementById("discard-btn").addEventListener("click", () => {
+    pending.clear();
+    renderCustomize();
+    showBanner("ok", "Preview discarded — your config was never touched.");
+  });
+
   async function ensureSchema() {
     if (!schema) schema = await api("/api/schema");
     return schema;
@@ -388,9 +465,10 @@
     }
   }
 
-  // The config's effective theme name; light:X,dark:Y pairs preview the dark side.
-  function currentThemeName() {
-    const raw = (valuesFromContent()["theme"] || []).at(-1) || "";
+  // The effective theme name in a values map; light:X,dark:Y pairs preview
+  // the dark side.
+  function themeNameFromValues(values) {
+    const raw = (values["theme"] || []).at(-1) || "";
     if (raw.includes(":")) {
       const dark = raw.split(",").map((s) => s.trim()).find((s) => s.startsWith("dark:"));
       return dark ? dark.slice(5).trim() : raw.split(":").pop().trim();
@@ -421,21 +499,27 @@
 
   async function renderCustomize() {
     if (!themesList) return;
-    const values = valuesFromContent();
-    const current = currentThemeName();
+    // Preview renders from disk values + staged pending changes; nothing here
+    // writes anything.
+    const values = pendingOverlayValues();
+    const current = themeNameFromValues(valuesFromContent());
+    const previewed = themeNameFromValues(values);
 
     const q = themeSearch.value.trim().toLowerCase();
     const shown = themesList.filter((t) => !q || t.name.toLowerCase().includes(q));
     themeListEl.innerHTML = shown.length
-      ? shown.map((t) =>
-          `<div class="theme-row ${t.name === current ? "current" : ""}" data-theme="${esc(t.name)}">` +
-          `<span>${esc(t.name)}</span><span class="src">${t.source === "user" ? "custom" : ""}</span></div>`
-        ).join("")
+      ? shown.map((t) => {
+          const cls = t.name === previewed && previewed !== current ? "pending"
+            : t.name === current ? "current" : "";
+          return `<div class="theme-row ${cls}" data-theme="${esc(t.name)}">` +
+            `<span>${esc(t.name)}</span><span class="src">${t.source === "user" ? "custom" : ""}</span></div>`;
+        }).join("")
       : "<p>No matching themes.</p>";
-    themeListEl.querySelector(".theme-row.current")?.scrollIntoView({ block: "nearest" });
+    themeListEl.querySelector(".theme-row.pending, .theme-row.current")
+      ?.scrollIntoView({ block: "nearest" });
 
     // Effective colors: the theme loads first, explicit config keys win.
-    const eff = { ...(await themeColorsFor(current)) };
+    const eff = { ...(await themeColorsFor(previewed)) };
     for (const key of ["background", "foreground", "cursor-color", "cursor-text",
                        "selection-background", "selection-foreground"]) {
       const v = (values[key] || []).at(-1);
@@ -472,7 +556,7 @@
       `</div>` +
       `<div class="tp-body" style="background:${esc(bg)};color:${esc(fg)};opacity:${opacity};` +
         `font-family:${esc(font)};font-size:${fontSize}px;padding:${padY}px ${padX}px;">` +
-        `<div class="tp-line" style="color:${pal(8, "#565f89")}"># ${esc(current || "no theme set")} — live preview</div>` +
+        `<div class="tp-line" style="color:${pal(8, "#565f89")}"># ${esc(previewed || "no theme set")}${previewed !== current ? " (preview — not applied)" : ""}</div>` +
         `<div class="tp-line"><span style="color:${pal(4, "#7aa2f7")}">const</span> ` +
           `greet = (<span style="color:${pal(3, "#e0af68")}">name</span>) => ` +
           `<span style="color:${pal(2, "#9ece6a")}">\`hello \${name}\`</span>;</div>` +
@@ -497,13 +581,15 @@
       num("window-padding-y", "1") +
       num("background-opacity", "0.05") +
       knob("cursor-style", `<select data-knob="cursor-style">${cursorOpts}</select>`);
+    renderApplyBar();
   }
 
   themeSearch.addEventListener("input", renderCustomize);
 
+  // Selections STAGE only — the Apply button is the single write path here.
   themeListEl.addEventListener("click", (e) => {
     const name = e.target.closest(".theme-row")?.dataset.theme;
-    if (name) saveSet({ key: "theme", value: name });
+    if (name) stage("theme", { value: name });
   });
 
   knobsEl.addEventListener("change", (e) => {
@@ -511,9 +597,9 @@
     if (!key) return;
     const value = e.target.value.trim();
     if (e.target.dataset.knobList) {
-      return saveSet(value ? { key, values: [value] } : { key, unset: true });
+      return stage(key, value ? { values: [value] } : { unset: true });
     }
-    return saveSet(value === "" ? { key, unset: true } : { key, value });
+    return stage(key, value === "" ? { unset: true } : { value });
   });
 
   // ── profiles view ──

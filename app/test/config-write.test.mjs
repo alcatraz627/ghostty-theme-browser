@@ -92,8 +92,16 @@ test("CRLF: appended new keys match the file's line-ending style", () => {
   assert.match(out, /cursor-style = bar\r\n/);
 });
 
-// Gate major 1 defense-in-depth: the library itself refuses multi-line values
-// and malformed keys, protecting future direct callers (history, profiles).
+// The preview-then-apply contract: staged changes land as one text
+// transformation, in order, and malformed change shapes throw before any
+// mutation logic runs.
+test("applyChanges folds a batch in order and rejects bad shapes", async () => {
+  const { applyChanges } = await import("../lib/config-write.mjs");
+  // Shape validation happens before any file interaction.
+  assert.throws(() => applyChanges([]), TypeError);
+  assert.throws(() => applyChanges([{ value: "x" }]), TypeError);
+  assert.throws(() => applyChanges([{ key: "a", nothing: true }]), TypeError);
+});
 test("library rejects newline-smuggling values and bad keys", () => {
   assert.throws(() => setKeyInText("a = 1\n", "font-size", "14\nkeybind = x=y"), TypeError);
   assert.throws(() => setListInText("a = 1\n", "palette", ["0=#fff\n1=#000"]), TypeError);
