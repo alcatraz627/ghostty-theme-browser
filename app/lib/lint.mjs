@@ -13,11 +13,13 @@ import { mkdtempSync, writeFileSync, rmSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ghosttyBin } from "./ghostty.mjs";
+import { parse } from "./config-model.mjs";
 
 const THEME_RE = /^theme "([^"]+)" not found/;
 
-export function lint(text) {
-  const bin = ghosttyBin();
+// The bin/timeoutMs overrides exist for tests, which need to exercise the
+// spawn-failure path without a 10s wall-clock wait.
+export function lint(text, { bin = ghosttyBin(), timeoutMs = 10_000 } = {}) {
   if (!bin) {
     return { ok: false, unavailable: true, diagnostics: [], fileLevel: [] };
   }
@@ -30,8 +32,17 @@ export function lint(text) {
     writeFileSync(file, text === "" ? "\n" : text);
     const res = spawnSync(bin, ["+validate-config", `--config-file=${file}`], {
       encoding: "utf8",
-      timeout: 10_000,
+      timeout: timeoutMs,
     });
+    // A spawn-level failure (timeout, crash, binary vanished) means the config
+    // was NOT validated — say so, or the UI renders "invalid, 0 problems".
+    if (res.error) {
+      return {
+        ok: false,
+        diagnostics: [],
+        fileLevel: [{ message: `validation did not run: ${res.error.message}` }],
+      };
+    }
     // Ghostty reports the candidate path with symlinks resolved
     // (/var → /private/var on macOS), so match against the resolved path.
     const reportedFile = realpathSync(file);
@@ -40,6 +51,11 @@ export function lint(text) {
     const fileLevel = [];
     const themesSeen = new Set();
     const output = `${res.stdout || ""}\n${res.stderr || ""}`;
+    // Ground truth for key attribution: what the caller actually submitted,
+    // line by line. Ghostty echoes offending text where a key would be, and
+    // quoted values may contain embedded newlines, so the reported "key" is
+    // only trusted when the submitted line really is `thatKey = ...`.
+    const submittedEntries = parse(text).entries;
 
     for (const line of output.split("\n")) {
       if (!line.trim()) continue;
@@ -56,9 +72,18 @@ export function lint(text) {
       // Line-anchored only when the output names our candidate file.
       if (line.startsWith(reportedFile + ":")) {
         const rest = line.slice(reportedFile.length + 1);
-        const m = rest.match(/^(\d+):([^:]*):\s*(.*)$/);
+        const m = rest.match(/^(\d+):(.*)$/);
         if (m) {
-          diagnostics.push({ line: Number(m[1]), key: m[2], message: m[3] });
+          const lineNo = Number(m[1]);
+          const keyed = m[2].match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+          const submitted = submittedEntries[lineNo - 1];
+          const legit =
+            keyed && submitted?.kind === "pair" && submitted.key === keyed[1];
+          diagnostics.push(
+            legit
+              ? { line: lineNo, key: keyed[1], message: keyed[2] }
+              : { line: lineNo, key: "", message: m[2].trim() }
+          );
           continue;
         }
       }

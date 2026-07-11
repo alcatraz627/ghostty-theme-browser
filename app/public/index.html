@@ -120,8 +120,8 @@
     return res.json();
   }
 
-  const esc = (s) => String(s).replace(/[&<>"]/g,
-    (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  const esc = (s) => String(s).replace(/[&<>"']/g,
+    (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 
   // One config line -> highlighted HTML. Comments dim; key/value colored;
   // hex colors get an inline swatch.
@@ -197,8 +197,9 @@
 
   // Clicking a line-anchored diagnostic moves the cursor to that line.
   diagnosticsList.addEventListener("click", (e) => {
-    const line = e.target.closest("li")?.dataset.line;
+    let line = e.target.closest("li")?.dataset.line;
     if (!line) return;
+    line = Math.max(1, Number(line));
     const lines = editor.value.split("\n");
     const pos = lines.slice(0, line - 1).join("\n").length + (line > 1 ? 1 : 0);
     editor.focus();

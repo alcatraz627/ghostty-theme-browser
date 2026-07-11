@@ -5,6 +5,9 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, writeFileSync, chmodSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { lint } from "../lib/lint.mjs";
 import { ghosttyBin } from "../lib/ghostty.mjs";
 
@@ -51,4 +54,42 @@ test("existing theme does not produce a theme error (guard stays silent on good 
   const r = lint("theme = Solarized Osaka Night\n");
   assert.equal(r.ok, true);
   assert.equal(r.fileLevel.length, 0);
+});
+
+// Validator finding 1: a spawn-level failure must surface as a message, never
+// as "invalid config, 0 problems".
+test("missing binary at spawn time surfaces as a file-level message", () => {
+  const r = lint("font-size = 14\n", { bin: "/nonexistent/fake-ghostty" });
+  assert.equal(r.ok, false);
+  assert.match(r.fileLevel[0]?.message ?? "", /validation did not run/);
+});
+
+test("validator timeout surfaces as a file-level message", () => {
+  const dir = mkdtempSync(join(tmpdir(), "lint-fakebin-"));
+  const fake = join(dir, "slow.sh");
+  writeFileSync(fake, "#!/bin/sh\nsleep 2\n");
+  chmodSync(fake, 0o755);
+  try {
+    const r = lint("font-size = 14\n", { bin: fake, timeoutMs: 100 });
+    assert.equal(r.ok, false);
+    assert.equal(r.diagnostics.length, 0);
+    assert.match(r.fileLevel[0]?.message ?? "", /validation did not run/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+// Validator finding 2: an embedded newline in a quoted value makes ghostty
+// echo user text where a key belongs; the parsed key must never be spoofable.
+test("embedded newline in a quoted value cannot spoof a diagnostic key", () => {
+  if (!ghosttyBin()) return;
+  const r = lint('font-size = "x\n9999:TOTALLY_FAKE_KEY"\n');
+  assert.ok(
+    !r.diagnostics.some((d) => d.key === "9999"),
+    JSON.stringify(r.diagnostics)
+  );
+  // Every attributed key must correspond to the submitted line's real key.
+  for (const d of r.diagnostics) {
+    assert.match(d.key, /^[A-Za-z0-9_-]*$/);
+  }
 });

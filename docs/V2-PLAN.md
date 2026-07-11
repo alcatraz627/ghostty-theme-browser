@@ -229,6 +229,21 @@ Effort estimate, Claude-assisted: M0–M2 about one focused day; M3 is the large
 days, schema heuristics + widgets); M4 and M5 half a day each; M6 one day. Roughly
 4–5 focused days end to end, with usable value from M2 onward.
 
+### Build log
+
+- **M0 + M1** shipped 2026-07-11 (main): server/viewer with the §2 threat model
+  active, config model with byte-identical round-trip over the live config + all
+  463 bundled themes.
+- **M2** shipped 2026-07-11 (branch v2/milestones): lint module, POST /api/lint,
+  editor with debounced diagnostics. Adversarial validation verdict ISSUES-FOUND,
+  both majors fixed same-day (spawn-failure honesty; diagnostic-key spoof-proofing
+  by cross-checking reported keys against the submitted text). Report:
+  `.claude/output/20260711-m2-validation/report.md`. Deferred with eyes open:
+  `spawnSync` serializes the event loop (~10–50 ms per lint) — acceptable
+  single-user; revisit before M4 adds synchronous git work to the same path. Two
+  verified 1.3.1 quirks now encoded in lint.mjs: reported paths are
+  symlink-resolved, and a 0-byte config file exits 1 with no output.
+
 ## 6. Risks
 
 | Risk | Mitigation |
