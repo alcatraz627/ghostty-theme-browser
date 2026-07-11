@@ -15,8 +15,16 @@ import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { env } from "./lib/env.mjs";
 import { configState } from "./lib/paths.mjs";
-import { ghosttyBin, versionLine } from "./lib/ghostty.mjs";
+import { ghosttyBin, versionLine, reloadKeybind } from "./lib/ghostty.mjs";
 import { lint } from "./lib/lint.mjs";
+import { buildSchema } from "./lib/schema.mjs";
+import {
+  setKeyInText,
+  unsetKeyInText,
+  setListInText,
+  writeConfig,
+  currentText,
+} from "./lib/config-write.mjs";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(ROOT, "public");
@@ -61,8 +69,10 @@ const api = {
   "GET /api/meta": () => ({
     ghosttyVersion: versionLine(),
     binaryPath: ghosttyBin(),
+    reloadKeybind: reloadKeybind(),
     port: PORT,
   }),
+  "GET /api/schema": () => buildSchema(),
   "GET /api/config": () => {
     const state = configState();
     return {
@@ -72,7 +82,45 @@ const api = {
   },
   "POST /api/lint": (body) =>
     lint(typeof body?.content === "string" ? body.content : ""),
+  // Single-setting change from the form view: {key, value} to set, {key,
+  // unset: true} to reset to default, {key, values: [...]} for list keys.
+  "POST /api/config/set": (body) => {
+    const key = body?.key;
+    if (typeof key !== "string" || !/^[A-Za-z0-9_-]+$/.test(key)) {
+      throw withStatus(new Error("bad key"), 400);
+    }
+    const before = currentText();
+    let after;
+    if (body.unset === true) {
+      after = unsetKeyInText(before, key);
+    } else if (Array.isArray(body.values)) {
+      if (!body.values.every((v) => typeof v === "string")) {
+        throw withStatus(new Error("values must be strings"), 400);
+      }
+      after = setListInText(before, key, body.values);
+    } else if (typeof body.value === "string") {
+      after = setKeyInText(before, key, body.value);
+    } else {
+      throw withStatus(new Error("provide value, values, or unset"), 400);
+    }
+    const result = writeConfig(after);
+    return { ...result, content: result.ok ? after : before };
+  },
+  // Whole-file save from the raw editor; force skips the validation gate
+  // (Ghostty itself tolerates bad lines by ignoring them).
+  "POST /api/config/save": (body) => {
+    if (typeof body?.content !== "string") {
+      throw withStatus(new Error("content must be a string"), 400);
+    }
+    const result = writeConfig(body.content, { skipValidate: body.force === true });
+    return { ...result, content: result.ok ? body.content : currentText() };
+  },
 };
+
+function withStatus(err, code) {
+  err.statusCode = code;
+  return err;
+}
 
 const BODY_LIMIT = 1024 * 1024;
 
@@ -130,7 +178,7 @@ const server = createServer((req, res) => {
         res.writeHead(200, { "content-type": "application/json" });
         res.end(body);
       } catch (err) {
-        deny(res, 500, err.message);
+        deny(res, err.statusCode || 500, err.message);
       }
     })();
     return;

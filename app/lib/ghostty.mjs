@@ -37,3 +37,17 @@ export function versionLine() {
     return `unavailable (${err.message})`;
   }
 }
+
+// The user's actual reload-config trigger (they may have rebound it), for
+// honest "press X to apply" hints. Ghostty spells Cmd as "super".
+export function reloadKeybind() {
+  try {
+    const line = runAction(["+list-keybinds"])
+      .split("\n")
+      .find((l) => l.includes("=reload_config"));
+    const m = line?.match(/keybind\s*=\s*(.+?)=reload_config/);
+    return m ? m[1] : null;
+  } catch {
+    return null;
+  }
+}

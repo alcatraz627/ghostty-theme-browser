@@ -28,6 +28,7 @@ export function candidatePaths() {
 }
 
 export function liveConfigPath() {
+  if (env.configPathOverride) return env.configPathOverride;
   const candidates = candidatePaths();
   const existing = candidates.find((c) => c.exists);
   // No config anywhere: a fresh install writes to the macOS-preferred location.

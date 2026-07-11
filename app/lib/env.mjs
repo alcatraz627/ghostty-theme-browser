@@ -10,4 +10,8 @@ export const env = {
   // Dev-server port. Default matches the ports.sh tier-3 claim for
   // "ghostty-config-manager"; override for ad-hoc runs only.
   port: Number(process.env.GHOSTTY_MGR_PORT || 6202),
+
+  // Manage a specific config file instead of the auto-detected live one.
+  // Used by tests to run the full write path against a sandbox copy.
+  configPathOverride: process.env.GHOSTTY_MGR_CONFIG || null,
 };

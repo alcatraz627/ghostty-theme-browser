@@ -42,11 +42,49 @@
     font-size: 12px; color: var(--dim); border: 1px solid var(--border);
     border-radius: 6px; padding: 2px 8px;
   }
-  #theme-toggle, #view-toggle {
+  #theme-toggle, .seg button {
     cursor: pointer; background: none; border: 1px solid var(--border);
     color: var(--text); border-radius: 6px; padding: 4px 10px; font: inherit;
   }
-  #view-toggle { margin-left: auto; }
+  .seg { margin-left: auto; display: flex; gap: 0; }
+  .seg button { border-radius: 0; border-right-width: 0; }
+  .seg button:first-child { border-radius: 6px 0 0 6px; }
+  .seg button:last-child { border-radius: 0 6px 6px 0; border-right-width: 1px; }
+  .seg button.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  #editor-actions { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  #editor-actions button, .row button, #form-view .apply {
+    cursor: pointer; background: none; border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 4px 12px; font: inherit;
+  }
+  #save-btn { border-color: var(--accent); color: var(--accent); }
+  #banner {
+    margin: 10px 0; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  #banner.ok { border-color: var(--key); }
+  #banner.bad { border-color: #f7768e; }
+  #form-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+  #form-search {
+    flex: 1; background: var(--surface); color: var(--text); font: inherit;
+    border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px;
+  }
+  .cat-title { margin: 18px 0 8px; font-size: 13px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; }
+  .row {
+    display: grid; grid-template-columns: minmax(220px, 1fr) minmax(200px, 1.4fr) auto;
+    gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 6px; background: var(--surface);
+  }
+  .row.modified { border-left: 3px solid var(--accent); }
+  .row .k { color: var(--key); word-break: break-all; }
+  .row .d { display: block; color: var(--dim); font-size: 12px; margin-top: 2px; }
+  .row .platform { color: var(--value); font-size: 11px; margin-left: 6px; }
+  .row input[type="text"], .row input[type="number"], .row select, .row textarea {
+    width: 100%; background: var(--bg); color: var(--text); font: inherit;
+    border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px;
+  }
+  .row input[type="color"] { width: 42px; height: 30px; padding: 1px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
+  .color-wrap { display: flex; gap: 8px; align-items: center; }
+  .color-wrap input[type="text"] { flex: 1; }
   #editor-view[hidden], #viewer-view[hidden] { display: none; }
   #editor {
     width: 100%; min-height: 55vh; resize: vertical;
@@ -84,19 +122,34 @@
 <header>
   <h1>Ghostty Config Manager</h1>
   <span class="badge" id="version">…</span>
-  <button id="view-toggle" type="button">Edit</button>
+  <nav class="seg" id="view-seg">
+    <button type="button" data-view="viewer" class="active">View</button>
+    <button type="button" data-view="editor">Edit</button>
+    <button type="button" data-view="form">Form</button>
+  </nav>
   <button id="theme-toggle" type="button">light</button>
 </header>
 <main>
   <p>Live config: <span id="config-path">…</span></p>
   <p id="error" hidden></p>
-  <section id="viewer-view">
+  <div id="banner" hidden></div>
+  <section id="viewer-view" data-view="viewer">
     <pre id="config"></pre>
   </section>
-  <section id="editor-view" hidden>
+  <section id="editor-view" data-view="editor" hidden>
     <textarea id="editor" spellcheck="false"></textarea>
-    <p id="lint-status">Start typing to lint.</p>
+    <div id="editor-actions">
+      <button id="save-btn" type="button">Save to config</button>
+      <span id="lint-status">Start typing to lint.</span>
+    </div>
     <ul id="diagnostics"></ul>
+  </section>
+  <section id="form-view" data-view="form" hidden>
+    <div id="form-toolbar">
+      <input id="form-search" type="search" placeholder="Search settings (key or description)…">
+      <span class="badge" id="form-count"></span>
+    </div>
+    <div id="form-body"><p>Loading schema…</p></div>
   </section>
 </main>
 <script>
@@ -145,18 +198,203 @@
     return res.json();
   }
 
-  // View switching: the viewer renders the file; the editor lints as you type.
-  const viewToggle = document.getElementById("view-toggle");
-  const viewerView = document.getElementById("viewer-view");
-  const editorView = document.getElementById("editor-view");
+  // ── shared state ──
   const editor = document.getElementById("editor");
-  viewToggle.addEventListener("click", () => {
-    const editing = editorView.hidden;
-    viewerView.hidden = editing;
-    editorView.hidden = !editing;
-    viewToggle.textContent = editing ? "View" : "Edit";
-    if (editing) { editor.focus(); runLint(); }
+  let cfgContent = "";
+  let meta = null;
+  let schema = null;
+
+  function setContent(content) {
+    cfgContent = content || "";
+    document.getElementById("config").innerHTML =
+      cfgContent.split("\n").map(renderLine).join("\n");
+    if (document.activeElement !== editor) editor.value = cfgContent;
+  }
+
+  // key → every value the user's config sets for it, in file order.
+  function valuesFromContent() {
+    const map = {};
+    for (const line of cfgContent.split("\n")) {
+      const m = line.match(/^\s*([A-Za-z0-9_-]+)\s*=\s*(.*?)\s*$/);
+      if (m) (map[m[1]] ??= []).push(m[2]);
+    }
+    return map;
+  }
+
+  const banner = document.getElementById("banner");
+  function showBanner(kind, html) {
+    banner.hidden = false;
+    banner.className = kind;
+    banner.innerHTML = html;
+  }
+  function reloadHintHtml(prefix) {
+    const kb = meta?.reloadKeybind || "super+shift+,";
+    return `${esc(prefix)} Press <b>${esc(kb)}</b> in Ghostty to apply.`;
+  }
+
+  // ── view switching ──
+  const seg = document.getElementById("view-seg");
+  seg.addEventListener("click", (e) => {
+    const view = e.target.dataset.view;
+    if (!view) return;
+    for (const btn of seg.querySelectorAll("button")) {
+      btn.classList.toggle("active", btn.dataset.view === view);
+    }
+    for (const sec of document.querySelectorAll("main section[data-view]")) {
+      sec.hidden = sec.dataset.view !== view;
+    }
+    if (view === "editor") { editor.focus(); runLint(); }
+    if (view === "form") ensureForm();
   });
+
+  // ── raw editor save (validation-gated, explicit save-anyway) ──
+  document.getElementById("save-btn").addEventListener("click", async () => {
+    try {
+      let r = await postApi("/api/config/save", { content: editor.value });
+      if (!r.ok && r.reason === "validation failed") {
+        const n = r.lint.diagnostics.length + r.lint.fileLevel.length;
+        if (!confirm(`Config has ${n} problem(s). Ghostty ignores bad lines — save anyway?`)) return;
+        r = await postApi("/api/config/save", { content: editor.value, force: true });
+      }
+      if (r.ok) {
+        setContent(r.content);
+        renderForm();
+        showBanner("ok", reloadHintHtml("Saved."));
+      } else {
+        showBanner("bad", esc(`Save failed: ${r.reason}`));
+      }
+    } catch (err) {
+      showBanner("bad", esc(err.message));
+    }
+  });
+
+  // ── form view ──
+  const formBody = document.getElementById("form-body");
+  const formSearch = document.getElementById("form-search");
+  const formCount = document.getElementById("form-count");
+  const CAT_ORDER = ["Fonts", "Colors", "Cursor", "Window", "Terminal", "Shell",
+    "Clipboard", "Mouse", "Keybinds", "Quick Terminal", "macOS", "Linux/GTK", "Other"];
+
+  async function ensureForm() {
+    if (schema) return;
+    try {
+      schema = await api("/api/schema");
+      renderForm();
+    } catch (err) {
+      formBody.innerHTML = `<p>Failed to load schema: ${esc(err.message)}</p>`;
+    }
+  }
+
+  function controlHtml(o, current) {
+    const val = current ?? o.default ?? "";
+    const k = `data-key="${esc(o.key)}"`;
+    switch (o.type) {
+      case "boolean":
+        return `<input type="checkbox" ${k} ${val === "true" ? "checked" : ""}>`;
+      case "number":
+        return `<input type="number" step="any" ${k} value="${esc(val)}">`;
+      case "enum": {
+        const opts = [...new Set([val, ...(o.enumValues || [])])]
+          .filter((v) => v !== "")
+          .map((v) => `<option ${v === val ? "selected" : ""}>${esc(v)}</option>`);
+        return `<select ${k}><option value="" ${val === "" ? "selected" : ""}>(default)</option>${opts.join("")}</select>`;
+      }
+      case "color": {
+        const hex = /^#?[0-9a-fA-F]{6}$/.test(val)
+          ? (val.startsWith("#") ? val : "#" + val) : "#000000";
+        return `<span class="color-wrap"><input type="color" ${k} data-role="swatch" value="${esc(hex)}"><input type="text" ${k} value="${esc(val)}"></span>`;
+      }
+      default:
+        return `<input type="text" ${k} value="${esc(val)}">`;
+    }
+  }
+
+  function renderForm() {
+    if (!schema) return;
+    const q = formSearch.value.trim().toLowerCase();
+    const values = valuesFromContent();
+    const opts = schema.options.filter(
+      (o) => !q || o.key.includes(q) || o.doc.toLowerCase().includes(q)
+    );
+    formCount.textContent = `${opts.length} settings`;
+    const byCat = {};
+    for (const o of opts) (byCat[o.category] ??= []).push(o);
+    let html = "";
+    for (const cat of CAT_ORDER) {
+      if (!byCat[cat]) continue;
+      html += `<div class="cat-title">${esc(cat)}</div>`;
+      for (const o of byCat[cat]) {
+        const userVals = values[o.key];
+        const modified = !!userVals;
+        const shortDoc = esc((o.doc.split(/\.\s|\n/)[0] || "").slice(0, 110));
+        const plat = o.platform === "linux" ? `<span class="platform">GTK/Linux</span>` : "";
+        let control, actions;
+        if (o.type === "list") {
+          const items = (userVals || []).join("\n");
+          const rows = Math.min(6, (userVals?.length || 1) + 1);
+          control = `<textarea rows="${rows}" data-key="${esc(o.key)}" data-list="1" placeholder="(using defaults — one item per line)">${esc(items)}</textarea>`;
+          actions = `<button class="apply" data-apply="${esc(o.key)}">Apply</button>`;
+        } else {
+          const cur = userVals ? userVals[userVals.length - 1] : null;
+          control = controlHtml(o, cur);
+          actions = modified ? `<button data-reset="${esc(o.key)}">reset</button>` : "";
+        }
+        html +=
+          `<div class="row ${modified ? "modified" : ""}" title="${esc(o.doc.slice(0, 600))}">` +
+          `<span><span class="k">${esc(o.key)}</span>${plat}<span class="d">${shortDoc}</span></span>` +
+          `<span>${control}</span><span>${actions}</span></div>`;
+      }
+    }
+    formBody.innerHTML = html || "<p>No matches.</p>";
+  }
+
+  async function saveSet(payload) {
+    try {
+      const r = await postApi("/api/config/set", payload);
+      if (r.ok) {
+        setContent(r.content);
+        renderForm();
+        showBanner("ok", reloadHintHtml(`Saved ${payload.key}.`));
+      } else {
+        const msgs = [
+          ...(r.lint?.diagnostics || []).map((d) => d.message),
+          ...(r.lint?.fileLevel || []).map((f) => f.message),
+        ];
+        showBanner("bad", esc(`Not saved (${payload.key}): ${msgs[0] || r.reason}`));
+        renderForm();
+      }
+    } catch (err) {
+      showBanner("bad", esc(err.message));
+    }
+  }
+
+  formBody.addEventListener("change", (e) => {
+    const t = e.target;
+    const key = t.dataset.key;
+    if (!key || t.dataset.list) return;
+    if (t.dataset.role === "swatch") {
+      const text = t.parentElement.querySelector('input[type="text"]');
+      text.value = t.value;
+      return saveSet({ key, value: t.value });
+    }
+    const value = t.type === "checkbox" ? (t.checked ? "true" : "false") : t.value;
+    return value === "" ? saveSet({ key, unset: true }) : saveSet({ key, value });
+  });
+
+  formBody.addEventListener("click", (e) => {
+    const reset = e.target.dataset.reset;
+    if (reset) return saveSet({ key: reset, unset: true });
+    const apply = e.target.dataset.apply;
+    if (apply) {
+      const ta = formBody.querySelector(`textarea[data-key="${CSS.escape(apply)}"]`);
+      const values = ta.value.split("\n").map((s) => s.trim()).filter(Boolean);
+      return values.length
+        ? saveSet({ key: apply, values })
+        : saveSet({ key: apply, unset: true });
+    }
+  });
+
+  formSearch.addEventListener("input", renderForm);
 
   const lintStatus = document.getElementById("lint-status");
   const diagnosticsList = document.getElementById("diagnostics");
@@ -208,14 +446,12 @@
 
   (async () => {
     try {
-      const meta = await api("/api/meta");
+      meta = await api("/api/meta");
       document.getElementById("version").textContent = meta.ghosttyVersion;
       const cfg = await api("/api/config");
       document.getElementById("config-path").textContent =
         cfg.path + (cfg.exists ? "" : "  (does not exist yet)");
-      document.getElementById("config").innerHTML =
-        (cfg.content || "").split("\n").map(renderLine).join("\n");
-      editor.value = cfg.content || "";
+      setContent(cfg.content);
     } catch (err) {
       const el = document.getElementById("error");
       el.hidden = false;

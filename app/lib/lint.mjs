@@ -88,6 +88,24 @@ export function lint(text, { bin = ghosttyBin(), timeoutMs = 10_000 } = {}) {
         }
       }
 
+      // Quirk #3 (verified on 1.3.1): when the config contains a `theme =`
+      // line, validation errors are reported WITHOUT path:line location, as
+      // bare "key: message". Recover the anchor from the submitted text —
+      // ghostty resolves repeated keys last-wins, so the last occurrence of
+      // the key is the line that owns the error.
+      const bare = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+      if (bare) {
+        let lastIdx = -1;
+        for (let i = 0; i < submittedEntries.length; i++) {
+          const e = submittedEntries[i];
+          if (e.kind === "pair" && e.key === bare[1]) lastIdx = i;
+        }
+        if (lastIdx !== -1) {
+          diagnostics.push({ line: lastIdx + 1, key: bare[1], message: bare[2] });
+          continue;
+        }
+      }
+
       fileLevel.push({ message: line.trim() });
     }
 

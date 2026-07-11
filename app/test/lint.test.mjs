@@ -79,6 +79,19 @@ test("validator timeout surfaces as a file-level message", () => {
   }
 });
 
+// Quirk #3: a config WITH a theme line gets location-less errors from
+// ghostty ("key: message", no path:line). The anchor must be recovered from
+// the submitted text's last occurrence of that key.
+test("themed config still yields line-anchored diagnostics", () => {
+  if (!ghosttyBin()) return;
+  const r = lint("theme = Solarized Osaka Night\nfont-size = banana\n");
+  assert.equal(r.ok, false);
+  const d = r.diagnostics.find((x) => x.key === "font-size");
+  assert.ok(d, JSON.stringify(r));
+  assert.equal(d.line, 2);
+  assert.match(d.message, /invalid value/);
+});
+
 // Validator finding 2: an embedded newline in a quoted value makes ghostty
 // echo user text where a key belongs; the parsed key must never be spoofable.
 test("embedded newline in a quoted value cannot spoof a diagnostic key", () => {
