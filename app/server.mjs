@@ -31,6 +31,14 @@ import {
   diff as historyDiff,
   captureExternal,
 } from "./lib/history.mjs";
+import {
+  listProfiles,
+  readProfile,
+  saveProfile,
+  deleteProfile,
+  activateProfile,
+} from "./lib/profiles.mjs";
+import { readFileSync as readFile } from "node:fs";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(ROOT, "public");
@@ -91,6 +99,23 @@ const api = {
     return { mtimeMs: state.mtimeMs, exists: state.exists };
   },
   "GET /api/history": () => ({ entries: historyLog(configState().path) }),
+  "GET /api/profiles": () => ({ profiles: listProfiles() }),
+  // Save the current config (or another profile, for duplicate) under a name.
+  "POST /api/profiles/save": (body) =>
+    mapTypeErrors(() => {
+      const state = configState();
+      const content =
+        typeof body?.from === "string"
+          ? readProfile(body.from)
+          : state.exists
+            ? readFile(state.path, "utf8")
+            : "";
+      return saveProfile(body?.name, content);
+    }),
+  "POST /api/profiles/activate": (body) =>
+    mapTypeErrors(() => activateProfile(body?.name)),
+  "POST /api/profiles/delete": (body) =>
+    mapTypeErrors(() => deleteProfile(body?.name)),
   "GET /api/history/diff": (_body, url) => {
     const hash = url.searchParams.get("hash") || "";
     if (!/^[0-9a-f]{7,40}$/.test(hash)) {
@@ -184,6 +209,17 @@ const api = {
 function withStatus(err, code) {
   err.statusCode = code;
   return err;
+}
+
+// Library TypeErrors are caller mistakes (bad name, missing profile) — they
+// come back as 400s, not 500s.
+function mapTypeErrors(fn) {
+  try {
+    return fn();
+  } catch (err) {
+    if (err instanceof TypeError) throw withStatus(err, 400);
+    throw err;
+  }
 }
 
 const BODY_LIMIT = 1024 * 1024;
