@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import { env } from "./lib/env.mjs";
 import { configState } from "./lib/paths.mjs";
 import { ghosttyBin, versionLine } from "./lib/ghostty.mjs";
+import { lint } from "./lib/lint.mjs";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(ROOT, "public");
@@ -53,20 +54,56 @@ function apiAuthorized(req, url) {
   );
 }
 
+// Handlers are keyed by "METHOD /path". POST bodies arrive parsed; every
+// handler here is still read-only with respect to the live config — the
+// first real write endpoint lands with the history milestone.
 const api = {
-  "/api/meta": () => ({
+  "GET /api/meta": () => ({
     ghosttyVersion: versionLine(),
     binaryPath: ghosttyBin(),
     port: PORT,
   }),
-  "/api/config": () => {
+  "GET /api/config": () => {
     const state = configState();
     return {
       ...state,
       content: state.exists ? readFileSync(state.path, "utf8") : null,
     };
   },
+  "POST /api/lint": (body) =>
+    lint(typeof body?.content === "string" ? body.content : ""),
 };
+
+const BODY_LIMIT = 1024 * 1024;
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0;
+    let overflowed = false;
+    const chunks = [];
+    req.on("data", (chunk) => {
+      size += chunk.length;
+      // Keep draining on overflow instead of destroying the socket, so the
+      // client receives a clean 413 rather than a connection reset.
+      if (size > BODY_LIMIT) {
+        overflowed = true;
+        chunks.length = 0;
+        return;
+      }
+      if (!overflowed) chunks.push(chunk);
+    });
+    req.on("end", () => {
+      if (overflowed) {
+        const err = new Error("body too large (max 1 MiB)");
+        err.statusCode = 413;
+        reject(err);
+      } else {
+        resolve(Buffer.concat(chunks));
+      }
+    });
+    req.on("error", reject);
+  });
+}
 
 const server = createServer((req, res) => {
   const gateError = requestGates(req);
@@ -76,15 +113,27 @@ const server = createServer((req, res) => {
 
   if (url.pathname.startsWith("/api/")) {
     if (!apiAuthorized(req, url)) return deny(res, 401, "missing or bad token");
-    const handler = api[url.pathname];
-    if (!handler || req.method !== "GET") return deny(res, 404, "no such endpoint");
-    try {
-      const body = JSON.stringify(handler());
-      res.writeHead(200, { "content-type": "application/json" });
-      return res.end(body);
-    } catch (err) {
-      return deny(res, 500, err.message);
-    }
+    const handler = api[`${req.method} ${url.pathname}`];
+    if (!handler) return deny(res, 404, "no such endpoint");
+    void (async () => {
+      let parsedBody = null;
+      if (req.method !== "GET") {
+        try {
+          const raw = await readBody(req);
+          parsedBody = raw.length ? JSON.parse(raw.toString("utf8")) : null;
+        } catch (err) {
+          return deny(res, err.statusCode || 400, err.message);
+        }
+      }
+      try {
+        const body = JSON.stringify(handler(parsedBody));
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(body);
+      } catch (err) {
+        deny(res, 500, err.message);
+      }
+    })();
+    return;
   }
 
   // Static files. Path-traversal-safe: normalize, then require the resolved

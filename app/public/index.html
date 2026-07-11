@@ -42,10 +42,28 @@
     font-size: 12px; color: var(--dim); border: 1px solid var(--border);
     border-radius: 6px; padding: 2px 8px;
   }
-  #theme-toggle {
-    margin-left: auto; cursor: pointer; background: none; border: 1px solid var(--border);
+  #theme-toggle, #view-toggle {
+    cursor: pointer; background: none; border: 1px solid var(--border);
     color: var(--text); border-radius: 6px; padding: 4px 10px; font: inherit;
   }
+  #view-toggle { margin-left: auto; }
+  #editor-view[hidden], #viewer-view[hidden] { display: none; }
+  #editor {
+    width: 100%; min-height: 55vh; resize: vertical;
+    background: var(--surface); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; font: inherit; line-height: 1.5;
+  }
+  #lint-status { margin: 10px 0 4px; color: var(--dim); }
+  #lint-status.ok { color: var(--key); }
+  #lint-status.bad { color: #f7768e; }
+  #diagnostics { list-style: none; margin: 4px 0 0; padding: 0; }
+  #diagnostics li {
+    border: 1px solid var(--border); border-left: 3px solid #f7768e;
+    border-radius: 6px; padding: 6px 10px; margin-bottom: 6px;
+    background: var(--surface); cursor: pointer;
+  }
+  #diagnostics .loc { color: var(--accent); margin-right: 8px; }
+  #diagnostics .key { color: var(--key); margin-right: 8px; }
   main { padding: 20px; max-width: 900px; margin: 0 auto; }
   #config-path { color: var(--accent); word-break: break-all; }
   pre {
@@ -66,12 +84,20 @@
 <header>
   <h1>Ghostty Config Manager</h1>
   <span class="badge" id="version">…</span>
+  <button id="view-toggle" type="button">Edit</button>
   <button id="theme-toggle" type="button">light</button>
 </header>
 <main>
   <p>Live config: <span id="config-path">…</span></p>
   <p id="error" hidden></p>
-  <pre id="config"></pre>
+  <section id="viewer-view">
+    <pre id="config"></pre>
+  </section>
+  <section id="editor-view" hidden>
+    <textarea id="editor" spellcheck="false"></textarea>
+    <p id="lint-status">Start typing to lint.</p>
+    <ul id="diagnostics"></ul>
+  </section>
 </main>
 <script>
   const qs = new URLSearchParams(location.search);
@@ -94,10 +120,12 @@
     return res.json();
   }
 
+  const esc = (s) => String(s).replace(/[&<>"]/g,
+    (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
   // One config line -> highlighted HTML. Comments dim; key/value colored;
   // hex colors get an inline swatch.
   function renderLine(line) {
-    const esc = (s) => s.replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
     if (/^\s*#/.test(line)) return `<span class="c">${esc(line)}</span>`;
     const m = line.match(/^(\s*)([a-z0-9-]+)(\s*=\s*)(.*)$/i);
     if (!m) return esc(line);
@@ -106,6 +134,76 @@
       (hex) => `<span class="swatch" style="background:${hex}"></span>${hex}`);
     return `${pad}<span class="k">${esc(key)}</span>${esc(eq)}<span class="v">${withSwatches}</span>`;
   }
+
+  async function postApi(path, payload) {
+    const res = await fetch(path, {
+      method: "POST",
+      headers: { "x-app-token": token, "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`${path}: ${res.status} ${(await res.json()).error || ""}`);
+    return res.json();
+  }
+
+  // View switching: the viewer renders the file; the editor lints as you type.
+  const viewToggle = document.getElementById("view-toggle");
+  const viewerView = document.getElementById("viewer-view");
+  const editorView = document.getElementById("editor-view");
+  const editor = document.getElementById("editor");
+  viewToggle.addEventListener("click", () => {
+    const editing = editorView.hidden;
+    viewerView.hidden = editing;
+    editorView.hidden = !editing;
+    viewToggle.textContent = editing ? "View" : "Edit";
+    if (editing) { editor.focus(); runLint(); }
+  });
+
+  const lintStatus = document.getElementById("lint-status");
+  const diagnosticsList = document.getElementById("diagnostics");
+  let lintTimer = null;
+  let lintSeq = 0;
+
+  async function runLint() {
+    const seq = ++lintSeq;
+    lintStatus.className = "";
+    lintStatus.textContent = "Checking…";
+    try {
+      const r = await postApi("/api/lint", { content: editor.value });
+      if (seq !== lintSeq) return; // a newer edit superseded this result
+      // Messages embed user-typed config values — escape everything.
+      const items = [
+        ...r.diagnostics.map((d) =>
+          `<li data-line="${Number(d.line)}"><span class="loc">line ${Number(d.line)}</span>` +
+          `<span class="key">${esc(d.key)}</span>${esc(d.message)}</li>`),
+        ...r.fileLevel.map((f) => `<li><span class="loc">file</span>${esc(f.message)}</li>`),
+      ];
+      diagnosticsList.innerHTML = items.join("");
+      const n = r.diagnostics.length + r.fileLevel.length;
+      lintStatus.className = r.ok ? "ok" : "bad";
+      lintStatus.textContent = r.ok
+        ? "✓ Valid config (checked by your Ghostty binary)"
+        : `✕ ${n} problem${n === 1 ? "" : "s"}`;
+    } catch (err) {
+      if (seq !== lintSeq) return;
+      lintStatus.className = "bad";
+      lintStatus.textContent = `Lint failed: ${err.message}`;
+    }
+  }
+
+  editor.addEventListener("input", () => {
+    clearTimeout(lintTimer);
+    lintTimer = setTimeout(runLint, 400);
+  });
+
+  // Clicking a line-anchored diagnostic moves the cursor to that line.
+  diagnosticsList.addEventListener("click", (e) => {
+    const line = e.target.closest("li")?.dataset.line;
+    if (!line) return;
+    const lines = editor.value.split("\n");
+    const pos = lines.slice(0, line - 1).join("\n").length + (line > 1 ? 1 : 0);
+    editor.focus();
+    editor.setSelectionRange(pos, pos + (lines[line - 1] || "").length);
+  });
 
   (async () => {
     try {
@@ -116,6 +214,7 @@
         cfg.path + (cfg.exists ? "" : "  (does not exist yet)");
       document.getElementById("config").innerHTML =
         (cfg.content || "").split("\n").map(renderLine).join("\n");
+      editor.value = cfg.content || "";
     } catch (err) {
       const el = document.getElementById("error");
       el.hidden = false;
