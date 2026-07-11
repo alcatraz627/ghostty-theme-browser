@@ -90,18 +90,36 @@ export function lint(text, { bin = ghosttyBin(), timeoutMs = 10_000 } = {}) {
 
       // Quirk #3 (verified on 1.3.1): when the config contains a `theme =`
       // line, validation errors are reported WITHOUT path:line location, as
-      // bare "key: message". Recover the anchor from the submitted text —
-      // ghostty resolves repeated keys last-wins, so the last occurrence of
-      // the key is the line that owns the error.
+      // bare "key: message". Recover an anchor from the submitted text only
+      // when it's unambiguous: the key occurs on exactly one line, or the
+      // message quotes a value that exactly one of the key's lines carries.
+      // Ghostty validates every line (not just the last-wins effective one),
+      // so guessing beyond that would point errors at valid lines.
       const bare = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
       if (bare) {
-        let lastIdx = -1;
+        const occ = [];
         for (let i = 0; i < submittedEntries.length; i++) {
           const e = submittedEntries[i];
-          if (e.kind === "pair" && e.key === bare[1]) lastIdx = i;
+          if (e.kind === "pair" && e.key === bare[1]) occ.push(i);
         }
-        if (lastIdx !== -1) {
-          diagnostics.push({ line: lastIdx + 1, key: bare[1], message: bare[2] });
+        let anchor = occ.length === 1 ? occ[0] : -1;
+        if (anchor === -1 && occ.length > 1) {
+          const quoted = bare[2].match(/"([^"]*)"/);
+          if (quoted) {
+            const matches = occ.filter(
+              (i) => submittedEntries[i].value === quoted[1]
+            );
+            if (matches.length === 1) anchor = matches[0];
+          }
+        }
+        if (anchor !== -1) {
+          diagnostics.push({ line: anchor + 1, key: bare[1], message: bare[2] });
+          continue;
+        }
+        if (occ.length > 0) {
+          // Key exists but the owning line is ambiguous — report without a
+          // line rather than point at a possibly-valid one.
+          fileLevel.push({ key: bare[1], message: `${bare[1]}: ${bare[2]}` });
           continue;
         }
       }

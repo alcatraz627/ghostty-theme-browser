@@ -72,3 +72,31 @@ test("setListInText appends at end when the key never existed", () => {
   const out = setListInText("a = 1\n", "keybind", ["ctrl+a=select_all"]);
   assert.equal(out, "a = 1\nkeybind = ctrl+a=select_all\n");
 });
+
+// Gate blocker 1: CRLF files must edit in place, not append orphan duplicates.
+const CRLF = "# note\r\nfont-size = 14\r\nwindow-padding-x = 4\r\n";
+
+test("CRLF: setKeyInText edits the existing line in place, keeping CRLF", () => {
+  const out = setKeyInText(CRLF, "font-size", "20");
+  assert.equal(out, "# note\r\nfont-size = 20\r\nwindow-padding-x = 4\r\n");
+});
+
+test("CRLF: unsetKeyInText actually removes the line", () => {
+  const out = unsetKeyInText(CRLF, "font-size");
+  assert.ok(!out.includes("font-size"));
+  assert.ok(out.includes("# note\r\n"));
+});
+
+test("CRLF: appended new keys match the file's line-ending style", () => {
+  const out = setKeyInText(CRLF, "cursor-style", "bar");
+  assert.match(out, /cursor-style = bar\r\n/);
+});
+
+// Gate major 1 defense-in-depth: the library itself refuses multi-line values
+// and malformed keys, protecting future direct callers (history, profiles).
+test("library rejects newline-smuggling values and bad keys", () => {
+  assert.throws(() => setKeyInText("a = 1\n", "font-size", "14\nkeybind = x=y"), TypeError);
+  assert.throws(() => setListInText("a = 1\n", "palette", ["0=#fff\n1=#000"]), TypeError);
+  assert.throws(() => setKeyInText("a = 1\n", "bad$key", "x"), TypeError);
+  assert.throws(() => unsetKeyInText("a = 1\n", "bad key"), TypeError);
+});

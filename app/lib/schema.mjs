@@ -83,8 +83,10 @@ function inferType(entry) {
   const def = entry.default;
   if (def === "true" || def === "false") return "boolean";
   if (def !== "" && def !== null && !Number.isNaN(Number(def))) return "number";
-  if (/^#?[0-9a-fA-F]{6}$/.test(def) || /-color$/.test(entry.key)) return "color";
+  // Enum beats color: several *-color keys take named values (background,
+  // extend, X11 names) where a doc-bulleted value list is the real contract.
   if (entry.enumValues) return "enum";
+  if (/^#?[0-9a-fA-F]{6}$/.test(def) || /-color$/.test(entry.key)) return "color";
   return "string";
 }
 

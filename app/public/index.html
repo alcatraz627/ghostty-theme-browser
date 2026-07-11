@@ -300,8 +300,15 @@
         return `<select ${k}><option value="" ${val === "" ? "selected" : ""}>(default)</option>${opts.join("")}</select>`;
       }
       case "color": {
-        const hex = /^#?[0-9a-fA-F]{6}$/.test(val)
-          ? (val.startsWith("#") ? val : "#" + val) : "#000000";
+        // Ghostty color values also accept X11 names, cell-* specials, and
+        // comma lists. The native picker can only faithfully represent hex,
+        // so for anything else render text-only — a #000000 fallback swatch
+        // silently destroys the real value on first confirm.
+        const isHex = /^#?[0-9a-fA-F]{6}$/.test(val);
+        if (val !== "" && !isHex) {
+          return `<input type="text" ${k} value="${esc(val)}">`;
+        }
+        const hex = isHex ? (val.startsWith("#") ? val : "#" + val) : "#000000";
         return `<span class="color-wrap"><input type="color" ${k} data-role="swatch" value="${esc(hex)}"><input type="text" ${k} value="${esc(val)}"></span>`;
       }
       default:

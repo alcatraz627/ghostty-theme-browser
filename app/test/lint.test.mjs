@@ -92,6 +92,27 @@ test("themed config still yields line-anchored diagnostics", () => {
   assert.match(d.message, /invalid value/);
 });
 
+// Gate blocker 2: when a key appears on multiple lines and only one is
+// invalid, the anchor must land on the INVALID line (matched by the quoted
+// value in the message), never on a valid one via last-wins guessing.
+test("duplicate key with one bad value anchors to the bad line", () => {
+  if (!ghosttyBin()) return;
+  const r = lint("theme = Solarized Osaka Night\nfont-size = banana\nfont-size = 12\n");
+  const d = r.diagnostics.find((x) => x.key === "font-size");
+  assert.ok(d, JSON.stringify(r));
+  assert.equal(d.line, 2, JSON.stringify(r.diagnostics));
+});
+
+test("ambiguous duplicate errors degrade to file-level, never a wrong anchor", () => {
+  if (!ghosttyBin()) return;
+  // Both lines invalid with the SAME value: no unique quoted-value match, so
+  // no line anchor may be claimed.
+  const r = lint("theme = Solarized Osaka Night\nfont-size = banana\nfont-size = banana\n");
+  const anchored = r.diagnostics.filter((x) => x.key === "font-size");
+  assert.equal(anchored.length, 0, JSON.stringify(r.diagnostics));
+  assert.ok(r.fileLevel.some((f) => f.key === "font-size"), JSON.stringify(r.fileLevel));
+});
+
 // Validator finding 2: an embedded newline in a quoted value makes ghostty
 // echo user text where a key belongs; the parsed key must never be spoofable.
 test("embedded newline in a quoted value cannot spoof a diagnostic key", () => {

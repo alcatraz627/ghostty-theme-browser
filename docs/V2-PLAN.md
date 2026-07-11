@@ -243,6 +243,17 @@ days, schema heuristics + widgets); M4 and M5 half a day each; M6 one day. Rough
   single-user; revisit before M4 adds synchronous git work to the same path. Two
   verified 1.3.1 quirks now encoded in lint.mjs: reported paths are
   symlink-resolved, and a 0-byte config file exits 1 with no output.
+- **M3** shipped 2026-07-11 (v2/milestones): binary-derived schema (200 options),
+  form view with typed widgets, single-key write path through the full safety
+  chain. Quirk #3 discovered and handled: a config containing `theme =` gets
+  location-less validation errors, so anchors are recovered from the submitted
+  text (unambiguously or not at all). Adversarial gate verdict ISSUES-FOUND
+  (2 blockers, 3 majors) — all fixed same-day: CRLF configs edit in place,
+  anchor recovery is evidence-based, values are single-line enforced at API and
+  library layers, enum-beats-color inference plus a hex-only swatch guard, and
+  writeConfig returns structured failures with namespaced, rotated backups
+  (50 kept). Report: `.claude/output/20260711-m3-validation/report.md`. Known
+  minor: comments interleaved inside a list block move below it on list apply.
 
 ## 6. Risks
 

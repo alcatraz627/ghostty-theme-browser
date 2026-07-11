@@ -89,17 +89,28 @@ const api = {
     if (typeof key !== "string" || !/^[A-Za-z0-9_-]+$/.test(key)) {
       throw withStatus(new Error("bad key"), 400);
     }
+    // Values must be single-line: an embedded newline would smuggle extra
+    // directives through an endpoint whose contract is "touch this one key".
+    const singleLine = (v) => typeof v === "string" && !/[\r\n]/.test(v);
     const before = currentText();
     let after;
     if (body.unset === true) {
       after = unsetKeyInText(before, key);
     } else if (Array.isArray(body.values)) {
-      if (!body.values.every((v) => typeof v === "string")) {
-        throw withStatus(new Error("values must be strings"), 400);
+      if (!body.values.every(singleLine)) {
+        throw withStatus(new Error("values must be single-line strings"), 400);
       }
-      after = setListInText(before, key, body.values);
+      after = body.values.length
+        ? setListInText(before, key, body.values)
+        : unsetKeyInText(before, key);
     } else if (typeof body.value === "string") {
-      after = setKeyInText(before, key, body.value);
+      if (!singleLine(body.value)) {
+        throw withStatus(new Error("value must be a single-line string"), 400);
+      }
+      // Empty value means "back to default" — same contract the UI uses.
+      after = body.value === ""
+        ? unsetKeyInText(before, key)
+        : setKeyInText(before, key, body.value);
     } else {
       throw withStatus(new Error("provide value, values, or unset"), 400);
     }
