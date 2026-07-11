@@ -9,3 +9,5 @@ _checkpoint.claude.md
 _*.claude.md
 .claude/skills/
 .claude/session-notes/
+.claude/wal.jsonl
+.claude/wal.jsonl.lock
