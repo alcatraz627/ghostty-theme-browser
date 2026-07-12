@@ -8,6 +8,7 @@
   :root {
     --bg: #16161e;
     --surface: #1e1e2a;
+    --surface-2: #262637;
     --text: #c8ccd8;
     --dim: #7a7f92;
     --border: #2c2f3e;
@@ -15,10 +16,20 @@
     --comment: #565c74;
     --key: #9ece6a;
     --value: #e0af68;
+    --input-bg: #ffffff;
+    --input-text: #1a1b26;
+    --input-border: #a9adc0;
+    --radius-s: 6px;   /* controls */
+    --radius-m: 8px;   /* cards, rows, banners */
+    --radius-l: 10px;  /* terminal boxes */
+    --fs-xs: 11px;     /* section labels, badges-in-rows */
+    --fs-sm: 12px;     /* meta, hints, secondary buttons */
+    --fs-base: 14px;   /* body */
   }
   :root[data-theme="light"] {
     --bg: #f4f4f6;
     --surface: #ffffff;
+    --surface-2: #ececf1;
     --text: #2a2d3a;
     --dim: #6b7085;
     --border: #d9dbe3;
@@ -26,11 +37,32 @@
     --comment: #9a9eb0;
     --key: #4d7a1e;
     --value: #a05f0a;
+    --input-bg: #ffffff;
+    --input-text: #1a1b26;
+    --input-border: #b9bdcc;
   }
   * { box-sizing: border-box; }
+  :root { accent-color: var(--accent); scrollbar-color: var(--border) var(--bg); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
   body {
     margin: 0; background: var(--bg); color: var(--text);
-    font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+    font: var(--fs-base)/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  /* Every small input field is a bright well on the dark chrome — one shared
+     rule so fields can never drift apart. The raw config editor is exempt on
+     purpose: it is a terminal-styled document, not a field. */
+  input[type="text"], input[type="search"], input[type="number"], select {
+    background: var(--input-bg); color: var(--input-text);
+    border: 1px solid var(--input-border); border-radius: var(--radius-s);
+    font: inherit; padding: 5px 8px;
+  }
+  input::placeholder { color: #8a8fa3; }
+  /* One label voice for every section heading across views. */
+  .section-label, .tp-label, .cat-title, .knob label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
   header {
     display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
@@ -39,65 +71,66 @@
   }
   header h1 { font-size: 15px; margin: 0; font-weight: 600; }
   .badge {
-    font-size: 12px; color: var(--dim); border: 1px solid var(--border);
-    border-radius: 6px; padding: 2px 8px;
+    font-size: var(--fs-sm); color: var(--dim); border: 1px solid var(--border);
+    border-radius: var(--radius-s); padding: 2px 8px;
   }
   #theme-toggle, .seg button {
     cursor: pointer; background: none; border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; padding: 4px 10px; font: inherit;
+    color: var(--text); border-radius: var(--radius-s); padding: 4px 10px; font: inherit;
   }
   .seg { margin-left: auto; display: flex; gap: 0; }
   .seg button { border-radius: 0; border-right-width: 0; }
-  .seg button:first-child { border-radius: 6px 0 0 6px; }
-  .seg button:last-child { border-radius: 0 6px 6px 0; border-right-width: 1px; }
+  .seg button:first-child { border-radius: var(--radius-s) 0 0 var(--radius-s); }
+  .seg button:last-child { border-radius: 0 var(--radius-s) var(--radius-s) 0; border-right-width: 1px; }
   .seg button.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
   #editor-actions { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
   #editor-actions button, .row button, #form-view .apply {
     cursor: pointer; background: none; border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; padding: 4px 12px; font: inherit;
+    color: var(--text); border-radius: var(--radius-s); padding: 4px 12px; font: inherit;
   }
   #save-btn { border-color: var(--accent); color: var(--accent); }
   #banner {
-    margin: 10px 0; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);
+    margin: 10px 0; padding: 8px 12px; border-radius: var(--radius-s); border: 1px solid var(--border);
     background: var(--surface);
   }
   #banner.ok { border-color: var(--key); }
   #banner.bad { border-color: #f7768e; }
   #form-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
   #form-search {
-    flex: 1; background: var(--surface); color: var(--text); font: inherit;
-    border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px;
-  }
-  .cat-title { margin: 18px 0 8px; font-size: 13px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    flex: 1; font: inherit;
+    }
+  .cat-title { margin: 18px 0 8px; }
   .row {
     display: grid; grid-template-columns: minmax(220px, 1fr) minmax(200px, 1.4fr) auto;
     gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--border);
-    border-radius: 8px; margin-bottom: 6px; background: var(--surface);
+    border-radius: var(--radius-m); margin-bottom: 6px; background: var(--surface);
   }
   .row.modified { border-left: 3px solid var(--accent); }
   .row .k { color: var(--key); word-break: break-all; }
-  .row .d { display: block; color: var(--dim); font-size: 12px; margin-top: 2px; }
-  .row .platform { color: var(--value); font-size: 11px; margin-left: 6px; }
+  .row .d { display: block; color: var(--dim); font-size: var(--fs-sm); margin-top: 2px; }
+  .row .platform { color: var(--value); font-size: var(--fs-xs); margin-left: 6px; }
   .row input[type="text"], .row input[type="number"], .row select, .row textarea {
-    width: 100%; background: var(--bg); color: var(--text); font: inherit;
-    border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px;
-  }
-  .row input[type="color"] { width: 42px; height: 30px; padding: 1px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
+    width: 100%; font: inherit;
+    }
+  .row textarea { background: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border); border-radius: var(--radius-s); padding: 5px 8px; font: inherit; width: 100%; }
+  .row input[type="color"] { width: 42px; height: 30px; padding: 1px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-s); }
   .color-wrap { display: flex; gap: 8px; align-items: center; }
   .color-wrap input[type="text"] { flex: 1; }
+  /* Pending = uncommitted state — warn amber, matching the override callout,
+     so "dirty" reads as one color everywhere. */
   #apply-bar {
     display: flex; gap: 10px; align-items: center; margin-bottom: 14px;
-    border: 1px solid var(--accent); border-radius: 8px; background: var(--surface);
+    border: 1px solid var(--value); border-radius: var(--radius-m); background: var(--surface);
     padding: 10px 14px;
   }
   #apply-msg { flex: 1; }
   #apply-btn {
     cursor: pointer; background: var(--accent); color: var(--bg);
-    border: 1px solid var(--accent); border-radius: 6px; padding: 5px 16px; font: inherit;
+    border: 1px solid var(--accent); border-radius: var(--radius-s); padding: 5px 16px; font: inherit;
   }
   #discard-btn {
     cursor: pointer; background: none; border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; padding: 5px 12px; font: inherit;
+    color: var(--text); border-radius: var(--radius-s); padding: 5px 12px; font: inherit;
   }
   .theme-row.pending { border-left: 3px dashed var(--accent); background: var(--bg); }
   #customize-grid {
@@ -107,11 +140,10 @@
   @media (max-width: 800px) { #customize-grid { grid-template-columns: 1fr; } }
   #theme-panel { display: flex; flex-direction: column; gap: 8px; }
   #theme-search {
-    background: var(--surface); color: var(--text); font: inherit;
-    border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px;
-  }
+    font: inherit;
+    }
   #theme-list {
-    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius-m); background: var(--surface);
     max-height: 70vh; overflow-y: auto;
   }
   .theme-row {
@@ -120,76 +152,82 @@
   .theme-row:hover { background: var(--bg); }
   .theme-row.current { border-left: 3px solid var(--accent); background: var(--bg); }
   .theme-row .src { margin-left: auto; font-size: 10px; color: var(--dim); }
-  #terminal-preview {
-    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
-    margin-bottom: 14px;
+  #previews {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;
   }
-  #terminal-preview .tp-bar {
+  @media (max-width: 1000px) { #previews { grid-template-columns: 1fr; } }
+  .tp-label { margin-bottom: 5px; }
+  .terminal-box {
+    border: 1px solid var(--border); border-radius: var(--radius-l); overflow: hidden;
+  }
+  .terminal-box .tp-bar {
     display: flex; gap: 6px; padding: 8px 12px; background: var(--surface);
     border-bottom: 1px solid var(--border);
   }
-  #terminal-preview .tp-dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.7; }
-  #terminal-preview .tp-body { padding: 0; line-height: 1.55; }
-  #terminal-preview .tp-line { white-space: pre-wrap; word-break: break-all; }
-  #terminal-preview .tp-cursor-block { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: text-bottom; }
-  #terminal-preview .tp-cursor-bar { display: inline-block; width: 2px; height: 1.1em; vertical-align: text-bottom; }
-  #terminal-preview .tp-cursor-underline { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: text-bottom; }
-  #terminal-preview .tp-palette { display: flex; margin-top: 10px; }
-  #terminal-preview .tp-palette span { flex: 1; height: 14px; }
-  #knobs { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
-  .knob {
-    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
-    padding: 8px 10px;
+  .terminal-box .tp-dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.7; }
+  .terminal-box .tp-body { padding: 0; line-height: 1.55; }
+  .terminal-box .tp-line { white-space: pre-wrap; word-break: break-all; }
+  .terminal-box .tp-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: normal; }
+  .terminal-box .tp-cursor-block { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: text-bottom; }
+  .terminal-box .tp-cursor-bar { display: inline-block; width: 2px; height: 1.1em; vertical-align: text-bottom; }
+  .terminal-box .tp-cursor-underline { display: inline-block; width: 0.6em; height: 1.1em; vertical-align: text-bottom; }
+  .terminal-box .tp-palette { display: flex; margin-top: 10px; }
+  .terminal-box .tp-palette span { flex: 1; height: 14px; cursor: help; }
+  .terminal-box [title] { cursor: help; }
+  #override-note {
+    border: 1px solid var(--value); border-radius: var(--radius-m); background: var(--surface);
+    padding: 8px 12px; margin-bottom: 12px; font-size: 13px;
   }
-  .knob label { display: block; color: var(--dim); font-size: 11px; margin-bottom: 4px; }
+  #override-note label { display: flex; gap: 8px; align-items: baseline; cursor: pointer; }
+  #knobs { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px 14px; }
+  .knob { padding: 4px 0; }
+  .knob label { display: block; color: var(--dim); font-size: var(--fs-xs); margin-bottom: 3px; }
   .knob input, .knob select {
-    width: 100%; background: var(--bg); color: var(--text); font: inherit;
-    border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px;
-  }
-  #history-hint { color: var(--dim); font-size: 12px; }
+    width: 100%; font: inherit;
+    }
+  #history-hint { color: var(--dim); font-size: var(--fs-sm); }
   .snap {
-    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius-m); background: var(--surface);
     padding: 8px 12px; margin-bottom: 8px;
   }
   .snap-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
-  .snap-time { color: var(--dim); font-size: 12px; }
-  .snap-src { font-size: 11px; border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: var(--dim); }
+  .snap-time { color: var(--dim); font-size: var(--fs-sm); }
+  .snap-src { font-size: var(--fs-xs); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: var(--dim); }
   .snap-src.external { color: var(--value); border-color: var(--value); }
   .snap-msg { flex: 1; }
   .snap button {
     cursor: pointer; background: none; border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; padding: 2px 10px; font: inherit; font-size: 12px;
+    color: var(--text); border-radius: var(--radius-s); padding: 2px 10px; font: inherit; font-size: var(--fs-sm);
   }
-  .snap pre { margin: 8px 0 2px; font-size: 12px; max-height: 300px; overflow: auto; }
+  .snap pre { margin: 8px 0 2px; font-size: var(--fs-sm); max-height: 300px; overflow: auto; }
   .snap .add { color: var(--key); }
   .snap .del { color: #f7768e; }
   #profiles-toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
   #profile-name {
-    flex: 1; background: var(--surface); color: var(--text); font: inherit;
-    border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px;
-  }
+    flex: 1; font: inherit;
+    }
   #profile-save {
     cursor: pointer; background: none; border: 1px solid var(--accent);
-    color: var(--accent); border-radius: 6px; padding: 4px 12px; font: inherit;
+    color: var(--accent); border-radius: var(--radius-s); padding: 4px 12px; font: inherit;
   }
   .profile {
     display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;
-    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius-m); background: var(--surface);
     padding: 10px 12px; margin-bottom: 8px;
   }
   .profile.active { border-left: 3px solid var(--key); }
   .profile .name { font-weight: 600; }
-  .profile .meta { color: var(--dim); font-size: 12px; flex: 1; }
-  .profile .badge-active { color: var(--key); font-size: 12px; }
+  .profile .meta { color: var(--dim); font-size: var(--fs-sm); flex: 1; }
+  .profile .badge-active { color: var(--key); font-size: var(--fs-sm); }
   .profile button {
     cursor: pointer; background: none; border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; padding: 2px 10px; font: inherit; font-size: 12px;
+    color: var(--text); border-radius: var(--radius-s); padding: 2px 10px; font: inherit; font-size: var(--fs-sm);
   }
   #editor-view[hidden], #viewer-view[hidden] { display: none; }
   #editor {
     width: 100%; min-height: 55vh; resize: vertical;
     background: var(--surface); color: var(--text); border: 1px solid var(--border);
-    border-radius: 8px; padding: 16px; font: inherit; line-height: 1.5;
+    border-radius: var(--radius-m); padding: 16px; font: inherit; line-height: 1.5;
   }
   #lint-status { margin: 10px 0 4px; color: var(--dim); }
   #lint-status.ok { color: var(--key); }
@@ -197,16 +235,17 @@
   #diagnostics { list-style: none; margin: 4px 0 0; padding: 0; }
   #diagnostics li {
     border: 1px solid var(--border); border-left: 3px solid #f7768e;
-    border-radius: 6px; padding: 6px 10px; margin-bottom: 6px;
+    border-radius: var(--radius-s); padding: 6px 10px; margin-bottom: 6px;
     background: var(--surface); cursor: pointer;
   }
   #diagnostics .loc { color: var(--accent); margin-right: 8px; }
   #diagnostics .key { color: var(--key); margin-right: 8px; }
-  main { padding: 20px; max-width: 900px; margin: 0 auto; }
-  #config-path { color: var(--accent); word-break: break-all; }
+  main { padding: 14px 20px 20px; max-width: 1080px; margin: 0 auto; }
+  main > p:first-of-type { margin-top: 4px; }
+  #config-path { color: var(--dim); word-break: break-all; }
   pre {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 16px; overflow-x: auto; white-space: pre-wrap;
+    border-radius: var(--radius-m); padding: 16px; overflow-x: auto; white-space: pre-wrap;
   }
   .c { color: var(--comment); }
   .k { color: var(--key); }
@@ -230,7 +269,7 @@
     <button type="button" data-view="history">History</button>
     <button type="button" data-view="profiles">Profiles</button>
   </nav>
-  <button id="theme-toggle" type="button">light</button>
+  <button id="theme-toggle" type="button">Light</button>
 </header>
 <main>
   <p>Live config: <span id="config-path">…</span></p>
@@ -248,8 +287,22 @@
         <div id="theme-list"><p>Loading themes…</p></div>
       </div>
       <div id="preview-panel">
-        <div id="terminal-preview"></div>
+        <div id="previews">
+          <div class="tp-wrap">
+            <div class="tp-label" id="preview-label">Preview</div>
+            <div id="terminal-preview" class="terminal-box"></div>
+          </div>
+          <div class="tp-wrap">
+            <div class="tp-label">Current (on disk)</div>
+            <div id="terminal-real" class="terminal-box"></div>
+          </div>
+        </div>
+        <div id="override-note" hidden>
+          <label><input type="checkbox" id="clear-overrides">
+            <span id="override-note-text"></span></label>
+        </div>
         <div id="knobs"></div>
+        <datalist id="font-families"></datalist>
       </div>
     </div>
   </section>
@@ -292,7 +345,7 @@
   const toggle = document.getElementById("theme-toggle");
   function setTheme(t) {
     root.dataset.theme = t;
-    toggle.textContent = t === "light" ? "dark" : "light";
+    toggle.textContent = t === "light" ? "Dark" : "Light";
     localStorage.setItem("theme", t);
   }
   setTheme(localStorage.getItem("theme") || "dark");
@@ -397,6 +450,17 @@
   // preview; NOTHING is written until the Apply button sends the whole batch.
   const pending = new Map(); // key → {value} | {values} | {unset:true}
 
+  // Color keys whose presence in the config masks a theme's own colors.
+  const OVERRIDE_KEYS = ["background", "foreground", "cursor-color", "cursor-text",
+    "selection-background", "selection-foreground", "palette"];
+
+  function stagedOverrideClears() {
+    if (!document.getElementById("clear-overrides").checked) return [];
+    const disk = valuesFromContent();
+    return OVERRIDE_KEYS.filter((k) => (disk[k] || []).length)
+      .map((key) => ({ key, unset: true }));
+  }
+
   function pendingOverlayValues() {
     const values = valuesFromContent();
     for (const [key, ch] of pending) {
@@ -414,20 +478,29 @@
 
   function renderApplyBar() {
     const bar = document.getElementById("apply-bar");
-    bar.hidden = pending.size === 0;
-    if (pending.size) {
+    const clears = stagedOverrideClears();
+    const total = pending.size + clears.length;
+    bar.hidden = total === 0;
+    if (total) {
+      const parts = [...pending.keys()];
+      if (clears.length) parts.push(`clear ${clears.length} override${clears.length === 1 ? "" : "s"}`);
       document.getElementById("apply-msg").textContent =
-        `Previewing ${pending.size} change${pending.size === 1 ? "" : "s"} (${[...pending.keys()].join(", ")}) — nothing written yet.`;
+        `Previewing ${total} change${total === 1 ? "" : "s"} (${parts.join(", ")}) — nothing written yet.`;
     }
   }
 
   document.getElementById("apply-btn").addEventListener("click", async () => {
-    if (!pending.size) return;
-    const changes = [...pending.entries()].map(([key, ch]) => ({ key, ...ch }));
+    // Clears go first so a pending explicit color still wins over its unset.
+    const changes = [
+      ...stagedOverrideClears(),
+      ...[...pending.entries()].map(([key, ch]) => ({ key, ...ch })),
+    ];
+    if (!changes.length) return;
     try {
       const r = await postApi("/api/config/apply", { changes });
       if (r.ok) {
         pending.clear();
+        document.getElementById("clear-overrides").checked = false;
         setContent(r.content);
         renderForm();
         renderCustomize();
@@ -457,7 +530,15 @@
 
   async function ensureCustomize() {
     try {
-      if (!themesList) themesList = (await api("/api/themes")).themes;
+      if (!themesList) {
+        themesList = (await api("/api/themes")).themes;
+        // Font picker options come from ghostty's own discovery, so every
+        // suggestion is a family it can really load.
+        api("/api/fonts").then(({ families }) => {
+          document.getElementById("font-families").innerHTML =
+            families.map((f) => `<option value="${esc(f)}">`).join("");
+        }).catch(() => {});
+      }
       await ensureSchema();
       renderCustomize();
     } catch (err) {
@@ -497,6 +578,67 @@
 
   const cssColor = (c) => (/^[0-9a-fA-F]{6}$/.test(c) ? "#" + c : c);
 
+  // Overlay explicit color keys from a values-map onto a theme's color map —
+  // the same precedence ghostty applies (theme first, explicit keys win).
+  function applyExplicitColors(eff, vals) {
+    for (const key of ["background", "foreground", "cursor-color", "cursor-text",
+                       "selection-background", "selection-foreground"]) {
+      const v = (vals[key] || []).at(-1);
+      if (v) eff[key] = v;
+    }
+    for (const entry of vals["palette"] || []) {
+      const m = entry.match(/^(\d{1,3})\s*=\s*(.+)$/);
+      if (m && Number(m[1]) <= 255) eff[`palette.${m[1]}`] = m[2].trim();
+    }
+  }
+
+  // One fake terminal, tooltips included: every colored element carries
+  // `key = value` for THIS panel's effective values.
+  function buildTerminalHtml(eff, m, header) {
+    const val = (k, fb) => eff[k] ?? fb;
+    const palV = (n, fb) => val(`palette.${n}`, fb);
+    const pal = (n, fb) => cssColor(palV(n, fb));
+    const palT = (n, fb) => `title="palette ${n} = ${esc(palV(n, fb))}"`;
+    const bg = cssColor(val("background", "#1a1b26"));
+    const fg = cssColor(val("foreground", "#c0caf5"));
+    const cursorColor = cssColor(val("cursor-color", val("foreground", "#c0caf5")));
+    const font = `${m.fontChain.at(-1) || "monospace"}, monospace`;
+    const cursorTitle = `title="cursor-style = ${esc(m.cursorStyle)} · cursor-color = ${esc(val("cursor-color", "(foreground)"))}"`;
+    const cursor = m.cursorStyle === "bar"
+      ? `<span class="tp-cursor-bar" ${cursorTitle} style="background:${esc(cursorColor)}"></span>`
+      : m.cursorStyle === "underline"
+        ? `<span class="tp-cursor-underline" ${cursorTitle} style="border-bottom:2px solid ${esc(cursorColor)}"></span>`
+        : `<span class="tp-cursor-block" ${cursorTitle} style="${m.cursorStyle === "block_hollow"
+            ? `border:1px solid ${esc(cursorColor)}`
+            : `background:${esc(cursorColor)}`}"></span>`;
+    const bodyTitle = `title="background = ${esc(val("background", "(default)"))} · ` +
+      `foreground = ${esc(val("foreground", "(default)"))} · ` +
+      `font-family = ${esc(m.fontChain.join(", ") || "(default)")} · font-size = ${m.fontSize} · ` +
+      `padding = ${m.padX}×${m.padY} · background-opacity = ${m.opacity}"`;
+    return (
+      `<div class="tp-bar">` +
+        `<span class="tp-dot" ${palT(1, "#f7768e")} style="background:${pal(1, "#f7768e")}"></span>` +
+        `<span class="tp-dot" ${palT(3, "#e0af68")} style="background:${pal(3, "#e0af68")}"></span>` +
+        `<span class="tp-dot" ${palT(2, "#9ece6a")} style="background:${pal(2, "#9ece6a")}"></span>` +
+      `</div>` +
+      `<div class="tp-body" ${bodyTitle} style="background:${esc(bg)};color:${esc(fg)};opacity:${m.opacity};` +
+        `font-family:${esc(font)};font-size:${m.fontSize}px;padding:${m.padY}px ${m.padX}px;">` +
+        `<div class="tp-line tp-title" ${palT(8, "#565f89")} style="color:${pal(8, "#565f89")}">${esc(header)}</div>` +
+        `<div class="tp-line" title="foreground = ${esc(val("foreground", "(default)"))}">` +
+          `<span ${palT(4, "#7aa2f7")} style="color:${pal(4, "#7aa2f7")}">const</span> ` +
+          `greet = (<span ${palT(3, "#e0af68")} style="color:${pal(3, "#e0af68")}">name</span>) => ` +
+          `<span ${palT(2, "#9ece6a")} style="color:${pal(2, "#9ece6a")}">\`hello \${name}\`</span>;</div>` +
+        `<div class="tp-line" ${palT(1, "#f7768e")} style="color:${pal(1, "#f7768e")}">✗ error: connection refused (port 6202)</div>` +
+        `<div class="tp-line" ${palT(2, "#9ece6a")} style="color:${pal(2, "#9ece6a")}">✓ build finished in 1.2s</div>` +
+        `<div class="tp-line"><span ${palT(5, "#bb9af7")} style="color:${pal(5, "#bb9af7")}">~/dev</span> $ ${cursor}</div>` +
+        `<div class="tp-palette">` +
+          Array.from({ length: 16 }, (_, i) =>
+            `<span ${palT(i, "#000000")} style="background:${pal(i, "#000000")}"></span>`).join("") +
+        `</div>` +
+      `</div>`
+    );
+  }
+
   async function renderCustomize() {
     if (!themesList) return;
     // Preview renders from disk values + staged pending changes; nothing here
@@ -518,72 +660,72 @@
     themeListEl.querySelector(".theme-row.pending, .theme-row.current")
       ?.scrollIntoView({ block: "nearest" });
 
-    // Effective colors: the theme loads first, explicit config keys win.
-    const eff = { ...(await themeColorsFor(previewed)) };
-    for (const key of ["background", "foreground", "cursor-color", "cursor-text",
-                       "selection-background", "selection-foreground"]) {
-      const v = (values[key] || []).at(-1);
-      if (v) eff[key] = v;
-    }
-    for (const pal of values["palette"] || []) {
-      const m = pal.match(/^(\d{1,3})\s*=\s*(.+)$/);
-      if (m) eff[`palette.${m[1]}`] = m[2].trim();
-    }
-    const pal = (n, fb) => cssColor(eff[`palette.${n}`] || fb);
-    const bg = cssColor(eff["background"] || "#1a1b26");
-    const fg = cssColor(eff["foreground"] || "#c0caf5");
-    const cursorColor = cssColor(eff["cursor-color"] || fg);
-    const cursorStyle = knobValue(values, "cursor-style") || "block";
-    // Number() with a fallback that respects explicit zeros — `0 || d`
-    // silently substitutes the default, which lied about opacity = 0.
     const numOr = (v, d) => (Number.isFinite(Number(v)) && v !== "" ? Number(v) : d);
-    const fontChain = values["font-family"] || [];
-    const font = `${fontChain.at(-1) || "monospace"}, monospace`;
-    const fontSize = numOr(knobValue(values, "font-size"), 13) || 13;
-    const padX = numOr(knobValue(values, "window-padding-x"), 0);
-    const padY = numOr(knobValue(values, "window-padding-y"), 0);
-    const opacity = numOr(knobValue(values, "background-opacity"), 1);
 
-    const cursor = cursorStyle === "bar"
-      ? `<span class="tp-cursor-bar" style="background:${esc(cursorColor)}"></span>`
-      : cursorStyle === "underline"
-        ? `<span class="tp-cursor-underline" style="border-bottom:2px solid ${esc(cursorColor)}"></span>`
-        : `<span class="tp-cursor-block" style="${cursorStyle === "block_hollow"
-            ? `border:1px solid ${esc(cursorColor)}`
-            : `background:${esc(cursorColor)}`}"></span>`;
+    const diskValues = valuesFromContent();
+    const diskOverrides = OVERRIDE_KEYS.filter((k) => (diskValues[k] || []).length);
+    const clearBox = document.getElementById("clear-overrides");
 
-    previewEl.innerHTML =
-      `<div class="tp-bar">` +
-        `<span class="tp-dot" style="background:${pal(1, "#f7768e")}"></span>` +
-        `<span class="tp-dot" style="background:${pal(3, "#e0af68")}"></span>` +
-        `<span class="tp-dot" style="background:${pal(2, "#9ece6a")}"></span>` +
-      `</div>` +
-      `<div class="tp-body" style="background:${esc(bg)};color:${esc(fg)};opacity:${opacity};` +
-        `font-family:${esc(font)};font-size:${fontSize}px;padding:${padY}px ${padX}px;">` +
-        `<div class="tp-line" style="color:${pal(8, "#565f89")}"># ${esc(previewed || "no theme set")}${previewed !== current ? " (preview — not applied)" : ""}</div>` +
-        `<div class="tp-line"><span style="color:${pal(4, "#7aa2f7")}">const</span> ` +
-          `greet = (<span style="color:${pal(3, "#e0af68")}">name</span>) => ` +
-          `<span style="color:${pal(2, "#9ece6a")}">\`hello \${name}\`</span>;</div>` +
-        `<div class="tp-line" style="color:${pal(1, "#f7768e")}">✗ error: connection refused (port 6202)</div>` +
-        `<div class="tp-line" style="color:${pal(2, "#9ece6a")}">✓ build finished in 1.2s</div>` +
-        `<div class="tp-line"><span style="color:${pal(5, "#bb9af7")}">~/dev</span> $ ${cursor}</div>` +
-        `<div class="tp-palette">` +
-          Array.from({ length: 16 }, (_, i) => `<span style="background:${pal(i, "#000")}"></span>`).join("") +
-        `</div>` +
-      `</div>`;
+    // ── the two panels ──
+    // Current: the on-disk truth — disk theme colors under disk overrides.
+    const realEff = { ...(await themeColorsFor(current)) };
+    applyExplicitColors(realEff, diskValues);
+    // Preview: the SELECTED theme's own look plus pending changes only. Disk
+    // color overrides are deliberately excluded so picking a theme actually
+    // shows that theme; the note below tells the truth about masking.
+    const prevEff = { ...(await themeColorsFor(previewed)) };
+    const pendingOnly = {};
+    for (const [key, ch] of pending) {
+      if (ch.unset) continue;
+      pendingOnly[key] = ch.values ? [...ch.values] : [ch.value];
+    }
+    applyExplicitColors(prevEff, pendingOnly);
+
+    // Each panel derives its metrics from its OWN values map (schema default
+    // as fallback) — the real panel must never inherit pending values.
+    const metrics = (vals) => ({
+      cursorStyle: knobValue(vals, "cursor-style") || "block",
+      fontChain: vals["font-family"] || [],
+      fontSize: numOr(knobValue(vals, "font-size"), 13) || 13,
+      padX: numOr(knobValue(vals, "window-padding-x"), 0),
+      padY: numOr(knobValue(vals, "window-padding-y"), 0),
+      opacity: numOr(knobValue(vals, "background-opacity"), 1),
+    });
+
+    const willClear = clearBox.checked && diskOverrides.length > 0;
+    const previewTruthful = !diskOverrides.length || willClear || previewed === current;
+    document.getElementById("preview-label").textContent =
+      `Preview — ${previewed || "no theme"}` +
+      (previewTruthful ? " (as it will apply)" : "");
+
+    previewEl.innerHTML = buildTerminalHtml(prevEff, metrics(values),
+      `# ${previewed || "no theme set"}${pending.size ? " — pending" : ""}`);
+    document.getElementById("terminal-real").innerHTML = buildTerminalHtml(
+      realEff, metrics(diskValues), `# ${current || "no theme set"} — current`);
+
+    const noteEl = document.getElementById("override-note");
+    noteEl.hidden = !diskOverrides.length;
+    if (diskOverrides.length) {
+      document.getElementById("override-note-text").innerHTML =
+        `Your config explicitly sets <b>${diskOverrides.map(esc).join(", ")}</b> — ` +
+        `these override any theme after Apply. Check to also clear them on Apply ` +
+        `so the selected theme fully takes effect.`;
+    }
 
     const knob = (key, control) =>
       `<div class="knob"><label>${esc(key)}</label>${control}</div>`;
     const num = (key, step) =>
       knob(key, `<input type="number" step="${step}" data-knob="${esc(key)}" value="${esc(knobValue(values, key))}">`);
-    const cursorOpts = `<option value="" ${!(values["cursor-style"] || []).length ? "selected" : ""}>(default)</option>` +
+    const pendCursor = (values["cursor-style"] || []).at(-1) || "";
+    const cursorOpts = `<option value="" ${!pendCursor ? "selected" : ""}>(default)</option>` +
       ["block", "bar", "underline", "block_hollow"]
-        .map((v) => `<option ${v === cursorStyle && (values["cursor-style"] || []).length ? "selected" : ""}>${v}</option>`).join("");
+        .map((v) => `<option ${v === pendCursor ? "selected" : ""}>${v}</option>`).join("");
+    const fontChain = values["font-family"] || [];
     // A multi-font fallback chain must not be silently collapsed by this
     // single-value knob — send those users to the list editor instead.
     const fontKnob = fontChain.length > 1
       ? `<span class="d">fallback chain (${fontChain.length} fonts) — edit in All settings to keep the chain</span>`
-      : `<input type="text" data-knob="font-family" data-knob-list="1" value="${esc(fontChain[0] || "")}" placeholder="(default)">`;
+      : `<input type="text" list="font-families" data-knob="font-family" data-knob-list="1" value="${esc(fontChain[0] || "")}" placeholder="(default)">`;
     knobsEl.innerHTML =
       knob("font-family", fontKnob) +
       num("font-size", "0.5") +
@@ -595,6 +737,7 @@
   }
 
   themeSearch.addEventListener("input", renderCustomize);
+  document.getElementById("clear-overrides").addEventListener("change", renderCustomize);
 
   // Selections STAGE only — the Apply button is the single write path here.
   themeListEl.addEventListener("click", (e) => {

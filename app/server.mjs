@@ -15,7 +15,7 @@ import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { env } from "./lib/env.mjs";
 import { configState } from "./lib/paths.mjs";
-import { ghosttyBin, versionLine, reloadKeybind } from "./lib/ghostty.mjs";
+import { ghosttyBin, versionLine, reloadKeybind, listFontFamilies } from "./lib/ghostty.mjs";
 import { lint } from "./lib/lint.mjs";
 import { buildSchema } from "./lib/schema.mjs";
 import {
@@ -103,6 +103,7 @@ const api = {
   "GET /api/history": () => ({ entries: historyLog(configState().path) }),
   "GET /api/profiles": () => ({ profiles: listProfiles() }),
   "GET /api/themes": () => ({ themes: listThemes() }),
+  "GET /api/fonts": () => ({ families: listFontFamilies() }),
   "GET /api/theme": (_body, url) =>
     mapTypeErrors(() => themeColors(url.searchParams.get("name") || "")),
   // Save the current config (or another profile, for duplicate) under a name.
