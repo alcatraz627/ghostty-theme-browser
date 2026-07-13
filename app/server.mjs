@@ -10,7 +10,7 @@
 
 import { createServer } from "node:http";
 import { randomBytes } from "node:crypto";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { env } from "./lib/env.mjs";
@@ -45,7 +45,30 @@ import { readFileSync as readFile } from "node:fs";
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(ROOT, "public");
 const PORT = env.port;
-const TOKEN = randomBytes(16).toString("hex");
+
+// The token survives restarts so open tabs don't 401 after every server
+// bounce. It lives in a user-only file in the state dir; the threat model
+// (127.0.0.1 bind + token on every API call + Origin/Host checks) is
+// unchanged — only the rotation cadence moves from per-launch to on-demand
+// (delete the file to rotate).
+function loadOrCreateToken() {
+  const path = join(env.stateDir, "token");
+  try {
+    const existing = readFileSync(path, "utf8").trim();
+    if (/^[0-9a-f]{32}$/.test(existing)) return existing;
+  } catch {
+    /* first run or unreadable — mint below */
+  }
+  const fresh = randomBytes(16).toString("hex");
+  try {
+    mkdirSync(env.stateDir, { recursive: true });
+    writeFileSync(path, fresh + "\n", { mode: 0o600 });
+  } catch {
+    /* state dir unwritable: degrade to per-launch token */
+  }
+  return fresh;
+}
+const TOKEN = loadOrCreateToken();
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
