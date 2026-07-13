@@ -23,4 +23,7 @@ export const env = {
   // Manage a specific config file instead of the auto-detected live one.
   // Used by tests to run the full write path against a sandbox copy.
   configPathOverride: process.env.GHOSTTY_MGR_CONFIG || null,
+
+  // Suppress the open-browser-on-start convenience (tests, headless runs).
+  noOpen: process.env.GHOSTTY_MGR_NO_OPEN === "1",
 };

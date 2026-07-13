@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node app/server.mjs",
+    "open": "open \"http://127.0.0.1:6202/?token=$(cat ~/.config/ghostty-manager/token)\"",
     "test": "node --test app/test/*.test.mjs"
   }
 }

@@ -11,4 +11,5 @@ hook. Current surface: `XDG_CONFIG_HOME`, `GHOSTTY_MGR_PORT`,
 `GHOSTTY_MGR_CONFIG` (manage a specific config file; tests use it to exercise
 the write path against a sandbox copy instead of the live config),
 `GHOSTTY_MGR_STATE` (root for backups + history repos; tests point it at a
-temp dir).
+temp dir), `GHOSTTY_MGR_NO_OPEN` (suppress the open-browser-on-start
+convenience).

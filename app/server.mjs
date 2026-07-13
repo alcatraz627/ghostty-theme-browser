@@ -9,6 +9,7 @@
 //   - GET endpoints never mutate
 
 import { createServer } from "node:http";
+import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
@@ -342,6 +343,13 @@ const server = createServer((req, res) => {
 });
 
 server.listen(PORT, "127.0.0.1", () => {
+  const url = `http://127.0.0.1:${PORT}/?token=${TOKEN}`;
   console.log(`ghostty-config-manager listening`);
-  console.log(`  http://127.0.0.1:${PORT}/?token=${TOKEN}`);
+  console.log(`  ${url}`);
+  // Interactive `npm start` opens the app itself — no terminal-output
+  // spelunking for the token. Headless runs (tests, background servers,
+  // GHOSTTY_MGR_NO_OPEN=1) never pop a browser.
+  if (process.stdout.isTTY && !env.noOpen && process.platform === "darwin") {
+    spawn("open", [url], { detached: true, stdio: "ignore" }).unref();
+  }
 });

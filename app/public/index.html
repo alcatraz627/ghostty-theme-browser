@@ -693,11 +693,8 @@
       opacity: numOr(knobValue(vals, "background-opacity"), 1),
     });
 
-    const willClear = clearBox.checked && diskOverrides.length > 0;
-    const previewTruthful = !diskOverrides.length || willClear || previewed === current;
     document.getElementById("preview-label").textContent =
-      `Preview — ${previewed || "no theme"}` +
-      (previewTruthful ? " (as it will apply)" : "");
+      `Preview — ${previewed || "no theme"}`;
 
     previewEl.innerHTML = buildTerminalHtml(prevEff, metrics(values),
       `# ${previewed || "no theme set"}${pending.size ? " — pending" : ""}`);
