@@ -10,6 +10,8 @@ import { createStaging } from "./staging.mjs";
 import { buildReceipt } from "./receipt.mjs";
 import { themeNameFor } from "./preview.mjs";
 import { displayLabel } from "./labels.mjs";
+import { KEYS, isTyping } from "./keys.mjs";
+import { initialLiveness, nextLiveness } from "./liveness.mjs";
 
 const PREVIEW_DEBOUNCE_MS = 250;
 const POLL_MS = 5000;
@@ -20,7 +22,15 @@ export function createApp({ token, fetchImpl } = {}) {
   const staging = createStaging();
   const themeCache = {};
   const themeLoading = new Set();
-  const api = createApi({ token, fetchImpl, onNetworkError: () => store.set({ stopped: true }) });
+  let live = initialLiveness();
+  const noteLiveness = (event) => {
+    const next = nextLiveness(live, event);
+    if (next === live) return;
+    live = next;
+    if (store.get().stopped !== live.stopped) store.set({ stopped: live.stopped });
+  };
+  const api = createApi({ token, fetchImpl, onNetworkError: () => noteLiveness("fail"), onAnswer: () => noteLiveness("ok") });
+  let lastDiscarded = null;
   let knownMtime = null;
   let previewTimer = null;
   let previewSeq = 0;
@@ -157,11 +167,51 @@ export function createApp({ token, fetchImpl } = {}) {
     }
   }
 
+  // Drops every staged change, says how many, and keeps them for one undo.
   function discard() {
-    return staging.discard();
+    const dropped = staging.discard();
+    if (dropped.size) {
+      lastDiscarded = dropped;
+      toast(`Discarded ${dropped.size} staged ${dropped.size === 1 ? "change" : "changes"}. ${KEYS.undo.glyph} brings ${dropped.size === 1 ? "it" : "them"} back.`);
+    }
+    return dropped;
+  }
+
+  // Brings back the set the last discard dropped, once.
+  function undoDiscard() {
+    if (!lastDiscarded) return false;
+    const back = lastDiscarded;
+    lastDiscarded = null;
+    for (const [key, change] of back) stage(key, change);
+    toast(`Brought back ${back.size} staged ${back.size === 1 ? "change" : "changes"}.`);
+    return true;
   }
 
   // ---- writes ----
+
+  // Restores and activations are one at a time: a held key or a double click
+  // must not fire a second write that replaces the real receipt.
+  let writing = false;
+  async function exclusive(fn) {
+    if (writing) return null;
+    writing = true;
+    try {
+      return await fn();
+    } finally {
+      writing = false;
+    }
+  }
+
+  // A write that is refused with an HTTP error gets its message on screen.
+  async function guarded(label, fn) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (err instanceof NetworkError) throw err;
+      toast(`${label}: ${err.message}`);
+      return null;
+    }
+  }
 
   async function finishWrite({ kind, response, keyCount = 0, title = null }) {
     const [cfg, hist] = await Promise.all([
@@ -169,6 +219,12 @@ export function createApp({ token, fetchImpl } = {}) {
       api.get("/api/history").catch((e) => (e instanceof NetworkError ? Promise.reject(e) : { entries: [] })),
     ]);
     applyDisk(cfg, { own: true });
+    // A restore that found the file already identical makes no entry. Keep the
+    // receipt the person is looking at, which still holds their way back.
+    if ((kind === "restore" || kind === "undo") && response?.history == null && store.get().receipt) {
+      toast("Already restored. The file is identical to that entry.");
+      return;
+    }
     const receipt = buildReceipt({
       kind,
       response,
@@ -195,7 +251,10 @@ export function createApp({ token, fetchImpl } = {}) {
       } else if (!data.ok) {
         store.set({ refusal: { reason: data.reason, lint: data.lint ?? null }, conflict: null });
       } else {
-        staging.discard();
+        // Only what was sent and is still unchanged; an edit made while the
+        // request was in flight stays pending.
+        staging.discardMatching(changes);
+        lastDiscarded = null;
         await finishWrite({ kind: "apply", response: data, keyCount: changes.length });
       }
     } catch (err) {
@@ -218,35 +277,55 @@ export function createApp({ token, fetchImpl } = {}) {
 
   // The caller supplies the editor's own base hash, so a hand edit made while
   // the editor was open is caught the same way as in Apply.
-  async function saveRaw(content, { baseHash, force = false }) {
+  async function saveRaw(content, { baseHash, force = false } = {}) {
+    if (!baseHash) throw new Error("saveRaw needs the baseHash of the file the editor started from");
     const res = await api.post("/api/config/save", { content, baseHash, force });
     if (res.data?.ok) await finishWrite({ kind: "raw", response: res.data, keyCount: 0 });
     return res;
   }
 
-  async function restoreEntry(hash, { kind = "restore", title = null } = {}) {
-    const { data } = await api.post("/api/history/restore", { hash });
-    if (!data?.ok) {
-      toast(`Restore failed: ${data?.reason ?? "unknown reason"}`);
-      return data;
-    }
-    await finishWrite({ kind, response: data, title });
-    return data;
+  function restoreEntry(hash, { kind = "restore", title = null } = {}) {
+    return exclusive(() =>
+      guarded("Restore failed", async () => {
+        const { data } = await api.post("/api/history/restore", { hash });
+        if (!data?.ok) {
+          toast(`Restore failed: ${data?.reason ?? "unknown reason"}`);
+          return data;
+        }
+        await finishWrite({ kind, response: data, title });
+        return data;
+      })
+    );
   }
 
-  async function activateProfile(name) {
-    const { data } = await api.post("/api/profiles/activate", { name });
-    if (!data?.ok) {
-      toast(`Activate failed: ${data?.reason ?? "unknown reason"}`);
-      return data;
-    }
-    await finishWrite({ kind: "restore", response: data, title: `Activated profile "${name}"` });
-    return data;
+  function activateProfile(name) {
+    return exclusive(() =>
+      guarded("Activate failed", async () => {
+        const { data } = await api.post("/api/profiles/activate", { name });
+        if (!data?.ok) {
+          toast(`Activate failed: ${data?.reason ?? "unknown reason"}`);
+          return data;
+        }
+        await finishWrite({ kind: "restore", response: data, title: `Activated profile "${name}"` });
+        return data;
+      })
+    );
   }
 
   async function undo(receipt = store.get().receipt) {
     if (!receipt?.undoTarget) return null;
     return restoreEntry(receipt.undoTarget, { kind: "undo" });
+  }
+
+  // Cmd+Enter. A field the person is still typing in has not staged yet, so it
+  // is committed first (blur fires its change event), then Apply runs.
+  async function applyFromShortcut(active) {
+    if (active && isTyping(active)) active.blur?.();
+    if (!staging.size) {
+      toast("Nothing to apply.");
+      return null;
+    }
+    return apply();
   }
 
   // ---- themes ----
@@ -290,7 +369,7 @@ export function createApp({ token, fetchImpl } = {}) {
 
   return {
     store, staging, api, themeCache,
-    load, poll, startPolling, ping, stage, discard, apply, reviewOnNewFile,
+    load, poll, startPolling, ping, stage, discard, undoDiscard, apply, applyFromShortcut, reviewOnNewFile,
     saveRaw, restoreEntry, activateProfile, undo, applyDisk, finishWrite, runPreview,
     ensureTheme, themeColors, ensureThemesFor, setAppearance, toast, nameOf,
   };

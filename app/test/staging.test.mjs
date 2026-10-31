@@ -159,6 +159,30 @@ test("onChange fires on stage, revert and discard, and stops after unsubscribe",
   assert.equal(n, 4);
 });
 
+test("discardMatching drops what was sent and keeps a key edited again since", () => {
+  const s = createStaging();
+  s.stage("font-size", { value: "15" }, ctx("font-size"));
+  s.stage("theme", { value: "Day" }, ctx("theme"));
+  const sent = s.changes();
+  s.stage("font-size", { value: "16" }, ctx("font-size"));
+  s.stage("clipboard-read", { unset: true }, ctx("clipboard-read"));
+  const dropped = s.discardMatching(sent);
+  assert.equal(dropped, 1, "only the theme was unchanged");
+  assert.deepEqual(s.changes(), [
+    { key: "font-size", value: "16" },
+    { key: "clipboard-read", unset: true },
+  ]);
+  assert.ok(s.base, "something is still pending, so the base stays");
+});
+
+test("discardMatching on a fully sent set empties it and clears the base", () => {
+  const s = createStaging();
+  s.stage("font-size", { value: "15" }, ctx("font-size"));
+  s.discardMatching(s.changes());
+  assert.equal(s.size, 0);
+  assert.equal(s.base, null);
+});
+
 test("sameAsDisk compares the last value of a scalar", () => {
   assert.equal(sameAsDisk({ value: "b" }, ["a", "b"]), true);
   assert.equal(sameAsDisk({ value: "a" }, ["a", "b"]), false);

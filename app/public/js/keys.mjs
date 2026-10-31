@@ -31,6 +31,11 @@ export const KEYS = {
   stepDown: { glyph: "↓", match: () => false },
 };
 
+// A held key repeats keydown. For anything that writes or discards, only the
+// first press counts.
+const ONCE_PER_PRESS = ["apply", "save", "undo", "copy", "history", "discard"];
+export const shouldIgnoreRepeat = (e) => !!e.repeat && ONCE_PER_PRESS.some((id) => KEYS[id].match(e));
+
 // "Apply 3 changes  ⌘↵": the text of a tooltip.
 export const tip = (label, id) => `${label}  ${KEYS[id].glyph}`;
 

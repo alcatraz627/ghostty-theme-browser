@@ -8,6 +8,7 @@ import { tip } from "../keys.mjs";
 import { buildPreview, themeNameFor, themeHasPair } from "../preview.mjs";
 import { lineDiff } from "../linediff.mjs";
 import { displayLabel } from "../labels.mjs";
+import { refusalText } from "../receipt.mjs";
 
 const icon = (name) => svgIcon(ICONS[name]);
 
@@ -34,7 +35,7 @@ function verdictNode(app, s) {
   if (s.refusal) {
     const lines = s.refusal.lint ? problemLines(app, s.refusal.lint) : [];
     return h("div", { class: "verdict bad", role: "alert" }, icon("alert"),
-      h("div", {}, "Not applied. Nothing was written.", lines.length ? h("ul", {}, ...lines.map((l) => h("li", {}, l))) : ` ${s.refusal.reason ?? ""}`));
+      h("div", {}, refusalText(s.refusal.reason), lines.length ? h("ul", {}, ...lines.map((l) => h("li", {}, l))) : null));
   }
   switch (v.state) {
     case "ok":
@@ -82,9 +83,9 @@ export function renderReceipt(app, r, { onHistory, solidUndo = true }) {
   const close = h("button", { type: "button", class: "btn icon small push", "aria-label": "Close receipt", "data-tip": tip("Close", "discard"), "data-tip-align": "end", onclick: () => app.store.set({ receipt: null }) }, icon("x"));
   return h("div", { class: "panel ok receipt", id: "receipt" },
     h("h3", {}, r.title, close),
+    h("div", { class: "acts first" }, undo, hist, cp),
     h("div", { class: "kv" }, ...kv),
-    r.backupPath ? h("div", { class: "kv cmd" }, h("span", {}, "Path"), h("span", { class: "mono", id: "backup-path", "data-cmd": r.restoreCommand }, r.backupPath)) : null,
-    h("div", { class: "acts" }, undo, hist, cp));
+    r.backupPath ? h("div", { class: "kv cmd" }, h("span", {}, "Path"), h("span", { class: "mono", id: "backup-path", "data-cmd": r.restoreCommand }, r.backupPath)) : null);
 }
 
 export function mountRail(app, host, { goHistory }) {

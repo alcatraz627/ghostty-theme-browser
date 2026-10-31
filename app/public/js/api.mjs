@@ -21,7 +21,7 @@ export class NetworkError extends Error {
   }
 }
 
-export function createApi({ token, fetchImpl = (...a) => fetch(...a), onNetworkError = () => {} }) {
+export function createApi({ token, fetchImpl = (...a) => fetch(...a), onNetworkError = () => {}, onAnswer = () => {} }) {
   async function request(method, path, body) {
     let res;
     try {
@@ -36,6 +36,7 @@ export function createApi({ token, fetchImpl = (...a) => fetch(...a), onNetworkE
       onNetworkError(e);
       throw e;
     }
+    onAnswer();
     let data = null;
     try {
       data = await res.json();

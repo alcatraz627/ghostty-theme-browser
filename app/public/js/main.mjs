@@ -4,7 +4,7 @@
 import { createApp } from "./app.mjs";
 import { h, svgIcon, clear } from "./dom.mjs";
 import { ICONS } from "./icons.mjs";
-import { KEYS, tip, isTyping } from "./keys.mjs";
+import { KEYS, tip, isTyping, shouldIgnoreRepeat } from "./keys.mjs";
 import { mountSettings } from "./views/settings.mjs";
 import { mountRail } from "./views/rail.mjs";
 import { mountRaw } from "./views/raw.mjs";
@@ -111,7 +111,12 @@ let reconnecting = null;
 function renderStopped() {
   const s = store.get();
   clear(stoppedRoot);
-  if (!s.stopped) return;
+  if (!s.stopped) {
+    // Any answer from the server ends the stopped state, so the loop can rest.
+    clearInterval(reconnecting);
+    reconnecting = null;
+    return;
+  }
   const minutes = s.meta?.idleMs ? Math.round(s.meta.idleMs / 60000) : 0;
   stoppedRoot.append(h("div", { class: "stopped", id: "stopped-panel" },
     h("h2", {}, minutes ? `Stopped after ${minutes} idle ${minutes === 1 ? "minute" : "minutes"}` : "The settings server is not running"),
@@ -120,14 +125,14 @@ function renderStopped() {
     h("div", { class: "acts" }, h("button", { type: "button", class: "btn solid", id: "retry-btn", "data-tip": tip("Check again", "press"), onclick: () => tryReconnect() }, icon("refresh"), h("span", {}, "Check again")))));
   if (!reconnecting) reconnecting = setInterval(tryReconnect, 4000);
 }
+// The loop keeps running until the server answers AND the reload succeeds, so a
+// server that answers /api/meta and then falters cannot strand the page here.
 async function tryReconnect() {
   try {
     await app.api.get("/api/meta");
-    clearInterval(reconnecting);
-    reconnecting = null;
     await app.load({ keepStaging: true });
   } catch {
-    /* still down; the panel stays */
+    /* still down, or the reload failed; the next round tries again */
   }
 }
 
@@ -173,11 +178,16 @@ document.addEventListener("keydown", (e) => {
   const s = store.get();
   if (s.stopped || openDialog()) return;
   const typing = isTyping(e.target);
+  // A held key must not fire a write or a discard again and again.
+  if (shouldIgnoreRepeat(e) && !(typing && (KEYS.undo.match(e) || KEYS.copy.match(e)))) {
+    e.preventDefault();
+    return;
+  }
 
   if (KEYS.apply.match(e)) {
     if (s.view === "settings") {
       e.preventDefault();
-      app.apply();
+      app.applyFromShortcut(document.activeElement);
     }
     return;
   }
@@ -231,15 +241,26 @@ document.addEventListener("keydown", (e) => {
   } else if (KEYS.history.match(e) && s.receipt?.historyHash) {
     e.preventDefault();
     goHistory(s.receipt.historyHash);
-  } else if (KEYS.undo.match(e) && !typing && s.receipt?.undoTarget && !staging.size) {
-    e.preventDefault();
-    app.undo();
+  } else if (KEYS.undo.match(e) && !typing) {
+    // First the set an Esc just discarded, then the receipt's Undo.
+    if (app.undoDiscard()) e.preventDefault();
+    else if (s.receipt?.undoTarget && !staging.size) {
+      e.preventDefault();
+      app.undo();
+    }
   } else if (KEYS.copy.match(e) && !typing && s.receipt?.restoreCommand) {
     e.preventDefault();
     document.getElementById("receipt-copy")?.click();
   }
 });
 document.addEventListener("pointerdown", () => app.ping(), true);
+// Staged changes live only in this tab, so closing or reloading it asks first.
+window.addEventListener("beforeunload", (e) => {
+  if (staging.size) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") app.poll();
 });
@@ -251,8 +272,10 @@ if (VIEWS[fromHash]) store.set({ view: fromHash });
 renderView();
 (async () => {
   try {
-    await app.load();
+    // Polling starts first so a server that is down at open is noticed and
+    // recovered from, not just one that goes down later.
     app.startPolling();
+    await app.load();
   } catch (err) {
     if (err?.name !== "NetworkError") {
       banner.hidden = false;

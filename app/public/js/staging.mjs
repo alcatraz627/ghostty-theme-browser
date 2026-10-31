@@ -66,6 +66,22 @@ export function createStaging() {
       emit();
       return before;
     },
+    // After a write: drop the changes that were sent and are still exactly what
+    // was sent. A key edited again while the write was in flight stays pending.
+    discardMatching(sent) {
+      let dropped = 0;
+      for (const ch of sent) {
+        const { key, ...change } = ch;
+        const now = pending.get(key);
+        if (now && JSON.stringify(now) === JSON.stringify(normalizeChange(change))) {
+          pending.delete(key);
+          dropped++;
+        }
+      }
+      if (!pending.size) base = null;
+      if (dropped) emit();
+      return dropped;
+    },
     has: (key) => pending.has(key),
     get: (key) => pending.get(key) ?? null,
     keys: () => [...pending.keys()],

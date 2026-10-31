@@ -62,6 +62,17 @@ export function buildReceipt({ kind = "apply", response, keyCount = 0, configPat
   };
 }
 
+// What to tell the person when the server refused or failed a write. It only
+// says "nothing was written" when that is certain.
+export function refusalText(reason) {
+  const r = String(reason ?? "");
+  if (r === "read-back mismatch") return "The file was written but did not read back the same. Check History.";
+  if (r.startsWith("filesystem error")) return `Something went wrong while writing (${r}). The file may have changed. Check History.`;
+  if (r === "validation failed") return "Not applied. Nothing was written.";
+  if (r === "config is locked by another process") return "Not applied. Another process holds the config lock. Nothing was written.";
+  return r ? `Not applied: ${r}.` : "Not applied.";
+}
+
 // Setting names for a one-line list: "Font size, Theme and 2 more".
 export function summarizeNames(names, max = 3) {
   if (names.length <= max) return names.join(", ");

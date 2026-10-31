@@ -13,7 +13,7 @@ import {
   flagShown,
   flagClick,
 } from "../public/js/controls.mjs";
-import { buildReceipt, formatKeybind, undoTargetFor } from "../public/js/receipt.mjs";
+import { buildReceipt, formatKeybind, undoTargetFor, refusalText } from "../public/js/receipt.mjs";
 import { lineDiff as pageDiff } from "../public/js/linediff.mjs";
 import { lineDiff as serverDiff } from "../lib/diff.mjs";
 import { tipHasShortcut, tip, KEYS } from "../public/js/keys.mjs";
@@ -168,6 +168,19 @@ test("with no earlier entry or no new entry there is nothing to undo to", () => 
   assert.equal(r.undoTarget, null);
   assert.equal(r.restoreCommand, null);
   assert.match(r.historyNote, /identical/);
+});
+
+test("a refusal says nothing was written only when that is certain", () => {
+  assert.match(refusalText("validation failed"), /Nothing was written/);
+  assert.match(refusalText("config is locked by another process"), /Nothing was written/);
+  const rb = refusalText("read-back mismatch");
+  assert.match(rb, /written but did not read back the same/);
+  assert.match(rb, /Check History/);
+  assert.doesNotMatch(rb, /Nothing was written/);
+  const fsErr = refusalText("filesystem error: ENOSPC");
+  assert.match(fsErr, /Check History/);
+  assert.doesNotMatch(fsErr, /Nothing was written/);
+  assert.doesNotMatch(refusalText("something new"), /Nothing was written/);
 });
 
 test("the page's line diff matches the server's", () => {

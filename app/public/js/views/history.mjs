@@ -42,9 +42,13 @@ export function mountHistory(app, root, { goHistory }) {
           diffBox.hidden = true;
           return;
         }
-        const { diff } = await app.api.get(`/api/history/diff?hash=${e.hash}`);
-        diffBox.replaceChildren(...diff.split("\n").map((l) => h("div", { class: l.startsWith("+") && !l.startsWith("+++") ? "a" : l.startsWith("-") && !l.startsWith("---") ? "d" : "g" }, l)));
-        diffBox.hidden = false;
+        try {
+          const { diff } = await app.api.get(`/api/history/diff?hash=${e.hash}`);
+          diffBox.replaceChildren(...diff.split("\n").map((l) => h("div", { class: l.startsWith("+") && !l.startsWith("+++") ? "a" : l.startsWith("-") && !l.startsWith("---") ? "d" : "g" }, l)));
+          diffBox.hidden = false;
+        } catch (err) {
+          if (err.name !== "NetworkError") app.toast(`Could not show that diff: ${err.message}`);
+        }
       } }, icon("diff"));
     const restoreBtn = i === 0 ? null : h("button", { type: "button", class: "btn", "data-restore": e.hash, "data-tip": tip("Restore this version", "press"), onclick: () => app.restoreEntry(e.hash) }, icon("restore"), h("span", {}, "Restore"));
     return h("div", { class: "snap", "data-hash": e.hash },
