@@ -9,6 +9,7 @@ import { ICONS } from "../icons.mjs";
 import { tip } from "../keys.mjs";
 import { esc } from "../preview.mjs";
 import { confirmDialog } from "./dialogs.mjs";
+import { detectEol, toLf, withEol } from "../eol.mjs";
 import { renderReceipt, problemLines } from "./rail.mjs";
 
 const icon = (name) => svgIcon(ICONS[name]);
@@ -25,7 +26,8 @@ export const highlight = (text) => text.split("\n").map(highlightLine).join("\n"
 
 export function mountRaw(app, root, { goHistory }) {
   const { store } = app;
-  let base = { hash: "", text: "" };
+  // text is the LF form the textarea holds; eol is what the file really uses.
+  let base = { hash: "", text: "", eol: "\n" };
   let lintTimer = null;
   let lintSeq = 0;
 
@@ -59,8 +61,8 @@ export function mountRaw(app, root, { goHistory }) {
 
   function loadFromDisk() {
     const s = store.get();
-    base = { hash: s.diskHash, text: s.diskText };
-    ta.value = s.diskText;
+    base = { hash: s.diskHash, text: toLf(s.diskText), eol: detectEol(s.diskText) };
+    ta.value = base.text;
     ta.setSelectionRange(0, 0);
     ta.scrollTop = 0;
     paint();
@@ -73,7 +75,7 @@ export function mountRaw(app, root, { goHistory }) {
     status.className = "status";
     status.textContent = "Checking…";
     try {
-      const { data: r } = await app.api.post("/api/lint", { content: ta.value });
+      const { data: r } = await app.api.post("/api/lint", { content: withEol(ta.value, base.eol) });
       if (seq !== lintSeq) return;
       clear(diags);
       const items = [
@@ -106,7 +108,7 @@ export function mountRaw(app, root, { goHistory }) {
   async function save() {
     const s = store.get();
     if (!dirty() || s.readOnly) return;
-    const content = ta.value;
+    const content = withEol(ta.value, base.eol);
     let res = await app.saveRaw(content, { baseHash: base.hash });
     if (res.status === 409 || res.data?.reason === "stale") {
       const { ok } = await confirmDialog({
@@ -156,7 +158,7 @@ export function mountRaw(app, root, { goHistory }) {
   store.subscribe((s, changed) => {
     if (changed.includes("diskHash")) {
       // A clean editor follows the file; one with edits keeps them and warns.
-      if (!dirty() || ta.value === s.diskText) loadFromDisk();
+      if (!dirty() || ta.value === toLf(s.diskText)) loadFromDisk();
       else paint();
     }
     if (changed.includes("receipt")) renderReceiptSlot();
