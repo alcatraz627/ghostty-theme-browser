@@ -10,6 +10,9 @@ import {
   buildPreview,
   themeNameFor,
   themeHasPair,
+  themeSides,
+  previewsLive,
+  LIVE_CAVEAT,
 } from "../public/js/preview.mjs";
 
 const BASE = {
@@ -72,6 +75,25 @@ for (const key of ["scrollback-limit", "cursor-style-blink", "window-save-state"
   });
 }
 
+test("cursor text claims to preview only while the cursor is a block", () => {
+  assert.equal(previewsLive("cursor-text", { "cursor-style": ["bar"] }), false);
+  assert.equal(previewsLive("cursor-text", { "cursor-style": ["underline"] }), false);
+  assert.equal(previewsLive("cursor-text", { "cursor-style": ["block_hollow"] }), false);
+  assert.equal(previewsLive("cursor-text", { "cursor-style": ["block"] }), true);
+  assert.equal(previewsLive("cursor-text", {}, { "cursor-style": ["block"] }), true, "falls back to the default style");
+  assert.equal(previewsLive("cursor-text", {}, {}), true, "and Ghostty's own default is a block");
+});
+
+test("the tag follows the sample: every claim matches a real change, every claim off the list is false", () => {
+  const withBar = { ...BASE, "cursor-style": ["bar"] };
+  assert.equal(previewsLive("cursor-text", withBar), buildPreview({ values: withBar }) !== buildPreview({ values: { ...withBar, "cursor-text": ["#ff0000"] } }));
+  const withBlock = { ...BASE, "cursor-style": ["block"] };
+  assert.equal(previewsLive("cursor-text", withBlock), buildPreview({ values: withBlock }) !== buildPreview({ values: { ...withBlock, "cursor-text": ["#ff0000"] } }));
+  assert.equal(previewsLive("scrollback-limit", {}), false);
+  assert.equal(previewsLive("font-size", {}), true);
+  assert.match(LIVE_CAVEAT["font-family"], /installed in this browser/);
+});
+
 test("the theme row is marked live though its key is not a color key", () => {
   assert.ok(PREVIEW_ROW_KEYS.includes("theme"));
   assert.ok(!PREVIEW_KEYS.includes("theme"));
@@ -114,6 +136,14 @@ test("no theme at all renders from the defaults and the explicit keys", () => {
   const html = buildPreview({ values: {}, appearance: "light" });
   assert.match(html, /class="term"/);
   assert.equal(html, buildPreview({ values: {}, appearance: "dark" }));
+});
+
+test("themeSides gives both halves of a pair and nothing for a single theme", () => {
+  assert.deepEqual(themeSides("light:Catppuccin Latte,dark:Catppuccin Mocha"), { light: "Catppuccin Latte", dark: "Catppuccin Mocha" });
+  assert.deepEqual(themeSides("dark:N,light:D"), { light: "D", dark: "N" });
+  assert.equal(themeSides("TokyoNight"), null);
+  assert.equal(themeSides("light:Only"), null);
+  assert.equal(themeSides(""), null);
 });
 
 test("themeNameFor reads either order of a pair and falls back to the other side", () => {

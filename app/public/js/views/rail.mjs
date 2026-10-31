@@ -14,7 +14,7 @@ const icon = (name) => svgIcon(ICONS[name]);
 
 function diffNode(rows) {
   return h("div", { class: "diff", role: "region", "aria-label": "Diff" },
-    ...rows.map((r) => h("div", { class: r.t === "+" ? "a" : r.t === "-" ? "d" : "g" }, r.t === "…" ? "…" : `${r.t === " " ? " " : r.t}${r.text}`)));
+    ...rows.map((r) => h("div", { class: r.t === "+" ? "a" : r.t === "-" ? "d" : "g" }, r.t === "…" ? "…" : `${r.t === " " ? " " : r.t}${r.text.replace(/\r$/, "")}`)));
 }
 
 // Lines for a validator reply, each naming the setting by its label and key.
@@ -121,6 +121,7 @@ export function mountRail(app, host, { goHistory }) {
       : "No theme is set, so Light and Dark look the same.";
   }
 
+  let shownReceipt = null;
   function renderPanel() {
     const s = store.get();
     const n = staging.size;
@@ -148,8 +149,14 @@ export function mountRail(app, host, { goHistory }) {
       if (!stale) node.append(verdictNode(app, s));
       panelHost.append(node);
     } else if (s.receipt) {
-      panelHost.append(renderReceipt(app, s.receipt, { onHistory: goHistory }));
+      const card = renderReceipt(app, s.receipt, { onHistory: goHistory });
+      panelHost.append(card);
+      // A tall sample (a big font size) can push the receipt below the fold, and
+      // the Undo button is the point of it, so bring a new receipt into view.
+      if (shownReceipt !== s.receipt) card.scrollIntoView({ block: "nearest" });
+      shownReceipt = s.receipt;
     } else {
+      shownReceipt = null;
       panelHost.append(h("div", { class: "panel", id: "diff-panel" }, h("h3", {}, "Pending changes", h("span", { class: "cnt" }, "0")),
         h("p", { class: "none" }, "Nothing is staged. A change you make shows here as a diff, checked by Ghostty, before anything is written.")));
     }

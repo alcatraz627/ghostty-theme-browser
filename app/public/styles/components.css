@@ -60,7 +60,7 @@
 }
 .search:focus-within { background: var(--fill-strong); }
 .search input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--text); }
-.search kbd { font: var(--fs-xs) var(--mono); background: var(--fill-strong); border-radius: var(--r-s); padding: 0 6px; }
+.search kbd { font: var(--fs-xs) var(--mono); color: var(--text); background: var(--fill-strong); border-radius: var(--r-s); padding: 0 6px; }
 
 /* ---------- columns ---------- */
 .cols { display: flex; flex: 1; min-height: 0; }
@@ -102,63 +102,68 @@
 .row .note { grid-column: 1 / -1; color: var(--warn); font-size: var(--fs-sm); display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
 .row .note .btn { color: var(--text); background: var(--fill); }
 
-/* ---------- controls: filled shapes, fixed widths ---------- */
-.sw { width: 38px; height: 22px; border-radius: var(--r-pill); background: var(--line); position: relative; flex: none; transition: background var(--t-fast); }
+/* ---------- controls: filled shapes, one height and one type size ---------- */
+.sw { width: 46px; height: var(--ctl-h); border-radius: var(--r-pill); background: var(--line); position: relative; flex: none; transition: background var(--t-fast); }
 .sw::before {
-  content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+  content: ""; position: absolute; top: 4px; left: 4px; width: 20px; height: 20px;
   border-radius: var(--r-round); background: var(--text); transition: left var(--t-fast);
 }
 .sw:hover:not(:disabled) { background: var(--fill-strong); }
 .sw.on, .sw.on:hover:not(:disabled) { background: var(--accent); }
-.sw.on::before { left: 19px; background: var(--on-accent); }
+.sw.on::before { left: 22px; background: var(--on-accent); }
 .sw[data-tip]:hover::after { bottom: calc(100% + 8px); }
 
-.seg { display: inline-flex; background: var(--fill); border-radius: var(--r-s); padding: 2px; gap: 2px; flex: none; }
-.seg button { padding: 3px 11px; font-size: var(--fs-sm); color: var(--dim); border-radius: var(--r-s); transition: background var(--t-fast), color var(--t-fast); }
+.seg { display: inline-flex; align-items: center; height: var(--ctl-h); background: var(--fill); border-radius: var(--r-s); padding: 2px; gap: 2px; flex: none; }
+.seg button { height: calc(var(--ctl-h) - 4px); padding: 0 11px; font-size: var(--ctl-fs); color: var(--dim); border-radius: var(--r-s); transition: background var(--t-fast), color var(--t-fast); }
 .seg button:hover:not(.on):not(:disabled) { background: var(--fill-strong); color: var(--text); }
 .seg button.on { background: var(--accent); color: var(--on-accent); font-weight: 600; box-shadow: var(--shadow-1); }
 
 .field {
-  width: 190px; background: var(--fill); border: 0; border-radius: var(--r-s);
-  padding: 5px 10px; font: 13px var(--mono); text-align: left; color: var(--text);
+  width: 190px; height: var(--ctl-h); background: var(--fill); border: 0; border-radius: var(--r-s);
+  padding: 0 10px; font: var(--ctl-fs) var(--mono); text-align: left; color: var(--text);
 }
 .field:hover:not(:disabled) { background: var(--fill-strong); }
 .field:focus { outline: 2px solid var(--accent); outline-offset: 0; }
 .field.select { cursor: pointer; width: 190px; }
-.field.list { width: 340px; resize: vertical; line-height: 1.5; }
+.field.list { width: 340px; height: auto; padding: 6px 10px; resize: vertical; line-height: 1.5; }
+.listbox { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.hint { font-size: var(--fs-xs); color: var(--dim); max-width: 340px; text-align: right; overflow-wrap: anywhere; }
 .fontbox { display: inline-flex; align-items: center; gap: 8px; }
 .fontbox .more { font-size: var(--fs-xs); color: var(--dim); white-space: nowrap; }
 
-.step { display: inline-flex; align-items: center; background: var(--fill); border-radius: var(--r-s); font: 13px var(--mono); flex: none; }
-.step button { padding: 3px 11px; color: var(--dim); border-radius: var(--r-s); }
+.step { display: inline-flex; align-items: center; height: var(--ctl-h); background: var(--fill); border-radius: var(--r-s); font: var(--ctl-fs) var(--mono); flex: none; }
+.step button { height: 100%; padding: 0 11px; color: var(--dim); border-radius: var(--r-s); font: inherit; }
 .step button:hover:not(:disabled) { background: var(--fill-strong); color: var(--text); }
-.step .num { width: 62px; text-align: center; background: none; border: 0; outline: 0; font: inherit; color: var(--text); padding: 3px 0; }
+.step .num { width: 62px; height: 100%; text-align: center; background: none; border: 0; outline: 0; font: inherit; color: var(--text); padding: 0; }
 .step:focus-within { outline: 2px solid var(--accent); }
 
-.swatch { display: inline-flex; align-items: center; gap: 9px; background: var(--fill); border-radius: var(--r-s); padding: 4px 10px 4px 5px; flex: none; }
-.swatch .picker { width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--r-s); background: none; cursor: pointer; box-shadow: inset 0 0 0 1px var(--fill-strong); }
+.swatch { display: inline-flex; align-items: center; gap: 9px; height: var(--ctl-h); background: var(--fill); border-radius: var(--r-s); padding: 0 10px 0 4px; flex: none; }
+.swatch .picker { width: 20px; height: 20px; padding: 0; border: 0; border-radius: var(--r-s); background: none; cursor: pointer; box-shadow: inset 0 0 0 1px var(--fill-strong); }
 .swatch .picker::-webkit-color-swatch-wrapper { padding: 0; }
 .swatch .picker::-webkit-color-swatch { border: 0; border-radius: var(--r-s); }
-.swatch .plain-swatch { width: 24px; height: 24px; border-radius: var(--r-s); background: var(--fill-strong); }
-.swatch .hex { width: 88px; background: none; border: 0; outline: 0; font: 13px var(--mono); color: var(--text); padding: 0; }
+.swatch .plain-swatch { width: 20px; height: 20px; border-radius: var(--r-s); background: var(--fill-strong); }
+.swatch .hex { width: 88px; background: none; border: 0; outline: 0; font: var(--ctl-fs) var(--mono); color: var(--text); padding: 0; }
 .swatch:focus-within { outline: 2px solid var(--accent); }
 
 .chooser {
-  display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
-  background: var(--fill); border-radius: var(--r-s); padding: 4px 6px 4px 10px; flex: none;
+  display: inline-flex; align-items: center; gap: 10px; min-height: var(--ctl-h); font-size: var(--ctl-fs);
+  background: var(--fill); border-radius: var(--r-s); padding: 0 6px 0 10px; flex: none; text-align: left;
   transition: background var(--t-fast);
 }
 .chooser:hover:not(:disabled) { background: var(--fill-strong); }
-.chooser .name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.chooser .name { max-width: 250px; overflow-wrap: anywhere; }
+.chooser .name.pair { display: flex; flex-direction: column; padding: 3px 0; line-height: 1.25; }
+.chooser .side i { font-style: normal; font-size: var(--fs-xs); color: var(--dim); margin-right: 6px; }
 .chooser .dots { display: inline-flex; gap: 3px; }
 .chooser .dots s { width: 9px; height: 9px; border-radius: var(--r-round); background: var(--fill-strong); }
-.chooser em { font-style: normal; color: var(--accent); font-size: var(--fs-sm); padding-left: 4px; }
+.chooser em { font-style: normal; color: var(--accent); padding-left: 4px; }
 
 .flags { display: inline-flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; max-width: 340px; }
-.flags button { font: var(--fs-sm) var(--mono); border-radius: var(--r-pill); padding: 2px 10px; color: var(--dim); background: var(--fill); transition: background var(--t-fast), color var(--t-fast); }
+.flags button { height: var(--ctl-h); font: var(--ctl-fs) var(--mono); border-radius: var(--r-pill); padding: 0 12px; color: var(--dim); background: var(--fill); transition: background var(--t-fast), color var(--t-fast); }
 .flags button:hover:not(:disabled) { background: var(--fill-strong); color: var(--text); }
 .flags button.on { color: var(--text); background: var(--accent-soft); }
 .flags button.on::before { content: "✓ "; color: var(--accent); }
+
 
 .settings { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .push { margin-left: auto; }

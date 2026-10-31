@@ -12,6 +12,7 @@ import {
   withFirstFont,
   flagShown,
   flagClick,
+  listExample,
 } from "../public/js/controls.mjs";
 import { buildReceipt, formatKeybind, undoTargetFor, refusalText } from "../public/js/receipt.mjs";
 import { lineDiff as pageDiff } from "../public/js/linediff.mjs";
@@ -118,6 +119,24 @@ test("stepper moves by the right step, within bounds, and leaves bad text alone"
   assert.equal(stepNumber("banana", 1, size), null, "text that is not a number is left for the validator");
   assert.equal(stepNumber("", 1, size), null);
   assert.equal(stepNumber("0.1", 1, { key: "x", default: "0.5" }), "0.2", "no float noise");
+});
+
+test("every list setting Ghostty has shows what one line looks like", async () => {
+  const { ghosttyBin } = await import("../lib/ghostty.mjs");
+  const { buildSchema } = await import("../lib/schema.mjs");
+  assert.equal(listExample("palette"), "0=#15161e");
+  assert.equal(listExample("keybind"), "super+t=new_tab");
+  assert.equal(listExample("font-codepoint-map"), "U+E000-U+F8FF=Symbols Nerd Font Mono");
+  assert.equal(listExample("env"), "NAME=value");
+  assert.equal(listExample("font-feature"), "calt or -liga");
+  assert.equal(listExample("font-variation"), "wght=600");
+  assert.equal(listExample("command-palette-entry"), "title:Name,action:new_tab");
+  assert.equal(listExample("config-file"), "?optional/path");
+  assert.equal(listExample("custom-shader"), "path/to/shader.glsl");
+  for (const k of ["font-family", "font-family-bold", "font-family-italic", "font-family-bold-italic"]) assert.equal(listExample(k), "Font name");
+  if (!ghosttyBin()) return;
+  const missing = buildSchema().options.filter((o) => o.type === "list" && !listExample(o.key)).map((o) => o.key);
+  assert.deepEqual(missing, [], "a list key with no example would show only a generic placeholder");
 });
 
 test("list text round trips and drops blank lines", () => {

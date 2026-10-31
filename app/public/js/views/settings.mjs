@@ -8,7 +8,7 @@ import { ICONS } from "../icons.mjs";
 import { tip } from "../keys.mjs";
 import { createControl } from "../controls.mjs";
 import { groupOptions, displayLabel, helpText, filterOptions } from "../labels.mjs";
-import { PREVIEW_ROW_KEYS, themeNameFor } from "../preview.mjs";
+import { PREVIEW_ROW_KEYS, LIVE_CAVEAT, previewsLive, themeNameFor } from "../preview.mjs";
 import { openThemePicker } from "./dialogs.mjs";
 
 const icon = (name) => svgIcon(ICONS[name]);
@@ -79,7 +79,9 @@ export function mountSettings(app, root, { goRail }) {
     const ctl = createControl(opt, ctx, st);
     const was = h("span", { class: "was", hidden: true });
     const act = h("button", { type: "button", class: "act", "aria-label": "Reset" }, icon("reset"));
-    const live = PREVIEW_ROW_KEYS.includes(opt.key) ? h("span", { class: "live", "data-tip": "This setting changes the sample terminal" }, "previews live") : null;
+    const live = PREVIEW_ROW_KEYS.includes(opt.key)
+      ? h("span", { class: "live", title: LIVE_CAVEAT[opt.key] ?? "This setting changes the sample terminal" }, "previews live")
+      : null;
     const note = opt.key === "theme" ? h("div", { class: "note", id: "override-note", hidden: true }) : null;
     const help = helpText(opt);
     const el = h("div", { class: "row", "data-key": opt.key, "data-group": opt.category },
@@ -89,7 +91,7 @@ export function mountSettings(app, root, { goRail }) {
       h("div", { class: "ctl" }, was, ctl.el),
       act, note);
     act.addEventListener("click", () => (staging.has(opt.key) ? staging.revert(opt.key) : app.stage(opt.key, { unset: true })));
-    const row = { opt, el, ctl, was, act, note };
+    const row = { opt, el, ctl, was, act, note, live };
     rows.set(opt.key, row);
     updateRow(row);
     return el;
@@ -118,6 +120,14 @@ export function mountSettings(app, root, { goRail }) {
       app.ensureTheme(themeNameFor({ theme: [st.value] }, s.variant));
       updateOverrideNote(row);
     }
+    updateLive(row);
+  }
+
+  // The tag only shows while the sample can really show this setting.
+  function updateLive(row) {
+    if (!row.live) return;
+    const s = store.get();
+    row.live.hidden = !previewsLive(row.opt.key, staging.effective(s.diskValues), s.defaults);
   }
 
   // The explicit colors in the file win over any theme, so say so next to the
@@ -294,6 +304,9 @@ export function mountSettings(app, root, { goRail }) {
       // The theme row's note depends on every color key, not only its own.
       const themeRow = rows.get("theme");
       if (themeRow) updateOverrideNote(themeRow);
+      // Cursor text depends on the cursor style, a different row.
+      const cursorText = rows.get("cursor-text");
+      if (cursorText) updateLive(cursorText);
       renderedStaged = cur;
       applyFilters();
     }

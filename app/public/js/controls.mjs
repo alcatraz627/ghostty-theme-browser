@@ -12,7 +12,7 @@
 import { flagState, toggleFlag } from "./flags.mjs";
 import { tip } from "./keys.mjs";
 import { h } from "./dom.mjs";
-import { themeNameFor } from "./preview.mjs";
+import { themeNameFor, themeSides } from "./preview.mjs";
 
 // Which control draws this option. current is the effective value, so a value
 // the schema does not list still gets a control that can show it.
@@ -73,6 +73,29 @@ export function stepNumber(text, dir, opt) {
   if (max !== undefined) next = Math.min(max, next);
   return String(next);
 }
+
+// What one line of each list setting looks like. A person should not have to
+// remember the grammar; the example is the box's placeholder and a hint under it.
+export const LIST_EXAMPLES = {
+  palette: "0=#15161e",
+  "font-feature": "calt or -liga",
+  "font-variation": "wght=600",
+  "font-variation-bold": "wght=700",
+  "font-variation-italic": "slnt=-12",
+  "font-variation-bold-italic": "wght=700",
+  "font-codepoint-map": "U+E000-U+F8FF=Symbols Nerd Font Mono",
+  env: "NAME=value",
+  keybind: "super+t=new_tab",
+  "command-palette-entry": "title:Name,action:new_tab",
+  "config-file": "?optional/path",
+  "custom-shader": "path/to/shader.glsl",
+  "font-family": "Font name",
+  "font-family-bold": "Font name",
+  "font-family-italic": "Font name",
+  "font-family-bold-italic": "Font name",
+};
+
+export const listExample = (key) => LIST_EXAMPLES[key] ?? null;
 
 export const listToText = (values) => (values ?? []).join("\n");
 export const textToList = (text) => String(text ?? "").split("\n").map((s) => s.trim()).filter(Boolean);
@@ -261,13 +284,15 @@ const BUILDERS = {
   // A list stages when the box loses focus or the person commits, never per
   // keystroke, so a half-typed line cannot reach the diff.
   list(opt, ctx, stage) {
-    const ta = h("textarea", { class: "field list", spellcheck: "false", "aria-label": opt.label, placeholder: "(defaults, one item per line)" });
+    const example = listExample(opt.key);
+    const ta = h("textarea", { class: "field list", spellcheck: "false", "aria-label": opt.label, placeholder: example ?? "(defaults, one item per line)" });
+    const hint = h("span", { class: "hint" }, example ? `One per line, for example ${example}` : "One item per line");
     ta.addEventListener("change", () => {
       const values = textToList(ta.value);
       stage(values.length ? { values } : { unset: true });
     });
     return {
-      el: ta,
+      el: h("span", { class: "listbox" }, ta, hint),
       update(s) {
         if (document.activeElement !== ta) {
           ta.value = listToText(s.values);
@@ -308,7 +333,19 @@ const BUILDERS = {
       el: btn,
       update(s) {
         current = s.value;
-        name.textContent = s.value || "(no theme)";
+        // A light and dark pair shows both halves, one under the other, so the
+        // dark half is never cut off; the full text is also the tooltip.
+        const sides = themeSides(s.value);
+        if (sides) {
+          name.replaceChildren(
+            h("span", { class: "side" }, h("i", {}, "light"), sides.light),
+            h("span", { class: "side" }, h("i", {}, "dark"), sides.dark)
+          );
+        } else {
+          name.textContent = s.value || "(no theme)";
+        }
+        name.classList.toggle("pair", !!sides);
+        btn.title = s.value;
         const colors = ctx.themeColors(themeNameFor({ theme: [s.value] }, ctx.appearance()));
         dots.replaceChildren(
           ...[1, 2, 3, 4, 5, 6].map((n) => h("s", { style: colors?.[`palette.${n}`] ? `background:${colors[`palette.${n}`]}` : "" }))

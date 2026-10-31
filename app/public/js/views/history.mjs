@@ -44,7 +44,7 @@ export function mountHistory(app, root, { goHistory }) {
         }
         try {
           const { diff } = await app.api.get(`/api/history/diff?hash=${e.hash}`);
-          diffBox.replaceChildren(...diff.split("\n").map((l) => h("div", { class: l.startsWith("+") && !l.startsWith("+++") ? "a" : l.startsWith("-") && !l.startsWith("---") ? "d" : "g" }, l)));
+          diffBox.replaceChildren(...diff.split("\n").map((l) => h("div", { class: l.startsWith("+") && !l.startsWith("+++") ? "a" : l.startsWith("-") && !l.startsWith("---") ? "d" : "g" }, l.replace(/\r$/, ""))));
           diffBox.hidden = false;
         } catch (err) {
           if (err.name !== "NetworkError") app.toast(`Could not show that diff: ${err.message}`);

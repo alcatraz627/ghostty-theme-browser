@@ -28,6 +28,21 @@ export const PREVIEW_KEYS = [
 // color setting.
 export const PREVIEW_ROW_KEYS = ["theme", ...PREVIEW_KEYS];
 
+// Does the sample really change when this row changes, given the values in
+// force? Cursor text is the color under a block cursor, so with a bar or an
+// underline the sample cannot show it and the row must not claim to.
+export function previewsLive(key, values = {}, defaults = {}) {
+  if (!PREVIEW_ROW_KEYS.includes(key)) return false;
+  if (key === "cursor-text") {
+    const style = values["cursor-style"]?.at(-1) ?? defaults["cursor-style"]?.at(-1) ?? "block";
+    return style === "block";
+  }
+  return true;
+}
+
+// A row's tag may need a caveat.
+export const LIVE_CAVEAT = { "font-family": "Only if the font is installed in this browser" };
+
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 
@@ -57,6 +72,16 @@ export function themeNameFor(values, appearance = "dark") {
     if (i > 0) sides[part.slice(0, i).trim()] = part.slice(i + 1).trim();
   }
   return sides[appearance] ?? sides[appearance === "dark" ? "light" : "dark"] ?? "";
+}
+
+// {light, dark} for a pair value, null for a single theme or none.
+export function themeSides(raw) {
+  const sides = {};
+  for (const part of String(raw ?? "").split(",")) {
+    const i = part.indexOf(":");
+    if (i > 0) sides[part.slice(0, i).trim()] = part.slice(i + 1).trim();
+  }
+  return sides.light !== undefined && sides.dark !== undefined ? { light: sides.light, dark: sides.dark } : null;
 }
 
 // True when the theme names a light side and a dark side.
