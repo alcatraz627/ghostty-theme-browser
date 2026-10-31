@@ -17,8 +17,10 @@ import {
   unlinkSync,
 } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { dirname, join } from "node:path";
+import { createHash } from "node:crypto";
+import { basename, dirname, join } from "node:path";
 import { parse, serialize, pairs } from "./config-model.mjs";
+import { lineDiff } from "./diff.mjs";
 import { lint } from "./lint.mjs";
 import { configState } from "./paths.mjs";
 import { env } from "./env.mjs";
@@ -26,6 +28,12 @@ import { captureExternal, snapshot } from "./history.mjs";
 
 const BACKUP_DIR = join(env.stateDir, "backups");
 const BACKUPS_KEPT = 50;
+
+// A fingerprint of the config text. The page records it when a change is staged
+// and sends it back with Apply, so a hand edit made in between is noticed.
+export function hashOf(text) {
+  return createHash("sha256").update(text ?? "").digest("hex");
+}
 
 // The value portion never includes a trailing \r — CRLF lines keep their
 // ending when edited in place.
@@ -172,7 +180,7 @@ function releaseLock(lock) {
 // unless skipValidate (the raw editor's explicit "save anyway"). All failures
 // come back as { ok: false, reason }, never a thrown exception; the returned
 // content is the new text on success, the pre-change text otherwise.
-export function applyChange(mutator, { skipValidate = false, message = "save" } = {}) {
+export function applyChange(mutator, { skipValidate = false, message = "save", baseHash = null } = {}) {
   const state = configState();
   const lock = acquireLock(state.path);
   if (!lock) {
@@ -190,6 +198,11 @@ export function applyChange(mutator, { skipValidate = false, message = "save" } 
     }
 
     const before = existsSync(state.path) ? readFileSync(state.path, "utf8") : "";
+    // First of two staleness checks: the file must still be what the caller
+    // staged against. A mismatch means someone edited it since, so write nothing.
+    if (baseHash && hashOf(before) !== baseHash) {
+      return { ok: false, reason: "stale", content: before, hash: hashOf(before) };
+    }
     const newText = mutator(before);
 
     const check = lint(newText);
@@ -224,6 +237,19 @@ export function applyChange(mutator, { skipValidate = false, message = "save" } 
           history = { error: `history capture failed: ${err.message}` };
         }
       }
+      // Second staleness check, right before the rename and after the last
+      // history capture: anything that landed since the first read means this
+      // write would clobber it, so back out. Only a change in the microseconds
+      // between this read and the rename can still be lost.
+      const justBefore = existsSync(state.path) ? readFileSync(state.path, "utf8") : "";
+      if (hashOf(justBefore) !== hashOf(before)) {
+        try {
+          unlinkSync(tmp);
+        } catch {
+          /* the temp file is already gone */
+        }
+        return { ok: false, reason: "stale", content: justBefore, hash: hashOf(justBefore) };
+      }
       renameSync(tmp, state.path);
 
       const readBack = readFileSync(state.path, "utf8");
@@ -233,12 +259,14 @@ export function applyChange(mutator, { skipValidate = false, message = "save" } 
 
       if (!history?.error) {
         try {
-          history = snapshot(state.path, newText, message, "app");
+          // The backup name rides in the history message so History can show it.
+          const label = backup ? `${message} [backup ${basename(backup)}]` : message;
+          history = snapshot(state.path, newText, label, "app");
         } catch (err) {
           history = { error: `history snapshot failed: ${err.message}` };
         }
       }
-      return { ok: true, backup, lint: check, history, content: newText };
+      return { ok: true, backup, lint: check, history, content: newText, hash: hashOf(newText) };
     } catch (err) {
       return { ok: false, reason: `filesystem error: ${err.message}`, backup, content: before };
     }
@@ -258,10 +286,18 @@ export function writeConfig(newText, opts = {}) {
 // {key, value} | {key, values: []} | {key, unset: true}; shapes are enforced
 // by the same assertions the surgery functions throw.
 export function applyChanges(changes, opts = {}) {
+  const mutator = buildMutator(changes);
+  const keys = changes.map((c) => c.key).join(", ");
+  return applyChange(mutator, { message: `apply ${changes.length} change(s): ${keys}`, ...opts });
+}
+
+// The one place a staged change set becomes new file text. Apply and preview
+// both call it, so the text shown before Apply is the text Apply writes.
+export function buildMutator(changes) {
   if (!Array.isArray(changes) || changes.length === 0) {
     throw new TypeError("changes must be a non-empty array");
   }
-  const mutator = (before) =>
+  return (before) =>
     changes.reduce((text, ch) => {
       if (!ch || typeof ch.key !== "string") {
         throw new TypeError("each change needs a key");
@@ -279,8 +315,28 @@ export function applyChanges(changes, opts = {}) {
       }
       throw new TypeError(`change for "${ch.key}" needs value, values, or unset`);
     }, before);
-  const keys = changes.map((c) => c.key).join(", ");
-  return applyChange(mutator, { message: `apply ${changes.length} change(s): ${keys}`, ...opts });
+}
+
+// What Apply would write for these changes, without writing anything: no lock,
+// no backup, no history capture. Returns the new text, a line diff, Ghostty's
+// verdict, and whether the file changed since the caller staged against it.
+export function previewChanges(changes, { baseHash = null } = {}) {
+  const mutator = buildMutator(changes);
+  const state = configState();
+  const before = state.exists ? readFileSync(state.path, "utf8") : "";
+  const hash = hashOf(before);
+  const stale = Boolean(baseHash) && hash !== baseHash;
+  const newText = mutator(before);
+  const check = lint(newText);
+  return {
+    ok: check.ok && !stale,
+    stale,
+    baseHash: hash,
+    newHash: hashOf(newText),
+    newText,
+    diff: lineDiff(before, newText),
+    lint: check,
+  };
 }
 
 // Throws a statusCode-tagged error on unreadable targets so the HTTP layer

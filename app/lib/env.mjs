@@ -24,6 +24,10 @@ export const env = {
   // Used by tests to run the full write path against a sandbox copy.
   configPathOverride: process.env.GHOSTTY_MGR_CONFIG || null,
 
+  // Stop the server after this many milliseconds without a request from a
+  // person. 0 turns the idle stop off (tests, long debugging sessions).
+  idleMs: Number(process.env.GHOSTTY_MGR_IDLE_MS ?? 300000),
+
   // Suppress the open-browser-on-start convenience (tests, headless runs).
   noOpen: process.env.GHOSTTY_MGR_NO_OPEN === "1",
 };
