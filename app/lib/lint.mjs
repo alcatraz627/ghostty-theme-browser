@@ -50,6 +50,7 @@ export function lint(text, { bin = ghosttyBin(), timeoutMs = 10_000 } = {}) {
     const diagnostics = [];
     const fileLevel = [];
     const themesSeen = new Set();
+    let unclassified = false;
     const output = `${res.stdout || ""}\n${res.stderr || ""}`;
     // Ground truth for key attribution: what the caller actually submitted,
     // line by line. Ghostty echoes offending text where a key would be, and
@@ -124,10 +125,20 @@ export function lint(text, { bin = ghosttyBin(), timeoutMs = 10_000 } = {}) {
         }
       }
 
+      // A line this code cannot classify means the run did not end cleanly,
+      // even if the exit code says 0 (a crash reporter failing to start, for
+      // example). Keep the raw line so the person sees what Ghostty said.
+      unclassified = true;
       fileLevel.push({ message: line.trim() });
     }
 
-    return { ok: res.status === 0, diagnostics, fileLevel };
+    // A failing exit that printed nothing usable would otherwise show as
+    // "invalid, 0 problems". Say what happened instead.
+    if (res.status !== 0 && !diagnostics.length && !fileLevel.length) {
+      fileLevel.push({ message: `validator exited with status ${res.status} and printed nothing` });
+    }
+
+    return { ok: res.status === 0 && !unclassified, diagnostics, fileLevel };
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

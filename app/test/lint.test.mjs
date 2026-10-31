@@ -127,3 +127,46 @@ test("embedded newline in a quoted value cannot spoof a diagnostic key", () => {
     assert.match(d.key, /^[A-Za-z0-9_-]*$/);
   }
 });
+
+// A validator that did not run cleanly must never read as a clean config. These
+// use fake validators through the same binary override the timeout test uses.
+function fakeValidator(body) {
+  const dir = mkdtempSync(join(tmpdir(), "lint-fakebin-"));
+  const fake = join(dir, "ghostty");
+  writeFileSync(fake, `#!/bin/sh\n${body}\n`);
+  chmodSync(fake, 0o755);
+  return { fake, cleanup: () => rmSync(dir, { recursive: true, force: true }) };
+}
+
+test("errors printed with exit 0 do not read as a clean validation", () => {
+  const v = fakeValidator('echo "error: SentryInitFailed"\nexit 0');
+  try {
+    const r = lint("font-size = 14\n", { bin: v.fake });
+    assert.equal(r.ok, false, JSON.stringify(r));
+    assert.ok(r.fileLevel.some((f) => /SentryInitFailed/.test(f.message)), JSON.stringify(r));
+  } finally {
+    v.cleanup();
+  }
+});
+
+test("a non-zero exit with no output still fails and says why", () => {
+  const v = fakeValidator("exit 133");
+  try {
+    const r = lint("font-size = 14\n", { bin: v.fake });
+    assert.equal(r.ok, false, JSON.stringify(r));
+    assert.ok(r.fileLevel.some((f) => /133/.test(f.message)), JSON.stringify(r));
+  } finally {
+    v.cleanup();
+  }
+});
+
+test("a validator that prints nothing and exits 0 stays clean (guard silent on good input)", () => {
+  const v = fakeValidator("exit 0");
+  try {
+    const r = lint("font-size = 14\n", { bin: v.fake });
+    assert.equal(r.ok, true, JSON.stringify(r));
+    assert.deepEqual(r.fileLevel, []);
+  } finally {
+    v.cleanup();
+  }
+});
