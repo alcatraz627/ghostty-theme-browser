@@ -82,6 +82,42 @@ export function unsetKeyInText(text, key) {
   return serialize(model);
 }
 
+// Edits a list key without moving anything that stays: lines whose value is
+// still wanted keep their place (and the comments around them), removed values
+// lose only their own line, and each new value goes right after the line that
+// precedes it in the wanted order. Returns the new entries, or null when that
+// cannot reproduce the wanted order (a reorder, or nothing survives), in which
+// case the caller replaces the whole block.
+function editListInPlace(entries, key, values, eol) {
+  const isKey = (e) => e.kind === "pair" && e.key === key;
+  const keptAt = new Map();
+  const used = new Set();
+  for (const e of entries.filter(isKey)) {
+    const j = values.findIndex((v, i) => !used.has(i) && v === e.value);
+    if (j !== -1) {
+      used.add(j);
+      keptAt.set(j, e);
+    }
+  }
+  if (!keptAt.size) return null;
+  const kept = new Set(keptAt.values());
+  const out = entries.filter((e) => !isKey(e) || kept.has(e));
+  const firstKept = keptAt.get(Math.min(...keptAt.keys()));
+  let prev = null;
+  values.forEach((value, j) => {
+    const have = keptAt.get(j);
+    if (have) {
+      prev = have;
+      return;
+    }
+    const fresh = { kind: "pair", raw: `${key} = ${value}${eol}`, key, value };
+    out.splice(prev ? out.indexOf(prev) + 1 : out.indexOf(firstKept), 0, fresh);
+    prev = fresh;
+  });
+  const got = out.filter(isKey).map((e) => e.value);
+  return got.length === values.length && got.every((v, i) => v === values[i]) ? out : null;
+}
+
 export function setListInText(text, key, values) {
   assertKey(key);
   values.forEach(assertSingleLine);
@@ -90,6 +126,13 @@ export function setListInText(text, key, values) {
     (e) => e.kind === "pair" && e.key === key
   );
   const eol = eolOf(text);
+  if (first !== -1) {
+    const inPlace = editListInPlace(model.entries, key, values, eol);
+    if (inPlace) {
+      model.entries = inPlace;
+      return serialize(model);
+    }
+  }
   const newEntries = values.map((v) => ({
     kind: "pair",
     raw: `${key} = ${v}${eol}`,
