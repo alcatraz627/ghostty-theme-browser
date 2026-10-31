@@ -4,6 +4,10 @@
 // config, the schema's option list can never drift across upgrades; only the
 // type-inference heuristics here can be wrong, and their failure mode is a
 // plain text input in the form, never wrong data.
+//
+// On top of that raw list this file adds what a person needs to find and set
+// things: a group, a readable label, and a control type that matches how
+// Ghostty actually reads the value.
 
 import { runAction, versionLine } from "./ghostty.mjs";
 import { parse } from "./config-model.mjs";
@@ -27,49 +31,136 @@ const LIST_KEYS = new Set([
   "custom-shader",
 ]);
 
-const CATEGORIES = [
+// Where a person should look for each setting. Exact keys win over prefixes,
+// and the first matching prefix wins. A key that matches nothing lands in
+// "Other", and a test names every such key so a new Ghostty release gets a
+// decision instead of a silent dumping ground.
+const EXACT_GROUP = {
+  Appearance: [
+    "theme", "background", "foreground", "palette", "minimum-contrast", "font-family", "font-size",
+    "background-opacity", "background-opacity-cells", "background-blur", "window-padding-x",
+    "window-padding-y", "window-padding-balance", "window-padding-color", "split-divider-color",
+  ],
+  Fonts: ["alpha-blending"],
+  Window: [
+    "confirm-close-surface", "quit-after-last-window-closed", "quit-after-last-window-closed-delay",
+    "initial-window", "undo-timeout", "drag-handle", "class", "split-preserve-zoom", "fullscreen",
+    "maximize", "title", "title-report",
+  ],
+  Scrolling: ["scroll-to-bottom", "scrollbar"],
+  "Links and mouse": ["right-click-action", "middle-click-action", "focus-follows-mouse"],
+  Notifications: ["desktop-notifications", "app-notifications", "progress-style"],
+  Shell: [
+    "command", "initial-command", "working-directory", "env", "input", "wait-after-command",
+    "abnormal-command-exit-runtime",
+  ],
+  Keybinds: ["keybind", "key-remap", "command-palette-entry"],
+  Advanced: [
+    "term", "enquiry-response", "async-backend", "language", "grapheme-width-method",
+    "image-storage-limit", "osc-color-report-format", "config-file", "config-default-files",
+    "custom-shader", "custom-shader-animation",
+  ],
+};
+const PREFIX_GROUP = [
+  ["background-", "Appearance"],
+  ["palette-", "Appearance"],
+  ["cursor-", "Appearance"],
+  ["selection-", "Appearance"],
+  ["bold-", "Appearance"],
+  ["faint-", "Appearance"],
+  ["search-", "Appearance"],
+  ["unfocused-split-", "Appearance"],
   ["font-", "Fonts"],
   ["freetype-", "Fonts"],
   ["adjust-", "Fonts"],
-  ["theme", "Colors"],
-  ["background", "Colors"],
-  ["foreground", "Colors"],
-  ["palette", "Colors"],
-  ["selection-", "Colors"],
-  ["minimum-contrast", "Colors"],
-  ["bold-", "Colors"],
-  ["faint-", "Colors"],
-  ["split-divider-color", "Colors"],
-  ["unfocused-split-", "Colors"],
-  ["cursor-", "Cursor"],
-  ["mouse-", "Mouse"],
-  ["click-", "Mouse"],
-  ["scrollback-", "Terminal"],
+  ["notify-", "Notifications"],
+  ["bell-", "Notifications"],
+  ["scrollback-", "Scrolling"],
+  ["mouse-", "Links and mouse"],
+  ["click-", "Links and mouse"],
+  ["link-", "Links and mouse"],
+  ["clipboard-", "Clipboard"],
+  ["copy-", "Clipboard"],
   ["shell-integration", "Shell"],
-  ["command", "Shell"],
-  ["initial-command", "Shell"],
-  ["working-directory", "Shell"],
-  ["env", "Shell"],
   ["window-", "Window"],
-  ["fullscreen", "Window"],
-  ["maximize", "Window"],
-  ["title", "Window"],
   ["resize-", "Window"],
+  ["tab-inherit-", "Window"],
+  ["split-inherit-", "Window"],
   ["macos-", "macOS"],
   ["gtk-", "Linux/GTK"],
   ["x11-", "Linux/GTK"],
   ["linux-", "Linux/GTK"],
-  ["clipboard-", "Clipboard"],
-  ["copy-", "Clipboard"],
-  ["keybind", "Keybinds"],
-  ["quick-terminal-", "Quick Terminal"],
+  ["quick-terminal-", "Quick terminal"],
+  ["vt-", "Advanced"],
+  ["auto-update", "Advanced"],
+  ["config-", "Advanced"],
+  ["custom-shader", "Advanced"],
 ];
+const EXACT_LOOKUP = new Map(
+  Object.entries(EXACT_GROUP).flatMap(([group, keys]) => keys.map((k) => [k, group]))
+);
 
 function categoryFor(key) {
-  for (const [prefix, cat] of CATEGORIES) {
-    if (key === prefix || key.startsWith(prefix)) return cat;
+  if (EXACT_LOOKUP.has(key)) return EXACT_LOOKUP.get(key);
+  for (const [prefix, group] of PREFIX_GROUP) {
+    if (key.startsWith(prefix)) return group;
   }
   return "Other";
+}
+
+// Where the doc-text heuristics guess wrong, say what the value really is.
+// Every value listed here must appear in the option's own documentation, which
+// a test checks, so a Ghostty release that renames one is noticed.
+const CONTROL_OVERRIDES = {
+  "window-padding-balance": { type: "enum", enumValues: ["false", "true", "equal"] },
+  "macos-titlebar-style": { type: "enum", enumValues: ["native", "transparent", "tabs", "hidden"] },
+  "macos-option-as-alt": { type: "enum", enumValues: ["false", "true", "left", "right"] },
+  "notify-on-command-finish": { type: "enum", enumValues: ["never", "unfocused", "always"] },
+  "bell-features": { type: "flags", flags: ["system", "audio", "attention", "title", "border"] },
+  "shell-integration-features": {
+    type: "flags",
+    flags: ["cursor", "sudo", "title", "ssh-env", "ssh-terminfo", "path"],
+  },
+  "notify-on-command-finish-action": { type: "flags", flags: ["bell", "notify"] },
+};
+
+// Readable names for the settings people look for most. Anything not listed
+// gets its key turned into words by labelFor.
+const LABELS = {
+  theme: "Theme",
+  background: "Background",
+  foreground: "Foreground",
+  "cursor-style": "Cursor style",
+  "cursor-style-blink": "Cursor blink",
+  "font-family": "Font family",
+  "font-size": "Font size",
+  "window-padding-balance": "Padding balance",
+  "window-padding-x": "Horizontal padding",
+  "window-padding-y": "Vertical padding",
+  "background-opacity": "Background opacity",
+  "macos-titlebar-style": "Titlebar style",
+  "macos-option-as-alt": "Option key as Alt",
+  "window-save-state": "Restore windows",
+  "notify-on-command-finish": "Notify when a command finishes",
+  "notify-on-command-finish-action": "Notification method",
+  "notify-on-command-finish-after": "Notify after",
+  "bell-features": "Bell features",
+  "copy-on-select": "Copy on select",
+  "clipboard-read": "Clipboard read",
+  "clipboard-write": "Clipboard write",
+  "shell-integration": "Shell integration",
+  "shell-integration-features": "Shell integration features",
+  "link-osc8": "OSC 8 hyperlinks",
+  "scrollback-limit-bytes": "Scrollback size",
+  "minimum-contrast": "Minimum contrast",
+};
+const WORDS = { osc: "OSC", vt: "VT", gtk: "GTK", ssh: "SSH", url: "URL", ui: "UI", x11: "X11", macos: "macOS" };
+
+export function labelFor(key) {
+  if (LABELS[key]) return LABELS[key];
+  const words = key.split("-").map((w) => WORDS[w] ?? w);
+  const text = words.join(" ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 function extractEnum(doc) {
@@ -132,9 +223,17 @@ export function buildSchema() {
       default: o.list ? null : o.defaults[0] ?? "",
       enumValues: extractEnum(o.doc),
       platform: platformOf(o.doc),
+      label: labelFor(o.key),
     };
     entry.type = inferType(entry);
     if (entry.type !== "enum") entry.enumValues = null;
+    // Curated truth beats the heuristics for the keys listed above.
+    const override = CONTROL_OVERRIDES[o.key];
+    if (override) {
+      entry.type = override.type;
+      entry.enumValues = override.enumValues ?? null;
+      if (override.flags) entry.flags = override.flags;
+    }
     return entry;
   });
 

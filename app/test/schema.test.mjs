@@ -19,7 +19,7 @@ test("schema types for known keys match reality", () => {
   assert.ok(byKey["cursor-style"].enumValues.includes("underline"));
   assert.equal(byKey["palette"].type, "list");
   assert.equal(byKey["keybind"].type, "list");
-  assert.equal(byKey["theme"].category, "Colors");
+  assert.equal(byKey["theme"].category, "Appearance");
   assert.match(byKey["font-family"].doc, /font famil/i);
 });
 
