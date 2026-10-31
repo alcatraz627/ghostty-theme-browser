@@ -20,11 +20,23 @@ export const GROUP_ORDER = [
   "Advanced",
 ];
 
+// The settings people reach for first sit at the top of their group, in this
+// order. Every other setting keeps the server's order after them.
+export const FIRST_IN_GROUP = [
+  "theme", "background", "foreground", "cursor-style", "cursor-style-blink",
+  "font-family", "font-size", "window-padding-balance", "window-padding-x", "window-padding-y", "background-opacity",
+];
+
 // [{name, options}] in the order a person looks for them. A group the server
 // adds later sorts after the known ones, and "Other" is always last.
 export function groupOptions(options) {
   const by = new Map();
-  for (const o of options) {
+  const first = (key) => {
+    const i = FIRST_IN_GROUP.indexOf(key);
+    return i === -1 ? FIRST_IN_GROUP.length : i;
+  };
+  const ordered = options.map((o, i) => [o, i]).sort((a, b) => first(a[0].key) - first(b[0].key) || a[1] - b[1]).map(([o]) => o);
+  for (const o of ordered) {
     const name = o.category || "Other";
     if (!by.has(name)) by.set(name, []);
     by.get(name).push(o);

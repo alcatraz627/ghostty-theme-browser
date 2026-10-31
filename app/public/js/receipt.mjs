@@ -29,19 +29,21 @@ const TITLES = {
   apply: (n) => `Applied ${n} ${n === 1 ? "change" : "changes"}`,
   raw: () => "Saved the file",
   restore: () => "Restored an earlier version",
+  undo: () => "Undone, the file is back to the earlier version",
 };
-const UNDO_LABEL = { apply: "Undo this apply", raw: "Undo this save", restore: "Undo this restore" };
+const UNDO_LABEL = { apply: "Undo this apply", raw: "Undo this save", restore: "Undo this restore", undo: "Redo" };
 
-// kind: "apply" | "raw" | "restore". response: the server's success reply.
+// kind: "apply" | "raw" | "restore" | "undo". response: the server's success reply.
 // keyCount: how many settings changed. entries: GET /api/history after the write.
-export function buildReceipt({ kind = "apply", response, keyCount = 0, configPath = "", reloadKeybind = "", entries = [] }) {
+// title replaces the default heading, for writes like "Activated profile work".
+export function buildReceipt({ kind = "apply", response, keyCount = 0, configPath = "", reloadKeybind = "", entries = [], title = null }) {
   const backupPath = response?.backup ?? null;
   const historyHash = response?.history?.hash ?? null;
   const historyError = response?.history?.error ?? null;
   const undoTarget = undoTargetFor(entries, historyHash);
   return {
     kind,
-    title: (TITLES[kind] ?? TITLES.apply)(keyCount),
+    title: title ?? (TITLES[kind] ?? TITLES.apply)(keyCount),
     keyCount,
     backupName: backupPath ? baseName(backupPath) : null,
     backupPath,
@@ -49,6 +51,7 @@ export function buildReceipt({ kind = "apply", response, keyCount = 0, configPat
     historyShort: historyHash ? historyHash.slice(0, 7) : null,
     historyNote: historyError ?? (historyHash ? null : "no new entry, the file is identical to the latest one"),
     newHash: response?.hash ?? null,
+    fileShort: response?.hash ? response.hash.slice(0, 12) : null,
     reloadKeybind,
     reloadGlyph: formatKeybind(reloadKeybind),
     // The same text the Copy button puts on the clipboard.
