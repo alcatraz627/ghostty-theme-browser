@@ -20,11 +20,7 @@ import { ghosttyBin, versionLine, reloadKeybind, listFontFamilies } from "./lib/
 import { lint } from "./lib/lint.mjs";
 import { buildSchema } from "./lib/schema.mjs";
 import {
-  setKeyInText,
-  unsetKeyInText,
-  setListInText,
   writeConfig,
-  applyChange,
   applyChanges,
   previewChanges,
   hashOf,
@@ -186,54 +182,11 @@ const api = {
   },
   "POST /api/lint": (body) =>
     lint(typeof body?.content === "string" ? body.content : ""),
-  // Single-setting change from the form view: {key, value} to set, {key,
-  // unset: true} to reset to default, {key, values: [...]} for list keys.
-  "POST /api/config/set": (body) => {
-    const key = body?.key;
-    if (typeof key !== "string" || !/^[A-Za-z0-9_-]+$/.test(key)) {
-      throw withStatus(new Error("bad key"), 400);
-    }
-    // Values must be single-line: an embedded newline would smuggle extra
-    // directives through an endpoint whose contract is "touch this one key".
-    const singleLine = (v) => typeof v === "string" && !/[\r\n]/.test(v);
-    // The mutation runs inside applyChange's cross-process lock against the
-    // freshest content — never against a base read before the lock.
-    let mutator;
-    let message;
-    if (body.unset === true) {
-      mutator = (before) => unsetKeyInText(before, key);
-      message = `unset ${key}`;
-    } else if (Array.isArray(body.values)) {
-      if (!body.values.every(singleLine)) {
-        throw withStatus(new Error("values must be single-line strings"), 400);
-      }
-      mutator = (before) =>
-        body.values.length
-          ? setListInText(before, key, body.values)
-          : unsetKeyInText(before, key);
-      message = body.values.length
-        ? `set ${key} (${body.values.length} items)`
-        : `unset ${key}`;
-    } else if (typeof body.value === "string") {
-      if (!singleLine(body.value)) {
-        throw withStatus(new Error("value must be a single-line string"), 400);
-      }
-      // Empty value means "back to default" — same contract the UI uses.
-      mutator = (before) =>
-        body.value === ""
-          ? unsetKeyInText(before, key)
-          : setKeyInText(before, key, body.value);
-      message = body.value === "" ? `unset ${key}` : `set ${key} = ${body.value}`;
-    } else {
-      throw withStatus(new Error("provide value, values, or unset"), 400);
-    }
-    return applyChange(mutator, { message });
-  },
   // The commit half of the Customize view's preview-then-apply contract:
   // all staged changes in one locked write, one history entry.
   "POST /api/config/apply": (body) => {
     validateChanges(body);
-    return mapTypeErrors(() => applyChanges(body.changes, { baseHash: baseHashOf(body) }));
+    return mapTypeErrors(() => applyChanges(body.changes, { baseHash: baseHashOf(body, { required: true }) }));
   },
   // What Apply would write for these changes, with the diff and Ghostty's
   // verdict. Pure: it never writes the config, a backup or history.
@@ -250,7 +203,7 @@ const api = {
     return writeConfig(body.content, {
       skipValidate: body.force === true,
       message: "raw editor save",
-      baseHash: baseHashOf(body),
+      baseHash: baseHashOf(body, { required: true }),
     });
   },
 };
@@ -277,9 +230,13 @@ function validateChanges(body) {
   }
 }
 
-// The hash of the file the page staged against, when it sent one.
-function baseHashOf(body) {
-  if (body?.baseHash === undefined || body.baseHash === null) return null;
+// The hash of the file the page staged against. A write must send one, so a
+// caller that forgets cannot skip the stale-file check; preview may omit it.
+function baseHashOf(body, { required = false } = {}) {
+  if (body?.baseHash === undefined || body.baseHash === null) {
+    if (required) throw withStatus(new Error("baseHash is required for a write"), 400);
+    return null;
+  }
   if (typeof body.baseHash !== "string" || !/^[0-9a-f]{64}$/.test(body.baseHash)) {
     throw withStatus(new Error("bad baseHash"), 400);
   }
