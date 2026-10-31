@@ -114,7 +114,7 @@ function renderStopped() {
   if (!s.stopped) return;
   const minutes = s.meta?.idleMs ? Math.round(s.meta.idleMs / 60000) : 0;
   stoppedRoot.append(h("div", { class: "stopped", id: "stopped-panel" },
-    h("h2", {}, minutes ? `Stopped after ${minutes} idle minutes` : "The settings server is not running"),
+    h("h2", {}, minutes ? `Stopped after ${minutes} idle ${minutes === 1 ? "minute" : "minutes"}` : "The settings server is not running"),
     h("p", {}, "Nothing was lost: your config file is untouched. Start it again with ", h("code", {}, "npm start"), " in this repo, then press the button."),
     staging.size ? h("p", {}, `Your ${staging.size} staged ${staging.size === 1 ? "change is" : "changes are"} kept in this tab until then.`) : null,
     h("div", { class: "acts" }, h("button", { type: "button", class: "btn solid", id: "retry-btn", "data-tip": tip("Check again", "press"), onclick: () => tryReconnect() }, icon("refresh"), h("span", {}, "Check again")))));

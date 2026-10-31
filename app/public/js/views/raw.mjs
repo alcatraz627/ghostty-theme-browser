@@ -64,7 +64,8 @@ export function mountRaw(app, root, { goHistory }) {
     ta.setSelectionRange(0, 0);
     ta.scrollTop = 0;
     paint();
-    lintNow();
+    // Linting spawns Ghostty, so only do it while the editor is on screen.
+    if (store.get().view === "raw") lintNow();
   }
 
   async function lintNow() {

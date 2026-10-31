@@ -239,7 +239,10 @@ export function mountSettings(app, root, { goRail }) {
     jump(next.dataset.group);
   });
 
-  searchInput.addEventListener("input", () => setFilter({ q: searchInput.value }));
+  searchInput.addEventListener("input", () => {
+    setFilter({ q: searchInput.value });
+    page.scrollTop = 0;
+  });
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && searchInput.value) {
       e.stopPropagation();

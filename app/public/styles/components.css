@@ -241,7 +241,6 @@
 .raw-hl .c { color: var(--syn-com); }
 .raw-hl .k { color: var(--syn-key); }
 .raw-hl .v { color: var(--syn-val); }
-.raw-hl .sw-hex { display: inline-block; width: 9px; height: 9px; margin-right: 4px; border-radius: var(--r-s); vertical-align: baseline; }
 .diags { list-style: none; margin: 0; padding: 0; max-height: 28vh; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
 .diags button { display: flex; gap: 10px; width: 100%; text-align: left; padding: 6px 10px; border-radius: var(--r-s); }
 .diags button:hover { background: var(--fill-strong); }
