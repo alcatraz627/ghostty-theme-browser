@@ -8,11 +8,19 @@ The settings window is a local web page for changing your Ghostty config. Every 
 
 ## Start and stop
 
-1. Run `npm start` in this repo. It opens the page in your browser.
-2. Use it. The server stops by itself after 5 minutes without a request from you, and prints how to start it again.
-3. Run `npm start` again whenever you need it. Your config is never touched while it is stopped.
+It runs only while you use it, as the pm2 service `ghostty-settings` on port 5124.
 
-The 5 minutes can be changed with the environment variable `GHOSTTY_MGR_IDLE_MS`, and `0` turns the stop off.
+1. Start it from any of these:
+   - **bfb Home:** the Local tools card. Click Ghostty settings and it starts and opens in a new tab.
+   - **Switchboard:** Dev servers, under Local services. Start, then the link.
+   - **A terminal:** `svc up ghostty-settings`, then open http://127.0.0.1:5124/
+2. Use it. The plain address works; it forwards you to the page with its access token.
+3. Leave it. It stops by itself after 5 minutes without a click or keypress from you. pm2 does not restart it, and an open tab polling for changes does not keep it alive.
+4. If a tab is still open when it stops, the tab says so and reconnects by itself once you start it again. Your staged changes stay in that tab.
+
+Stop it sooner with the power button on the bfb card, Stop in Switchboard, or `svc down ghostty-settings`. A restart of the Mac leaves it stopped.
+
+The service is defined in `ecosystem.config.cjs`. The 5 minutes can be changed with the environment variable `GHOSTTY_MGR_IDLE_MS`, and `0` turns the stop off. `npm start` still runs it in a terminal for development.
 
 ## Using it
 

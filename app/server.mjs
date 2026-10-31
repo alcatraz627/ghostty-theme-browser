@@ -290,7 +290,7 @@ function readBody(req) {
 const idle = createIdleWatch({
   idleMs: env.idleMs,
   onIdle: () => {
-    console.log(`ghostty-config-manager stopped after ${Math.round(env.idleMs / 60000)} idle minutes. Start it again with: npm start`);
+    console.log(`ghostty-config-manager stopped after ${Math.round(env.idleMs / 60000)} idle minutes. Start it again from Switchboard or bfb Home, or with: svc up ghostty-settings`);
     server.close();
     process.exit(0);
   },
@@ -331,6 +331,16 @@ const server = createServer((req, res) => {
       }
     })();
     return;
+  }
+
+  // A plain bookmark, Switchboard's link or bfb's Open button lands on "/"
+  // without the token. Send it on to the tokened address so the page works.
+  // Another site cannot read where a redirect points, and the Host and Origin
+  // gates above already turned away anything not addressed to this port.
+  if (req.method === "GET" && url.pathname === "/" && url.searchParams.get("token") !== TOKEN) {
+    idle.touch();
+    res.writeHead(302, { location: `/?token=${TOKEN}`, "cache-control": "no-store" });
+    return res.end();
   }
 
   // Static files. Path-traversal-safe: normalize, then require the resolved
