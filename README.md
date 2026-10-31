@@ -1,6 +1,17 @@
-# Ghostty Theme Browser
+<p align="center">
+  <img src=".github/readme/banner.svg" alt="ghostty-theme-browser banner: The costume shop" width="100%">
+</p>
+
+# <img src=".github/readme/favicon.svg" alt="" width="32" height="32"> Ghostty Theme Browser
 
 An interactive browser for exploring all 463+ Ghostty terminal color themes with live previews.
+
+<details>
+<summary>Riddle answer</summary>
+
+A Ghostty theme from iTerm2-Color-Schemes: the browser previews each of the 463 with sample code, errors and output before you copy its raw colours into your config.
+
+</details>
 
 ## Features
 
