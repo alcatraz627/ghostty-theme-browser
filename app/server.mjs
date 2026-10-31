@@ -9,22 +9,71 @@
 //   - GET endpoints never mutate
 
 import { createServer } from "node:http";
+import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { env } from "./lib/env.mjs";
 import { configState } from "./lib/paths.mjs";
-import { ghosttyBin, versionLine } from "./lib/ghostty.mjs";
+import { ghosttyBin, versionLine, reloadKeybind, listFontFamilies } from "./lib/ghostty.mjs";
+import { lint } from "./lib/lint.mjs";
+import { buildSchema } from "./lib/schema.mjs";
+import {
+  writeConfig,
+  applyChanges,
+  previewChanges,
+  hashOf,
+} from "./lib/config-write.mjs";
+import { createIdleWatch } from "./lib/idle.mjs";
+import {
+  log as historyLog,
+  show as historyShow,
+  diff as historyDiff,
+  captureExternal,
+} from "./lib/history.mjs";
+import {
+  listProfiles,
+  readProfile,
+  saveProfile,
+  deleteProfile,
+  activateProfile,
+} from "./lib/profiles.mjs";
+import { listThemes, themeColors } from "./lib/themes.mjs";
+import { readFileSync as readFile } from "node:fs";
 
 const ROOT = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(ROOT, "public");
 const PORT = env.port;
-const TOKEN = randomBytes(16).toString("hex");
+
+// The token survives restarts so open tabs don't 401 after every server
+// bounce. It lives in a user-only file in the state dir; the threat model
+// (127.0.0.1 bind + token on every API call + Origin/Host checks) is
+// unchanged — only the rotation cadence moves from per-launch to on-demand
+// (delete the file to rotate).
+function loadOrCreateToken() {
+  const path = join(env.stateDir, "token");
+  try {
+    const existing = readFileSync(path, "utf8").trim();
+    if (/^[0-9a-f]{32}$/.test(existing)) return existing;
+  } catch {
+    /* first run or unreadable — mint below */
+  }
+  const fresh = randomBytes(16).toString("hex");
+  try {
+    mkdirSync(env.stateDir, { recursive: true });
+    writeFileSync(path, fresh + "\n", { mode: 0o600 });
+  } catch {
+    /* state dir unwritable: degrade to per-launch token */
+  }
+  return fresh;
+}
+const TOKEN = loadOrCreateToken();
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".svg": "image/svg+xml",
@@ -53,20 +102,201 @@ function apiAuthorized(req, url) {
   );
 }
 
+// Handlers are keyed by "METHOD /path". POST bodies arrive parsed; every
+// handler here is still read-only with respect to the live config — the
+// first real write endpoint lands with the history milestone.
 const api = {
-  "/api/meta": () => ({
+  "GET /api/meta": () => ({
     ghosttyVersion: versionLine(),
     binaryPath: ghosttyBin(),
+    reloadKeybind: reloadKeybind(),
     port: PORT,
+    idleMs: env.idleMs,
   }),
-  "/api/config": () => {
+  // The page sends this on a person's key press or click while its tab is
+  // visible. It counts as activity because it is not the quiet poll route.
+  "POST /api/ping": () => ({ ok: true }),
+  "GET /api/schema": () => buildSchema(),
+  // The stat poll doubles as the external-edit detector: any hand edit the
+  // repo hasn't seen becomes an [external] timeline entry.
+  "GET /api/stat": () => {
     const state = configState();
-    return {
-      ...state,
-      content: state.exists ? readFileSync(state.path, "utf8") : null,
-    };
+    try {
+      captureExternal(state.path);
+    } catch {
+      /* history is auxiliary; stat stays available without it */
+    }
+    return { mtimeMs: state.mtimeMs, exists: state.exists };
+  },
+  "GET /api/history": () => ({ entries: historyLog(configState().path) }),
+  "GET /api/profiles": () => ({ profiles: listProfiles() }),
+  "GET /api/themes": () => ({ themes: listThemes() }),
+  "GET /api/fonts": () => ({ families: listFontFamilies() }),
+  "GET /api/theme": (_body, url) =>
+    mapTypeErrors(() => themeColors(url.searchParams.get("name") || "")),
+  // Save the current config (or another profile, for duplicate) under a name.
+  "POST /api/profiles/save": (body) =>
+    mapTypeErrors(() => {
+      const state = configState();
+      const content =
+        typeof body?.from === "string"
+          ? readProfile(body.from)
+          : state.exists
+            ? readFile(state.path, "utf8")
+            : "";
+      return saveProfile(body?.name, content, { overwrite: body?.overwrite === true });
+    }),
+  "POST /api/profiles/activate": (body) =>
+    mapTypeErrors(() => activateProfile(body?.name)),
+  "POST /api/profiles/delete": (body) =>
+    mapTypeErrors(() => deleteProfile(body?.name)),
+  "GET /api/history/diff": (_body, url) => {
+    const hash = url.searchParams.get("hash") || "";
+    if (!/^[0-9a-f]{7,40}$/.test(hash)) {
+      throw withStatus(new Error("bad hash"), 400);
+    }
+    try {
+      return { diff: historyDiff(configState().path, hash) };
+    } catch {
+      throw withStatus(new Error("unknown snapshot hash"), 400);
+    }
+  },
+  "POST /api/history/restore": (body) => {
+    if (typeof body?.hash !== "string" || !/^[0-9a-f]{7,40}$/.test(body.hash)) {
+      throw withStatus(new Error("bad hash"), 400);
+    }
+    let content;
+    try {
+      content = historyShow(configState().path, body.hash);
+    } catch {
+      throw withStatus(new Error("unknown snapshot hash"), 400);
+    }
+    return writeConfig(content, {
+      message: `restore ${body.hash.slice(0, 7)}`,
+    });
+  },
+  "GET /api/config": () => {
+    const state = configState();
+    const content = state.exists ? readFileSync(state.path, "utf8") : null;
+    return { ...state, content, hash: hashOf(content ?? "") };
+  },
+  "POST /api/lint": (body) =>
+    lint(typeof body?.content === "string" ? body.content : ""),
+  // The commit half of the Customize view's preview-then-apply contract:
+  // all staged changes in one locked write, one history entry.
+  "POST /api/config/apply": (body) => {
+    validateChanges(body);
+    return mapTypeErrors(() => applyChanges(body.changes, { baseHash: baseHashOf(body, { required: true }) }));
+  },
+  // What Apply would write for these changes, with the diff and Ghostty's
+  // verdict. Pure: it never writes the config, a backup or history.
+  "POST /api/config/preview": (body) => {
+    validateChanges(body);
+    return mapTypeErrors(() => previewChanges(body.changes, { baseHash: baseHashOf(body) }));
+  },
+  // Whole-file save from the raw editor; force skips the validation gate
+  // (Ghostty itself tolerates bad lines by ignoring them).
+  "POST /api/config/save": (body) => {
+    if (typeof body?.content !== "string") {
+      throw withStatus(new Error("content must be a string"), 400);
+    }
+    return writeConfig(body.content, {
+      skipValidate: body.force === true,
+      message: "raw editor save",
+      baseHash: baseHashOf(body, { required: true }),
+    });
   },
 };
+
+function withStatus(err, code) {
+  err.statusCode = code;
+  return err;
+}
+
+// The change list shared by preview and apply: keys are plain, values are one
+// line each, because a newline would smuggle in an extra directive.
+function validateChanges(body) {
+  if (!Array.isArray(body?.changes) || !body.changes.length) {
+    throw withStatus(new Error("changes must be a non-empty array"), 400);
+  }
+  for (const ch of body.changes) {
+    if (typeof ch?.key !== "string" || !/^[A-Za-z0-9_-]+$/.test(ch.key)) {
+      throw withStatus(new Error("bad key in changes"), 400);
+    }
+    const vals = Array.isArray(ch.values) ? ch.values : typeof ch.value === "string" ? [ch.value] : [];
+    if (!vals.every((v) => typeof v === "string" && !/[\r\n]/.test(v))) {
+      throw withStatus(new Error("values must be single-line strings"), 400);
+    }
+  }
+}
+
+// The hash of the file the page staged against. A write must send one, so a
+// caller that forgets cannot skip the stale-file check; preview may omit it.
+function baseHashOf(body, { required = false } = {}) {
+  if (body?.baseHash === undefined || body.baseHash === null) {
+    if (required) throw withStatus(new Error("baseHash is required for a write"), 400);
+    return null;
+  }
+  if (typeof body.baseHash !== "string" || !/^[0-9a-f]{64}$/.test(body.baseHash)) {
+    throw withStatus(new Error("bad baseHash"), 400);
+  }
+  return body.baseHash;
+}
+
+// Library TypeErrors are caller mistakes (bad name, missing profile) — they
+// come back as 400s, not 500s.
+function mapTypeErrors(fn) {
+  try {
+    return fn();
+  } catch (err) {
+    if (err instanceof TypeError) throw withStatus(err, 400);
+    throw err;
+  }
+}
+
+const BODY_LIMIT = 1024 * 1024;
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0;
+    let overflowed = false;
+    const chunks = [];
+    req.on("data", (chunk) => {
+      size += chunk.length;
+      // Keep draining on overflow instead of destroying the socket, so the
+      // client receives a clean 413 rather than a connection reset.
+      if (size > BODY_LIMIT) {
+        overflowed = true;
+        chunks.length = 0;
+        return;
+      }
+      if (!overflowed) chunks.push(chunk);
+    });
+    req.on("end", () => {
+      if (overflowed) {
+        const err = new Error("body too large (max 1 MiB)");
+        err.statusCode = 413;
+        reject(err);
+      } else {
+        resolve(Buffer.concat(chunks));
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
+// The app should not run when nobody uses it. After idleMs without a request
+// from a person it exits cleanly and says how to start it again.
+const idle = createIdleWatch({
+  idleMs: env.idleMs,
+  onIdle: () => {
+    console.log(`ghostty-config-manager stopped after ${Math.round(env.idleMs / 60000)} idle minutes. Start it again from Switchboard or bfb Home, or with: svc up ghostty-settings`);
+    server.close();
+    process.exit(0);
+  },
+});
+// Check often enough that a short idle window (used in tests) is honoured.
+setInterval(() => idle.check(), Math.min(10_000, Math.max(250, Math.floor(env.idleMs / 4) || 10_000)));
 
 const server = createServer((req, res) => {
   const gateError = requestGates(req);
@@ -76,19 +306,46 @@ const server = createServer((req, res) => {
 
   if (url.pathname.startsWith("/api/")) {
     if (!apiAuthorized(req, url)) return deny(res, 401, "missing or bad token");
-    const handler = api[url.pathname];
-    if (!handler || req.method !== "GET") return deny(res, 404, "no such endpoint");
-    try {
-      const body = JSON.stringify(handler());
-      res.writeHead(200, { "content-type": "application/json" });
-      return res.end(body);
-    } catch (err) {
-      return deny(res, 500, err.message);
-    }
+    // The page polls /api/stat to notice hand edits. That says nothing about
+    // whether a person is here, so it never keeps the server alive.
+    if (url.pathname !== "/api/stat") idle.touch();
+    const handler = api[`${req.method} ${url.pathname}`];
+    if (!handler) return deny(res, 404, "no such endpoint");
+    void (async () => {
+      let parsedBody = null;
+      if (req.method !== "GET") {
+        try {
+          const raw = await readBody(req);
+          parsedBody = raw.length ? JSON.parse(raw.toString("utf8")) : null;
+        } catch (err) {
+          return deny(res, err.statusCode || 400, err.message);
+        }
+      }
+      try {
+        const result = handler(parsedBody, url);
+        // A stale base is a conflict the page must resolve, not a plain failure.
+        res.writeHead(result?.reason === "stale" ? 409 : 200, { "content-type": "application/json" });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        deny(res, err.statusCode || 500, err.message);
+      }
+    })();
+    return;
+  }
+
+  // A plain bookmark, Switchboard's link or bfb's Open button lands on "/"
+  // without the token. Send it on to the tokened address so the page works.
+  // Another site cannot read where a redirect points, and the Host and Origin
+  // gates above already turned away anything not addressed to this port.
+  if (req.method === "GET" && url.pathname === "/" && url.searchParams.get("token") !== TOKEN) {
+    idle.touch();
+    res.writeHead(302, { location: `/?token=${TOKEN}`, "cache-control": "no-store" });
+    return res.end();
   }
 
   // Static files. Path-traversal-safe: normalize, then require the resolved
   // path to stay inside PUBLIC_DIR.
+  idle.touch();
   const rel = url.pathname === "/" ? "index.html" : url.pathname.slice(1);
   const filePath = normalize(join(PUBLIC_DIR, rel));
   if (!filePath.startsWith(PUBLIC_DIR) || !existsSync(filePath)) {
@@ -99,6 +356,13 @@ const server = createServer((req, res) => {
 });
 
 server.listen(PORT, "127.0.0.1", () => {
+  const url = `http://127.0.0.1:${PORT}/?token=${TOKEN}`;
   console.log(`ghostty-config-manager listening`);
-  console.log(`  http://127.0.0.1:${PORT}/?token=${TOKEN}`);
+  console.log(`  ${url}`);
+  // Interactive `npm start` opens the app itself — no terminal-output
+  // spelunking for the token. Headless runs (tests, background servers,
+  // GHOSTTY_MGR_NO_OPEN=1) never pop a browser.
+  if (process.stdout.isTTY && !env.noOpen && process.platform === "darwin") {
+    spawn("open", [url], { detached: true, stdio: "ignore" }).unref();
+  }
 });

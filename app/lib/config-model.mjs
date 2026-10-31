@@ -18,9 +18,13 @@ export function parse(text) {
     trailingNewline = true;
   }
   const entries = lines.map((raw) => {
-    if (/^\s*$/.test(raw)) return { kind: "blank", raw };
-    if (/^\s*#/.test(raw)) return { kind: "comment", raw };
-    const m = raw.match(PAIR_RE);
+    // CRLF files reach here with a trailing \r on every line (we only split
+    // on \n). Classify against the logical line; raw keeps its bytes so the
+    // round-trip guarantee is untouched.
+    const logical = raw.endsWith("\r") ? raw.slice(0, -1) : raw;
+    if (/^\s*$/.test(logical)) return { kind: "blank", raw };
+    if (/^\s*#/.test(logical)) return { kind: "comment", raw };
+    const m = logical.match(PAIR_RE);
     if (m) return { kind: "pair", raw, key: m[1], value: m[2].trim() };
     return { kind: "unknown", raw };
   });

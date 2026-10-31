@@ -3,11 +3,31 @@
 //
 // Convention recorded at .claude/conventions/env-access.md.
 
+import { homedir } from "node:os";
+import { join } from "node:path";
+
 export const env = {
+  // Root for app state (backups, history repos). Tests point this at a temp
+  // dir so nothing they do touches the real state.
+  stateDir:
+    process.env.GHOSTTY_MGR_STATE ||
+    join(homedir(), ".config", "ghostty-manager"),
+
   // Base dir for the XDG config lookup (Ghostty's cross-platform config home).
   xdgConfigHome: process.env.XDG_CONFIG_HOME || null,
 
-  // Dev-server port. Default matches the ports.sh tier-3 claim for
-  // "ghostty-config-manager"; override for ad-hoc runs only.
-  port: Number(process.env.GHOSTTY_MGR_PORT || 6202),
+  // Server port. The default is the ports.sh tier-2 claim "ghostty-settings",
+  // the pm2 service Switchboard and bfb start; override for ad-hoc runs only.
+  port: Number(process.env.GHOSTTY_MGR_PORT || 5124),
+
+  // Manage a specific config file instead of the auto-detected live one.
+  // Used by tests to run the full write path against a sandbox copy.
+  configPathOverride: process.env.GHOSTTY_MGR_CONFIG || null,
+
+  // Stop the server after this many milliseconds without a request from a
+  // person. 0 turns the idle stop off (tests, long debugging sessions).
+  idleMs: Number(process.env.GHOSTTY_MGR_IDLE_MS ?? 300000),
+
+  // Suppress the open-browser-on-start convenience (tests, headless runs).
+  noOpen: process.env.GHOSTTY_MGR_NO_OPEN === "1",
 };

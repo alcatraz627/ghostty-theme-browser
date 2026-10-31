@@ -1,0 +1,54 @@
+/* Reset, page frame, text, form defaults and tooltips. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: var(--fs-base) / 1.45 var(--ui);
+  overflow: hidden;
+}
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+button:disabled { cursor: default; opacity: 0.45; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.mono { font-family: var(--mono); }
+.dim { color: var(--dim); }
+::selection { background: var(--accent-soft); }
+
+/* scrollbars stay quiet and appear only where something scrolls */
+* { scrollbar-width: thin; scrollbar-color: var(--fill-strong) transparent; }
+
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+/* tooltips carry the shortcut. The default sits above the control. */
+[data-tip] { position: relative; }
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tip-bg);
+  color: var(--tip-ink);
+  padding: 4px 9px;
+  border-radius: var(--r-s);
+  font: 12px var(--ui);
+  font-weight: 400;
+  white-space: nowrap;
+  box-shadow: var(--shadow-pop);
+  z-index: 40;
+  pointer-events: none;
+}
+[data-tip-pos="below"]:hover::after,
+[data-tip-pos="below"]:focus-visible::after { bottom: auto; top: calc(100% + 8px); }
+[data-tip-align="end"]:hover::after,
+[data-tip-align="end"]:focus-visible::after { left: auto; right: 0; transform: none; }
+[data-tip-align="start"]:hover::after,
+[data-tip-align="start"]:focus-visible::after { left: 0; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

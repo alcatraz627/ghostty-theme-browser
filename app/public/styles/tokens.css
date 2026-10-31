@@ -1,0 +1,96 @@
+/* Every color, radius, shadow and size the page uses. Nothing else in the style
+   sheets names a color; they read these. The dark set keeps the Tokyo-Night tint.
+   js/boot.js sets data-theme from the person's saved choice, else the OS. */
+
+:root {
+  --ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 12.5px;
+  --fs-base: 14px;
+
+  --r-s: 6px;
+  --r-m: 10px;
+  --r-l: 14px;
+  --r-pill: 99px;
+  --r-round: 50%;
+
+  --gap-s: 6px;
+  --gap-m: 12px;
+  --gap-l: 20px;
+  --rail-w: 408px;
+  --list-w: 800px;
+
+  --ctl-h: 28px;
+  --ctl-fs: 13px;
+
+  --t-fast: 0.12s;
+}
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #16161e;
+  --panel: #1a1b26;
+  --surface: #1e202e;
+  --elev: #24283b;
+  --line: #2a2e42;
+  --text: #c0caf5;
+  --dim: #959dc0;
+  --accent: #7aa2f7;
+  --on-accent: #11131c;
+  --ok: #9ece6a;
+  --warn: #e0af68;
+  --err: #f7768e;
+
+  --fill: rgba(255, 255, 255, 0.06);
+  --fill-strong: rgba(255, 255, 255, 0.1);
+  --hover: rgba(122, 162, 247, 0.07);
+  --hover-line: rgba(122, 162, 247, 0.28);
+  --accent-soft: rgba(122, 162, 247, 0.18);
+  --add-bg: rgba(158, 206, 106, 0.13);
+  --del-bg: rgba(247, 118, 142, 0.13);
+  --scrim: rgba(8, 9, 14, 0.6);
+
+  --tip-bg: #dfe3f5;
+  --tip-ink: #16161e;
+
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, 0.03), 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-pop: 0 8px 28px rgba(0, 0, 0, 0.45);
+
+  --syn-key: var(--ok);
+  --syn-val: var(--warn);
+  --syn-com: var(--dim);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eceef5;
+  --panel: #f6f7fb;
+  --surface: #ffffff;
+  --elev: #ffffff;
+  --line: #d9dce8;
+  --text: #272a3a;
+  --dim: #555c78;
+  --accent: #2756c4;
+  --on-accent: #ffffff;
+  --ok: #36701a;
+  --warn: #8c5200;
+  --err: #b6304a;
+
+  --fill: rgba(30, 45, 110, 0.06);
+  --fill-strong: rgba(30, 45, 110, 0.1);
+  --hover: rgba(47, 95, 208, 0.06);
+  --hover-line: rgba(47, 95, 208, 0.26);
+  --accent-soft: rgba(47, 95, 208, 0.14);
+  --add-bg: rgba(63, 122, 26, 0.12);
+  --del-bg: rgba(196, 54, 79, 0.11);
+  --scrim: rgba(30, 36, 60, 0.4);
+
+  --tip-bg: #272a3a;
+  --tip-ink: #f6f7fb;
+
+  --shadow-1: 0 1px 2px rgba(30, 40, 80, 0.08), 0 2px 12px rgba(30, 40, 80, 0.07);
+  --shadow-pop: 0 8px 28px rgba(40, 50, 90, 0.2);
+}

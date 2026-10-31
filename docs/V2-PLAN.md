@@ -229,6 +229,64 @@ Effort estimate, Claude-assisted: M0–M2 about one focused day; M3 is the large
 days, schema heuristics + widgets); M4 and M5 half a day each; M6 one day. Roughly
 4–5 focused days end to end, with usable value from M2 onward.
 
+### Build log
+
+- **M0 + M1** shipped 2026-07-11 (main): server/viewer with the §2 threat model
+  active, config model with byte-identical round-trip over the live config + all
+  463 bundled themes.
+- **M2** shipped 2026-07-11 (branch v2/milestones): lint module, POST /api/lint,
+  editor with debounced diagnostics. Adversarial validation verdict ISSUES-FOUND,
+  both majors fixed same-day (spawn-failure honesty; diagnostic-key spoof-proofing
+  by cross-checking reported keys against the submitted text). Report:
+  `.claude/output/20260711-m2-validation/report.md`. Deferred with eyes open:
+  `spawnSync` serializes the event loop (~10–50 ms per lint) — acceptable
+  single-user; revisit before M4 adds synchronous git work to the same path. Two
+  verified 1.3.1 quirks now encoded in lint.mjs: reported paths are
+  symlink-resolved, and a 0-byte config file exits 1 with no output.
+- **M3** shipped 2026-07-11 (v2/milestones): binary-derived schema (200 options),
+  form view with typed widgets, single-key write path through the full safety
+  chain. Quirk #3 discovered and handled: a config containing `theme =` gets
+  location-less validation errors, so anchors are recovered from the submitted
+  text (unambiguously or not at all). Adversarial gate verdict ISSUES-FOUND
+  (2 blockers, 3 majors) — all fixed same-day: CRLF configs edit in place,
+  anchor recovery is evidence-based, values are single-line enforced at API and
+  library layers, enum-beats-color inference plus a hex-only swatch guard, and
+  writeConfig returns structured failures with namespaced, rotated backups
+  (50 kept). Report: `.claude/output/20260711-m3-validation/report.md`. Known
+  minor: comments interleaved inside a list block move below it on list apply.
+- **M4** shipped 2026-07-12 (v2/milestones): per-target git history with timeline
+  UI, restore-as-append, external-edit capture (write-time + stat-poll). Gate
+  verdict ISSUES-FOUND (2 blockers: cross-process lost updates with ok:true;
+  hand-edit TOCTOU) — fixed by moving read-modify-write inside a cross-process
+  mkdir-lock (`applyChange`, now the single write primitive) and re-capturing
+  external state immediately before the rename; diff endpoint now 400s cleanly.
+  Residual accepted: a hand edit landing in the microseconds between the final
+  capture and rename is overwritten on disk (recoverable only if seen by a
+  prior capture); history growth is unbounded by design ("kept forever",
+  1.4 MB / 200 writes measured). Report:
+  `.claude/output/20260712-m4-validation/report.md`.
+- **M5** shipped 2026-07-12 (v2/milestones): profiles as complete config files;
+  activation through the locked chain (outgoing config always lands in history
+  first). Gate verdict PASS-WITH-NOTES — its two majors (case-insensitive
+  silent overwrite; EISDIR listing outage) were pre-fixed and re-verified live
+  by the validator. Known behaviors, deliberate: byte-identical profiles all
+  read active; a profile saved before any config exists stays inert. Report:
+  `.claude/output/20260712-m5-validation/report.md`.
+- **M6** shipped 2026-07-12 (v2/milestones): the Customize landing view, reshaped
+  per user feedback ("form viewer, not a customization app") — theme picker over
+  the binary's live corpus, terminal preview of effective colors (theme first,
+  explicit keys win), curated knobs; the schema form demoted to "All settings".
+  **Corrected same-day after user pushback (atone mist-20260711-214932-dc):
+  selections STAGE ONLY; an explicit Apply commits the batch as one locked
+  write and one history entry; Discard drops it.** Preview-surface contract now
+  standing: browse/preview interactions never mutate durable state. Gate verdict
+  ISSUES-FOUND (theme-name "." EISDIR 500; opacity-0 previewed opaque;
+  font-chain collapse) — all fixed with guard tests same-day. Accepted gap: the
+  client-side effective-colors merge is untested inline script (extraction
+  deferred). Report: `.claude/output/20260712-m6-validation/report.md`. V1's
+  hosted browser remains untouched at the repo root; the local app reads themes
+  live so it cannot drift.
+
 ## 6. Risks
 
 | Risk | Mitigation |

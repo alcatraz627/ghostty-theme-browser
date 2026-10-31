@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node app/server.mjs",
+    "open": "open http://127.0.0.1:5124/",
     "test": "node --test app/test/*.test.mjs"
   }
 }
