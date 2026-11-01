@@ -2,7 +2,8 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { groupOptions, GROUP_ORDER, displayLabel, helpText, matchesQuery, filterOptions } from "../public/js/labels.mjs";
+import { groupOptions, GROUP_ORDER, displayLabel, helpText, hasMoreDoc, matchesQuery, filterOptions } from "../public/js/labels.mjs";
+import { HELP } from "../public/js/help.mjs";
 import {
   controlKind,
   hexForPicker,
@@ -45,11 +46,37 @@ test("displayLabel uses the schema label and never a bare key", () => {
   assert.equal(displayLabel(undefined, "window-save-state"), "Window save state");
 });
 
-test("helpText is the first sentence of the first paragraph", () => {
-  assert.equal(helpText(OPTS[0]), "How the tab bar and titlebar combine.");
-  assert.equal(helpText(OPTS[1]), "Font size in points.");
+test("without written help, help is the first whole sentence of Ghostty's documentation", () => {
+  assert.equal(helpText({ key: "x", doc: "How the tab bar combines.\n\nMore detail here." }), "How the tab bar combines.");
+  assert.equal(helpText({ key: "x", doc: "Bytes for images (e.g. kitty graphics). And more." }), "Bytes for images (e.g. kitty graphics).", "e.g. does not end a sentence");
+  assert.equal(helpText({ key: "x", doc: "Uses `palette-generate` here." }), "Uses palette-generate here.", "code marks are removed");
   assert.equal(helpText({ doc: "" }), "");
-  assert.ok(helpText({ doc: "x".repeat(400) }).length <= 170);
+  const long = "x".repeat(400);
+  assert.equal(helpText({ key: "x", doc: long }), long, "never cut short");
+});
+
+test("written help wins, and More appears only when the documentation adds something", () => {
+  assert.equal(helpText({ key: "font-size", doc: "Font size in points." }), HELP["font-size"]);
+  assert.equal(hasMoreDoc({ key: "font-size", doc: "Font size in points." }), true);
+  assert.equal(hasMoreDoc({ key: "x", doc: "One sentence only." }), false);
+  assert.equal(hasMoreDoc({ key: "x", doc: "One sentence. And another." }), true);
+  assert.equal(hasMoreDoc({ key: "x", doc: "" }), false);
+});
+
+test("every setting Ghostty has shows help a person can read", async () => {
+  const { ghosttyBin } = await import("../lib/ghostty.mjs");
+  const { buildSchema } = await import("../lib/schema.mjs");
+  if (!ghosttyBin()) return;
+  const options = buildSchema().options;
+  const known = new Set(options.map((o) => o.key));
+  assert.deepEqual(Object.keys(HELP).filter((k) => !known.has(k)), [], "written help for a setting Ghostty does not have");
+  for (const o of options) {
+    const help = helpText(o);
+    assert.ok(help, `${o.key} has no help`);
+    assert.ok(!help.endsWith("…"), `${o.key} is cut short`);
+    assert.ok(!help.includes("`"), `${o.key} shows a code mark`);
+    assert.notEqual(help.toLowerCase().replace(/\W/g, ""), displayLabel(o).toLowerCase().replace(/\W/g, ""), `${o.key} only repeats its label`);
+  }
 });
 
 test("search finds a setting by label, key and description", () => {

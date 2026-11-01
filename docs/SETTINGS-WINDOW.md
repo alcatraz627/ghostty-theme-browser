@@ -22,6 +22,14 @@ Stop it sooner with the power button on the bfb card, Stop in Switchboard, or `s
 
 The service is defined in `ecosystem.config.cjs`. The 5 minutes can be changed with the environment variable `GHOSTTY_MGR_IDLE_MS`, and `0` turns the stop off. `npm start` still runs it in a terminal for development.
 
+## Reading a row
+
+A dot, a bold name and a blue control mean the value is set in your file. A quiet control with "default" or "from theme" beside it means your file leaves it alone, and "Set in file" at the top lists only the ones you set.
+
+The eye marks a setting the sample terminal can show. More opens Ghostty's own notes on that setting.
+
+The header over the sample names what it really shows. "Your colors" means your file sets every color, so none of the theme is visible.
+
 ## Using it
 
 1. Pick a group in the strip at the top, or press `/` and search by name, key or description.
@@ -62,4 +70,4 @@ Run `bash app/checks/settings-gui.sh`. It runs the checks that need no browser a
 - The theme picker replaces a `light:X,dark:Y` pair with one theme. Editing each side needs your call.
 - History diffs still show git's header lines.
 - The first Apply to an empty config adds a blank line.
-- Starting and stopping from Switchboard and the better-file-browser homepage depends on a proposal that is filed, `prop-20261031-145506-e0`.
+- About 110 settings have help written for this page. The rest show the first sentence of Ghostty's documentation.

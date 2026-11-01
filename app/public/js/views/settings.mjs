@@ -7,7 +7,7 @@ import { h, svgIcon, $$ } from "../dom.mjs";
 import { ICONS } from "../icons.mjs";
 import { tip } from "../keys.mjs";
 import { createControl } from "../controls.mjs";
-import { groupOptions, displayLabel, helpText, filterOptions } from "../labels.mjs";
+import { groupOptions, displayLabel, helpText, hasMoreDoc, docText, filterOptions } from "../labels.mjs";
 import { PREVIEW_ROW_KEYS, LIVE_CAVEAT, previewsLive, themeNameFor } from "../preview.mjs";
 import { openThemePicker } from "./dialogs.mjs";
 
@@ -43,7 +43,7 @@ export function mountSettings(app, root, { goRail }) {
   // ---- strip ----
   const chips = h("div", { class: "chips", role: "tablist", "aria-label": "Setting groups" });
   const modBtn = h("button", { type: "button", class: "chip-toggle", id: "filter-modified", "data-tip": tip("Show settings set in the file", "filterModified"),
-    onclick: () => setFilter({ modified: !store.get().filters.modified }) }, h("span", {}, "Modified"), h("span", { class: "count" }));
+    onclick: () => setFilter({ modified: !store.get().filters.modified }) }, h("span", { class: "dot" }), h("span", {}, "Set in file"), h("span", { class: "count" }));
   const pendBtn = h("button", { type: "button", class: "chip-toggle", id: "filter-pending", "data-tip": tip("Show staged settings", "filterPending"),
     onclick: () => setFilter({ pending: !store.get().filters.pending }) }, h("span", {}, "Pending"), h("span", { class: "count" }));
   const searchInput = h("input", { type: "search", id: "search", placeholder: "Search", "aria-label": "Search settings", spellcheck: "false" });
@@ -78,20 +78,34 @@ export function mountSettings(app, root, { goRail }) {
     const st = rowState(opt, { diskValues: s.diskValues, pending: null, readOnly: s.readOnly });
     const ctl = createControl(opt, ctx, st);
     const was = h("span", { class: "was", hidden: true });
+    const dflt = h("span", { class: "dflt", hidden: true }, "default");
+    const dot = h("span", { class: "dot", role: "img", "aria-label": "Set in your file", title: "Set in your file", hidden: true });
     const act = h("button", { type: "button", class: "act", "aria-label": "Reset" }, icon("reset"));
+    const liveText = LIVE_CAVEAT[opt.key] ?? "Changes the sample terminal";
     const live = PREVIEW_ROW_KEYS.includes(opt.key)
-      ? h("span", { class: "live", title: LIVE_CAVEAT[opt.key] ?? "This setting changes the sample terminal" }, "previews live")
+      ? h("span", { class: "live", role: "img", "aria-label": liveText, title: liveText }, icon("eye"))
       : null;
     const note = opt.key === "theme" ? h("div", { class: "note", id: "override-note", hidden: true }) : null;
     const help = helpText(opt);
+    const label = displayLabel(opt);
+    const doc = hasMoreDoc(opt) ? h("div", { class: "doc", hidden: true }) : null;
+    const more = doc
+      ? h("button", { type: "button", class: "more-doc", "aria-expanded": "false", "data-tip": tip(`Read Ghostty's notes on ${label}`, "press"),
+          onclick: () => {
+            doc.hidden = !doc.hidden;
+            if (!doc.hidden && !doc.textContent) doc.textContent = docText(opt);
+            more.textContent = doc.hidden ? "More" : "Less";
+            more.setAttribute("aria-expanded", String(!doc.hidden));
+          } }, "More")
+      : null;
     const el = h("div", { class: "row", "data-key": opt.key, "data-group": opt.category },
       h("div", { class: "txt" },
-        h("div", { class: "head" }, h("span", { class: "label" }, displayLabel(opt)), h("span", { class: "key" }, opt.key), live, opt.platform ? h("span", { class: "plat" }, opt.platform === "linux" ? "GTK and Linux" : "macOS only") : null),
-        help ? h("div", { class: "help" }, help) : null),
-      h("div", { class: "ctl" }, was, ctl.el),
-      act, note);
+        h("div", { class: "head" }, dot, h("span", { class: "label" }, label), live, h("span", { class: "key" }, opt.key), opt.platform ? h("span", { class: "plat" }, opt.platform === "linux" ? "GTK and Linux" : "macOS only") : null),
+        help || more ? h("div", { class: "help" }, help, more ? " " : null, more) : null),
+      h("div", { class: "ctl" }, ctl.el, was, dflt),
+      act, note, doc);
     act.addEventListener("click", () => (staging.has(opt.key) ? staging.revert(opt.key) : app.stage(opt.key, { unset: true })));
-    const row = { opt, el, ctl, was, act, note, live };
+    const row = { opt, el, ctl, was, dflt, dot, act, note, live };
     rows.set(opt.key, row);
     updateRow(row);
     return el;
@@ -103,12 +117,21 @@ export function mountSettings(app, root, { goRail }) {
     const pending = staging.get(opt.key);
     const st = rowState(opt, { diskValues: s.diskValues, pending, readOnly: s.readOnly });
     // A color the file leaves unset comes from the theme, so show that color.
+    let fromTheme = false;
     if (opt.type === "color" && !st.isSet) {
       const themed = app.themeColors(themeNameFor(staging.effective(s.diskValues), s.variant))?.[opt.key];
-      if (themed) st.value = themed.startsWith("#") || !/^[0-9a-fA-F]{6}$/.test(themed) ? themed : `#${themed}`;
+      if (themed) {
+        st.value = themed.startsWith("#") || !/^[0-9a-fA-F]{6}$/.test(themed) ? themed : `#${themed}`;
+        fromTheme = true;
+      }
     }
     row.ctl.update(st);
     row.el.classList.toggle("pend", !!pending);
+    // Whose value is this: the file's (dot, accent control), or else the theme's or Ghostty's (quiet, with a word beside it).
+    row.el.classList.toggle("set", st.isSet);
+    row.dot.hidden = !st.isSet;
+    row.dflt.hidden = st.isSet || !!pending;
+    row.dflt.textContent = fromTheme ? "from theme" : "default";
     const disk = s.diskValues[opt.key] ?? [];
     row.was.hidden = !pending;
     if (pending) row.was.textContent = wasText(disk);
@@ -142,7 +165,7 @@ export function mountSettings(app, root, { goRail }) {
     const names = set.map((k) => displayLabel(s.byKey[k], k).toLowerCase());
     const shown = names.length > 3 ? `${names.slice(0, 3).join(", ")} and ${names.length - 3} more` : names.join(", ");
     note.replaceChildren(
-      h("span", { title: names.join(", ") }, `Your file sets ${shown} itself. These override a theme, so a new theme will not change them.`),
+      h("span", { title: names.join(", ") }, `Your colors win: your file sets ${shown}, so a theme only changes the rest.`),
       h("button", { type: "button", class: "btn small", id: "clear-overrides", disabled: !!s.readOnly, "data-tip": tip("Stage clearing these so the theme shows through", "press"),
         onclick: () => set.forEach((k) => app.stage(k, { unset: true })) }, "Stage clearing them")
     );

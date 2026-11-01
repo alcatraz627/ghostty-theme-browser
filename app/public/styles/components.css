@@ -79,27 +79,43 @@
 
 /* ---------- settings rows: quiet, no divider ---------- */
 .row {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto 28px; gap: 6px 18px; align-items: center;
+  display: grid; grid-template-columns: 320px minmax(0, 1fr) 28px; gap: 6px 18px; align-items: center;
   padding: 11px 12px 11px 14px; margin: 1px 0;
   border-left: 3px solid transparent; border-radius: var(--r-m);
 }
 .row:hover, .row:focus-within { background: var(--hover); box-shadow: inset 0 0 0 1px var(--hover-line); }
 .row.pend { border-left-color: var(--accent); background: var(--hover); }
-.row .head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 8px; }
-.row .label { font-weight: 560; }
+.row .head { position: relative; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 8px; }
+.row .label { font-weight: 480; }
+.row.set .label { font-weight: 650; }
 .row .key { font: var(--fs-xs) var(--mono); color: var(--dim); }
-.row .live { font-size: var(--fs-xs); color: var(--accent); }
+.row .live { color: var(--dim); align-self: center; display: inline-flex; }
+.row .live svg { width: 13px; height: 13px; }
 .row .plat { font-size: var(--fs-xs); color: var(--warn); }
-.row .help { color: var(--dim); font-size: var(--fs-sm); margin-top: 1px; max-width: 52ch; }
-.row .ctl { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; max-width: 380px; }
-.row .was { font: var(--fs-xs) var(--mono); color: var(--warn); white-space: nowrap; margin-right: 4px; }
+.row .help { color: var(--dim); font-size: var(--fs-sm); margin-top: 1px; text-wrap: pretty; }
+.row .more-doc { color: var(--dim); font-size: var(--fs-xs); border-radius: var(--r-s); padding: 0 3px; text-decoration: underline; text-underline-offset: 2px; }
+.row .more-doc:hover { background: var(--fill-strong); color: var(--text); }
+.row .doc { grid-column: 1 / -1; color: var(--dim); font-size: var(--fs-sm); line-height: 1.5; white-space: pre-line; max-width: 72ch; padding: 4px 0; }
+.row .ctl { display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.row .was { font: var(--fs-xs) var(--mono); color: var(--warn); white-space: nowrap; }
+.row .dflt { font-size: var(--fs-xs); color: var(--dim); }
+.dot { width: 6px; height: 6px; border-radius: var(--r-round); background: var(--accent); flex: none; display: inline-block; }
+.row .head > .dot { position: absolute; left: -11px; top: 7px; }
+
+/* A value Ghostty supplies is drawn quietly, so the ones you set stand out. */
+.row:not(.set) .seg button.on { background: var(--fill-strong); color: var(--text); font-weight: 500; box-shadow: none; }
+.row:not(.set) .sw.on, .row:not(.set) .sw.on:hover:not(:disabled) { background: var(--fill-strong); }
+.row:not(.set) .sw.on::before { background: var(--text); }
+.row:not(.set) .flags button.on { background: var(--fill-strong); }
+.row:not(.set) .flags button.on::before { color: var(--dim); }
+.row:not(.set) .field, .row:not(.set) .num, .row:not(.set) .hex { color: var(--dim); }
 .row .act {
   display: flex; align-items: center; justify-content: center; height: 26px; border-radius: var(--r-s);
   color: var(--dim); opacity: 0; transition: background var(--t-fast), opacity var(--t-fast);
 }
 .row:hover .act, .row.pend .act, .row .act:focus-visible, .row:focus-within .act { opacity: 1; }
 .row .act:hover { background: var(--fill-strong); color: var(--text); }
-.row .note { grid-column: 1 / -1; color: var(--warn); font-size: var(--fs-sm); display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+.row .note { grid-column: 1 / -1; color: var(--dim); font-size: var(--fs-sm); display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
 .row .note .btn { color: var(--text); background: var(--fill); }
 
 /* ---------- controls: filled shapes, one height and one type size ---------- */
@@ -126,8 +142,8 @@
 .field:focus { outline: 2px solid var(--accent); outline-offset: 0; }
 .field.select { cursor: pointer; width: 190px; }
 .field.list { width: 340px; height: auto; padding: 6px 10px; resize: vertical; line-height: 1.5; }
-.listbox { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-.hint { font-size: var(--fs-xs); color: var(--dim); max-width: 340px; text-align: right; overflow-wrap: anywhere; }
+.listbox { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.hint { font-size: var(--fs-xs); color: var(--dim); max-width: 340px; overflow-wrap: anywhere; }
 .fontbox { display: inline-flex; align-items: center; gap: 8px; }
 .fontbox .more { font-size: var(--fs-xs); color: var(--dim); white-space: nowrap; }
 
@@ -158,7 +174,7 @@
 .chooser .dots s { width: 9px; height: 9px; border-radius: var(--r-round); background: var(--fill-strong); }
 .chooser em { font-style: normal; color: var(--accent); padding-left: 4px; }
 
-.flags { display: inline-flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; max-width: 340px; }
+.flags { display: inline-flex; flex-wrap: wrap; gap: 5px; max-width: 340px; }
 .flags button { height: var(--ctl-h); font: var(--ctl-fs) var(--mono); border-radius: var(--r-pill); padding: 0 12px; color: var(--dim); background: var(--fill); transition: background var(--t-fast), color var(--t-fast); }
 .flags button:hover:not(:disabled) { background: var(--fill-strong); color: var(--text); }
 .flags button.on { color: var(--text); background: var(--accent-soft); }
@@ -180,7 +196,6 @@
 }
 .pv-head .grow { flex: 1; }
 .pv-head .seg button { text-transform: none; letter-spacing: 0; font-size: var(--fs-xs); padding: 2px 9px; }
-.pv-foot { padding: 6px 12px 8px; font-size: var(--fs-xs); color: var(--dim); }
 .term { font-family: var(--mono); line-height: 1.5; padding: 10px 14px 12px; }
 .term .tl { display: flex; gap: 6px; margin: -2px 0 8px; }
 .term .tl s { width: 9px; height: 9px; border-radius: var(--r-round); opacity: 0.8; }
@@ -316,7 +331,7 @@ dialog.dlg .acts { justify-content: flex-end; margin-top: 14px; }
   .page { padding: 0 14px; }
   .rail { padding: 0 14px 20px 0; }
   .row { grid-template-columns: minmax(0, 1fr) 28px; }
-  .row .ctl { grid-column: 1; justify-content: flex-start; max-width: none; }
+  .row .ctl { grid-column: 1; }
   .row .act { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
   .strip { flex-wrap: wrap; padding: 4px 14px 10px; }
   .chips { flex: 1 1 100%; }

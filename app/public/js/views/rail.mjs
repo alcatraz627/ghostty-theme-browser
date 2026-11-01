@@ -1,11 +1,11 @@
-// The right rail: the Preview and On disk terminals, then directly under them
-// the panel that shows the pending diff with Ghostty's verdict, or, after a
-// write, the receipt in the same place.
+// The right rail: the sample terminal, joined by the On disk one only while
+// something is staged, then directly under them the panel that shows the pending
+// diff with Ghostty's verdict, or, after a write, the receipt in the same place.
 
 import { h, svgIcon, clear } from "../dom.mjs";
 import { ICONS } from "../icons.mjs";
 import { tip } from "../keys.mjs";
-import { buildPreview, themeNameFor, themeHasPair } from "../preview.mjs";
+import { buildPreview, shownThemeName, themeHasPair } from "../preview.mjs";
 import { lineDiff } from "../linediff.mjs";
 import { displayLabel } from "../labels.mjs";
 import { refusalText } from "../receipt.mjs";
@@ -98,8 +98,7 @@ export function mountRail(app, host, { goHistory }) {
   const diskName = h("span", { class: "pv-name" });
   const previewTerm = h("div", { id: "term-preview" });
   const diskTerm = h("div", { id: "term-disk" });
-  const foot = h("div", { class: "pv-foot", id: "pv-foot" });
-  const previewCard = h("div", { class: "pv", id: "pv-preview" }, h("div", { class: "pv-head" }, h("span", {}, "Preview"), previewName, h("span", { class: "grow" }), toggle), previewTerm, foot);
+  const previewCard = h("div", { class: "pv", id: "pv-preview" }, h("div", { class: "pv-head" }, h("span", {}, "Preview"), previewName, h("span", { class: "grow" }), toggle), previewTerm);
   const diskCard = h("div", { class: "pv", id: "pv-disk" }, h("div", { class: "pv-head" }, h("span", {}, "On disk"), diskName), diskTerm);
   const panelHost = h("div", { id: "rail-panel" });
   host.append(previewCard, diskCard, panelHost);
@@ -112,13 +111,13 @@ export function mountRail(app, host, { goHistory }) {
     const common = { appearance: s.variant, themeColorsByName: app.themeCache, defaults: s.defaults };
     previewTerm.innerHTML = buildPreview({ values: eff, ...common });
     diskTerm.innerHTML = buildPreview({ values: s.diskValues, ...common });
-    previewName.textContent = themeNameFor(eff, s.variant);
-    diskName.textContent = themeNameFor(s.diskValues, s.variant);
+    previewName.textContent = shownThemeName(eff, s.variant);
+    diskName.textContent = shownThemeName(s.diskValues, s.variant);
     for (const b of toggle.children) b.classList.toggle("on", b.dataset.variant === s.variant);
-    foot.hidden = themeHasPair(eff);
-    foot.textContent = themeNameFor(eff, s.variant)
-      ? "This theme has no light and dark pair, so Light and Dark look the same."
-      : "No theme is set, so Light and Dark look the same.";
+    // Light and Dark only differ for a theme with both sides.
+    toggle.hidden = !themeHasPair(eff);
+    // With nothing staged the two terminals would be identical.
+    diskCard.hidden = staging.size === 0;
   }
 
   let shownReceipt = null;

@@ -275,7 +275,6 @@ const BUILDERS = {
       el: input,
       update(s) {
         if (document.activeElement !== input) input.value = s.value;
-        input.placeholder = s.value === "" ? "(default)" : "";
         setDisabled(input, s.disabled);
       },
     };
@@ -304,7 +303,7 @@ const BUILDERS = {
   },
 
   font(opt, ctx, stage) {
-    const input = h("input", { type: "text", class: "field", list: "font-families", spellcheck: "false", "aria-label": opt.label, placeholder: "(default)" });
+    const input = h("input", { type: "text", class: "field", list: "font-families", spellcheck: "false", "aria-label": opt.label });
     const more = h("span", { class: "more" });
     let user = [];
     input.addEventListener("change", () => {

@@ -74,6 +74,18 @@ export function themeNameFor(values, appearance = "dark") {
   return sides[appearance] ?? sides[appearance === "dark" ? "light" : "dark"] ?? "";
 }
 
+// The words for what the sample really shows. Colors set in the file win over a
+// theme, so a file that sets all of them shows none of the theme named beside them.
+export function shownThemeName(values = {}, appearance = "dark") {
+  const name = themeNameFor(values, appearance);
+  const ownPalette = values.palette?.length ?? 0;
+  const anyOwn = ownPalette > 0 || COLOR_KEYS.some((k) => lastOf(values, k));
+  if (!anyOwn) return name || "Default colors";
+  const allOwn = lastOf(values, "background") && lastOf(values, "foreground") && ownPalette >= 16;
+  if (allOwn || !name) return "Your colors";
+  return `${name}, plus your colors`;
+}
+
 // {light, dark} for a pair value, null for a single theme or none.
 export function themeSides(raw) {
   const sides = {};

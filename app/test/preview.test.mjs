@@ -9,6 +9,7 @@ import {
   PREVIEW_ROW_KEYS,
   buildPreview,
   themeNameFor,
+  shownThemeName,
   themeHasPair,
   themeSides,
   previewsLive,
@@ -21,6 +22,17 @@ const BASE = {
   "font-size": ["13"],
   "cursor-style": ["bar"],
 };
+
+test("the header names what the sample really shows", () => {
+  const palette = Array.from({ length: 16 }, (_, i) => `${i}=#101010`);
+  assert.equal(shownThemeName({}), "Default colors");
+  assert.equal(shownThemeName({ theme: ["Nord"] }), "Nord");
+  assert.equal(shownThemeName({ theme: ["light:Day,dark:Night"] }, "light"), "Day");
+  assert.equal(shownThemeName({ theme: ["Nord"], background: ["#000000"] }), "Nord, plus your colors");
+  assert.equal(shownThemeName({ background: ["#000000"] }), "Your colors");
+  assert.equal(shownThemeName({ theme: ["Nord"], background: ["#000000"], foreground: ["#ffffff"], palette }), "Your colors", "every color is overridden, so the theme is not visible");
+  assert.equal(shownThemeName({ theme: ["Nord"], background: ["#000000"], foreground: ["#ffffff"], palette: palette.slice(0, 3) }), "Nord, plus your colors");
+});
 
 // One different value for each key on the list.
 const CHANGED = {

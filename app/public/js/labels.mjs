@@ -4,6 +4,8 @@
 // message in the page names a setting through displayLabel, so a key is never
 // shown raw where a name exists.
 
+import { HELP } from "./help.mjs";
+
 export const GROUP_ORDER = [
   "Appearance",
   "Fonts",
@@ -62,14 +64,33 @@ export function displayLabel(opt, key = opt?.key) {
   return opt?.label || humanize(key ?? "");
 }
 
-// The first sentence of the option's own documentation, on one line.
-export function helpText(opt, max = 170) {
-  const para = String(opt?.doc ?? "").trim().split(/\n\s*\n/)[0] || "";
-  const flat = para.replace(/\s+/g, " ").trim();
-  if (!flat) return "";
-  const m = flat.match(/^(.+?[.!?])(\s|$)/);
-  const sentence = m ? m[1] : flat;
-  return sentence.length > max ? sentence.slice(0, max - 1).trimEnd() + "…" : sentence;
+// Ghostty's documentation with the Markdown code marks removed, since the page
+// shows it as plain text.
+export function docText(opt) {
+  return String(opt?.doc ?? "").replaceAll("`", "").trim();
+}
+
+// The first whole sentence of the text. "e.g." and friends do not end a sentence.
+function firstSentence(flat) {
+  for (const m of flat.matchAll(/[.!?](?=\s|$)/g)) {
+    const upTo = flat.slice(0, m.index + 1);
+    if (!/\b(e\.g|i\.e|etc|vs)\.$/.test(upTo)) return upTo;
+  }
+  return flat;
+}
+
+// The one or two lines under a setting's name: the written help where there is
+// some, else the first whole sentence of Ghostty's documentation. Never cut short.
+export function helpText(opt) {
+  if (opt?.key && Object.hasOwn(HELP, opt.key)) return HELP[opt.key];
+  const para = docText(opt).split(/\n\s*\n/)[0] || "";
+  return firstSentence(para.replace(/\s+/g, " ").trim());
+}
+
+// True when Ghostty's documentation says more than the help line already does.
+export function hasMoreDoc(opt) {
+  const doc = docText(opt).replace(/\s+/g, " ").trim();
+  return !!doc && doc !== helpText(opt);
 }
 
 // Every word the person typed must appear in the label, the key or the
